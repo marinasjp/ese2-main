@@ -11,6 +11,10 @@ ___
 - **Marina San Jose Pena** - 2569221s@student.gla.ac.uk
 
 - **Djan Tanova** - 2542341t@student.gla.ac.uk
+
+- **Anthony Rainey** - 2506467r@student.gla.ac.uk
+
+- **Alexander Lake** - 2576885l@student.gla.ac.uk
 ***
 ## Team Coach
 - **Tim Storer** - Timothy.Storer@glasgow.ac.uk
@@ -31,3 +35,7 @@ Our main communication system will be over teams and through group meetings.
 - **Marina San Jose Pena** - 
 
 - **Djan Tanova** - 
+
+- **Anthony Rainey** - 
+
+- **Alexander Lake** - 
