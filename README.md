@@ -26,16 +26,16 @@ Our main communication system will be over teams and through group meetings.
 ***
 ## Team Structure and Roles
 
-- **Alex Markopoulou** - 
+- **Alex Markopoulou** - Developer
 
-- **Raphael Nekam** - 
+- **Raphael Nekam** - Product owner
 
-- **Kyle Watt** - 
+- **Kyle Watt** - Quality assurance manager
 
-- **Marina San Jose Pena** - 
+- **Marina San Jose Pena** - Toolsmith
 
-- **Djan Tanova** - 
+- **Djan Tanova** - Chief architect
 
-- **Anthony Rainey** - 
+- **Anthony Rainey** - Team manager
 
-- **Alexander Lake** - 
+- **Alexander Lake** - UX designer
