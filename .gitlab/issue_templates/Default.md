@@ -1,16 +1,20 @@
 # Issue Description
 
-- Summary 
+<!-- - quick summary   !-->
 
 ##Which file(s) are affected:
- - File 1
- - File 2
+
+<!-- - eg. file 1
+           file 2   !-->
+
 
 ## What needs to be done:
- - Task 1
- - Task 2
+
+<!-- - what to try or research   !-->
 
 ##Any related Issues?
+
+<!-- - anything this may affect?   !-->
 
 
 ## Priority/Severity
