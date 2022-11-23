@@ -1,18 +1,17 @@
-# Issue Description
+## Issue Description
 
 <!-- - quick summary   !-->
 
-##Which file(s) are affected:
+## which file(s) are affected:
 
-<!-- - eg. file 1
-           file 2   !-->
+<!-- - eg. file  file 2   !-->
 
 
 ## What needs to be done:
 
 <!-- - what to try or research   !-->
 
-##Any related Issues?
+## Any related Issues?
 
 <!-- - anything this may affect?   !-->
 
