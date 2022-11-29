@@ -1,0 +1,48 @@
+@use 'variables' as *;
+@import "/node_modules/primeflex/primeflex.css";
+
+body {
+  background: #f3f3f3;
+  margin: 0;
+}
+
+.sidenav {
+  width: $sidenav-width;
+  background: white;
+  box-shadow: $shadow;
+  height: 100vh;
+
+  .p-inputnumber-input {
+    width: 175px;
+    height: 35px;
+
+    text-align: center;
+
+  }
+
+  .p-multiselect {
+    width: 248px !important;
+  }
+
+  .p-inputnumber-buttons-horizontal {
+    height: 35px !important;
+    width: 35px !important;
+
+    span {
+      font-size: 0.75rem;
+    }
+
+    .p-button {
+      width: 35px !important;
+    }
+  }
+
+
+  .p-accordion-content {
+    padding: 12px !important;
+  }
+}
+
+.content {
+  width: calc(100% - 300px); /* 240px -> sidenav width  -> using scss variable does not work for calc*/
+}
