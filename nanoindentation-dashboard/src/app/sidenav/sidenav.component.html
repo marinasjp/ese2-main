@@ -1,9 +1,19 @@
 <div class="sidenav">
 
   <p-accordion [multiple]="true">
+    <p-accordionTab header="Files">
+      <h4 class="mt-2">Upload a File</h4>
+      <p-fileUpload (uploadHandler)="uploadHandler($event)"
+                    mode="basic"
+                    [auto]="true"
+                    [customUpload]="true"
+                    chooseLabel="Upload File"
+                    name="myfile[]"></p-fileUpload>
+    </p-accordionTab>
+
     <p-accordionTab header="Filtering">
 
-      <div style="border: 1px solid #dee2e6; border-radius: 5px; padding: 12px">
+      <div style="border: 1px solid #383838; border-radius: 5px; padding: 12px">
         <div class="flex flex-row">
           <p-inputSwitch [(ngModel)]="useProminency" class="mr-2"></p-inputSwitch>
           <h4 class="m-0 mt-1">Use Prominency</h4>
@@ -49,7 +59,7 @@
 
       </div>
 
-      <div style="border: 1px solid #dee2e6; border-radius: 5px; padding: 12px; margin-top: 12px">
+      <div style="border: 1px solid #383838; border-radius: 5px; padding: 12px; margin-top: 12px">
         <p-multiSelect [options]="filters" [(ngModel)]="selectedFilters" optionLabel="name"
                        defaultLabel="Other Filters"></p-multiSelect>
 

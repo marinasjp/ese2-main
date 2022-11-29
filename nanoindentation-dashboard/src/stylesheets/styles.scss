@@ -2,13 +2,12 @@
 @import "/node_modules/primeflex/primeflex.css";
 
 body {
-  background: #f3f3f3;
   margin: 0;
 }
 
 .sidenav {
   width: $sidenav-width;
-  background: white;
+  background: #1e1e1e;
   box-shadow: $shadow;
   height: 100vh;
 

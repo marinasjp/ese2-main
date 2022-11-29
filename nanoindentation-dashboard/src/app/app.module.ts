@@ -12,12 +12,18 @@ import {InputNumberModule} from "primeng/inputnumber";
 import {FormsModule} from "@angular/forms";
 import {InputSwitchModule} from "primeng/inputswitch";
 import {MultiSelectModule} from "primeng/multiselect";
+import {FileUploadModule} from "primeng/fileupload";
+import {HttpClientModule} from "@angular/common/http";
+import { GraphsComponent } from './graphs/graphs.component';
+import {CardModule} from "primeng/card";
+import {ChartModule} from "primeng/chart";
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    SidenavComponent
+    SidenavComponent,
+    GraphsComponent,
   ],
   imports: [
     BrowserModule,
@@ -28,7 +34,11 @@ import {MultiSelectModule} from "primeng/multiselect";
     InputNumberModule,
     FormsModule,
     InputSwitchModule,
-    MultiSelectModule
+    MultiSelectModule,
+    FileUploadModule,
+    HttpClientModule,
+    CardModule,
+    ChartModule
   ],
   providers: [],
   bootstrap: [AppComponent]
