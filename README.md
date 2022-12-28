@@ -39,3 +39,6 @@ Our main communication system will be over teams and through group meetings.
 - **Anthony Rainey** - Team manager
 
 - **Alexander Lake** - UX designer
+
+## How to get it running
+First install NodeJS, and then install Angular15. After this, open the nanoindentation-dashboard  folder inside the NodeJS command prompt and run npm install. This will install the rest of the dependencies.
