@@ -17,6 +17,7 @@ import {HttpClientModule} from "@angular/common/http";
 import { GraphsComponent } from './graphs/graphs.component';
 import {CardModule} from "primeng/card";
 import {ChartModule} from "primeng/chart";
+import {TooltipModule} from 'primeng/tooltip';
 
 
 @NgModule({
@@ -38,6 +39,7 @@ import {ChartModule} from "primeng/chart";
     FileUploadModule,
     HttpClientModule,
     CardModule,
+    TooltipModule,
     ChartModule
   ],
   providers: [],

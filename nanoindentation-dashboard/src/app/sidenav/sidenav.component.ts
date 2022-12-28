@@ -1,6 +1,6 @@
 import {Component} from '@angular/core';
 import {GraphService} from "../services/graph.service";
-
+import {TooltipModule} from 'primeng/tooltip';
 
 @Component({
   selector: 'app-sidenav',

@@ -1,6 +1,7 @@
 <div class="sidenav">
 
   <p-accordion [multiple]="true">
+    <!-- Files Tab -->
     <p-accordionTab header="Files">
       <h4 class="mt-2">Upload a File</h4>
       <p-fileUpload (uploadHandler)="uploadHandler($event)"
@@ -8,15 +9,17 @@
                     [auto]="true"
                     [customUpload]="true"
                     chooseLabel="Upload File"
-                    name="myfile[]"></p-fileUpload>
+                    name="myfile[]"
+                    pTooltip="Upload your .txt file containing your nano-indentation data"
+                    tooltipPosition="right"></p-fileUpload>
     </p-accordionTab>
-
+    <!-- Filtering Tab -->
     <p-accordionTab header="Filtering">
-
       <div style="border: 1px solid #383838; border-radius: 5px; padding: 12px">
         <div class="flex flex-row">
           <p-inputSwitch [(ngModel)]="useProminency" class="mr-2"></p-inputSwitch>
-          <h4 class="m-0 mt-1">Use Prominency</h4>
+          <h4 pTooltip="Prominency is the (Insert tooltip for prominency because I'm still not entirely sure what it does)"
+          class="m-0 mt-1">Use Prominency</h4>
         </div>
 
         <ng-container *ngIf="useProminency">
@@ -82,13 +85,13 @@
 
         </ng-container>
       </div>
-
     </p-accordionTab>
+    <!-- Contact Point Tab -->
     <p-accordionTab header="Contact Point">
       Contact Point
     </p-accordionTab>
+    <!-- Other Tab -->
     <p-accordionTab header="Header 3">
-      Content 3
     </p-accordionTab>
   </p-accordion>
 
