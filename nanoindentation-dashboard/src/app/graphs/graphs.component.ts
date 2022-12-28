@@ -9,14 +9,10 @@ import {UIChart} from "primeng/chart";
 })
 export class GraphsComponent {
   @ViewChild("chart") chart: UIChart;
-
   basicOptions;
   basicData;
-
-  data: number[] = [124, 52, 51, 33, 53];
-
+  data;
   constructor(private graphService: GraphService) {
-
     this.graphService.graphData$.subscribe((data) => {
       if (data?.Indentation) {
         this.basicData.datasets[0].data = data.Indentation;
@@ -24,13 +20,12 @@ export class GraphsComponent {
         this.chart.reinit();
       }
     })
-
   }
 
   ngOnInit() {
     this.applyDarkTheme();
     this.basicData = {
-      labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+      labels: [],
       datasets: [
         {
           label: 'First Dataset',
@@ -41,7 +36,6 @@ export class GraphsComponent {
         },
       ]
     };
-
   }
 
   applyDarkTheme() {
