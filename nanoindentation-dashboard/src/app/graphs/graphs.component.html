@@ -7,6 +7,7 @@
         [data]="basicData"
         [options]="basicOptions">
       </p-chart>
+      <p-multiSelect [options]="datasets" [(ngModel)]="selectedDatasets" optionLabel="name" defaultLabel="Select Dataset"></p-multiSelect>
   </div>
   <div>
     <p-chart type="line"

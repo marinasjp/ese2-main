@@ -12,11 +12,21 @@ export class GraphsComponent {
   basicOptions;
   basicData;
   data;
+
+  datasets: {id: number, name: string, data: any, labels: any}[] = [
+    ]
+  selectedDatasets: { id: number, name: string, data: any, labels: any}[] = [];
+
   constructor(private graphService: GraphService) {
     this.graphService.graphData$.subscribe((data) => {
       if (data?.Indentation) {
+        this.datasets.push({id:1,name:"Dataset1",data:data.Indentation,labels:data.Time})
         this.basicData.datasets[0].data = data.Indentation;
         this.basicData.labels = data.Time;
+
+        // this.basicData.datasets[0].data = this.selectedDatasets[1].data;
+        // this.basicData.labels = this.selectedDatasets[1].labels;
+
         this.chart.reinit();
       }
     })
