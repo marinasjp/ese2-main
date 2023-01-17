@@ -19,7 +19,6 @@ import {CardModule} from "primeng/card";
 import {ChartModule} from "primeng/chart";
 import {TooltipModule} from 'primeng/tooltip';
 
-
 @NgModule({
   declarations: [
     AppComponent,
@@ -40,7 +39,7 @@ import {TooltipModule} from 'primeng/tooltip';
     HttpClientModule,
     CardModule,
     TooltipModule,
-    ChartModule
+    ChartModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
