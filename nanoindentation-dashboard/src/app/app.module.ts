@@ -18,6 +18,10 @@ import { GraphsComponent } from './graphs/graphs.component';
 import {CardModule} from "primeng/card";
 import {ChartModule} from "primeng/chart";
 import {TooltipModule} from 'primeng/tooltip';
+import {MatSliderModule} from '@angular/material/slider';
+import {InputTextareaModule} from 'primeng/inputtextarea';
+
+
 
 @NgModule({
   declarations: [
@@ -39,7 +43,9 @@ import {TooltipModule} from 'primeng/tooltip';
     HttpClientModule,
     CardModule,
     TooltipModule,
-    ChartModule,
+    ChartModule, 
+    MatSliderModule,
+    InputTextareaModule
   ],
   providers: [],
   bootstrap: [AppComponent]

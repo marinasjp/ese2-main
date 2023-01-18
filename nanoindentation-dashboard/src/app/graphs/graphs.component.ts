@@ -13,19 +13,21 @@ export class GraphsComponent {
   basicData;
   data;
 
-  datasets: {id: number, name: string, data: any, labels: any}[] = [
-    ]
-  selectedDatasets: { id: number, name: string, data: any, labels: any}[] = [];
-
+  datasets: {id: number, name: string, data: any, labels: any}[] = []
+  selectedDatasets: { id: number, name: string, data: any, label: any}[] =[]
+  
   constructor(private graphService: GraphService) {
     this.graphService.graphData$.subscribe((data) => {
       if (data?.Indentation) {
         this.datasets.push({id:1,name:"Dataset1",data:data.Indentation,labels:data.Time})
+        
         this.basicData.datasets[0].data = data.Indentation;
         this.basicData.labels = data.Time;
 
-        // this.basicData.datasets[0].data = this.selectedDatasets[1].data;
-        // this.basicData.labels = this.selectedDatasets[1].labels;
+        // this.basicData.datasets[0].data = this.selectedDatasets[0]?.data;
+        // console.log(this.selectedDatasets[0].data);
+        // this.basicData.labels = this.selectedDatasets[0]?.label;
+        // console.log(this.selectedDatasets[0].label);
 
         this.chart.reinit();
       }
