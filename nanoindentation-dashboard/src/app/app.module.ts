@@ -1,9 +1,7 @@
 import {NgModule} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
-
 import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
-
 import {ButtonModule} from 'primeng/button';
 import {SidenavComponent} from './sidenav/sidenav.component';
 import {AccordionModule} from "primeng/accordion";
@@ -20,8 +18,8 @@ import {ChartModule} from "primeng/chart";
 import {TooltipModule} from 'primeng/tooltip';
 import {MatSliderModule} from '@angular/material/slider';
 import {InputTextareaModule} from 'primeng/inputtextarea';
-
-
+import {SliderModule} from 'primeng/slider';
+import {ScrollerModule} from 'primeng/scroller';
 
 @NgModule({
   declarations: [
@@ -45,7 +43,9 @@ import {InputTextareaModule} from 'primeng/inputtextarea';
     TooltipModule,
     ChartModule, 
     MatSliderModule,
-    InputTextareaModule
+    InputTextareaModule,
+    SliderModule,
+    ScrollerModule
   ],
   providers: [],
   bootstrap: [AppComponent]

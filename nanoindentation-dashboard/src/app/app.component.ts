@@ -21,7 +21,8 @@ export class AppComponent implements OnInit {
 
     loadPyodide({ indexURL: PYODIDE_BASE_URL }).then((pyodide) => {
       globalThis.pyodide = pyodide;
-
+      console.log(globalThis.pyodide);
+      console.log('pyodide loaded');
     })
 
     

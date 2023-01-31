@@ -1,8 +1,5 @@
 import {Component} from '@angular/core';
 import {GraphService} from "../services/graph.service";
-import {TooltipModule} from 'primeng/tooltip';
-
-
 
 @Component({
   selector: 'app-sidenav',
@@ -19,6 +16,11 @@ export class SidenavComponent {
   customerData: any = [];
   pythonCode: string;
   output: any;
+  result: any;
+
+  filterSelect: number;
+  consoleItems: string[];
+  //consoleItems = new Array(1000);
 
   filters: { id: number, name: string, inputs?: string[] }[] = [
     {id: 1, name: "Median Filter", inputs: ["Window Length [nm]", "Polynomical Order (int)"]},
@@ -30,7 +32,7 @@ export class SidenavComponent {
   }
 
   ngOnInit() {
-
+    this.consoleItems = []
   }
 
   uploadHandler(event: any) {
@@ -38,7 +40,6 @@ export class SidenavComponent {
     this.uploadedFile = event.files;
     console.log(this.uploadedFile)
     this.parseData();
-    
   }
 
   parseData() {
@@ -95,22 +96,27 @@ export class SidenavComponent {
     console.log("START UPLOADING")
     this.uploadedFile = event.files;
     console.log(this.uploadedFile)
-    this.parseRawData();
+    // this.parseRawData();
 
   }
   
-  parseRawData(){
-
-   
-    globalThis.pyodide.runPython('print("testing - This should appear on browser console (ctrl+shft-i)")').then((result)=>{console.log(result);});
-  }
+  // parseRawData(){
+  //   globalThis.pyodide.runPython('print("testing - This should appear on browser console (ctrl+shft-i)")').then((result)=>{console.log(result);});
+  // }
 
 
   runCode(code: string) {
+    console.log(globalThis.pyodide.runPython());
+    globalThis.pyodide.runPython('def multiply(); return 3+4');
+    let func = globalThis.pyodide.globals.get('multiply');
     globalThis.pyodide.runPython(code).then((result)=>{
+      this.consoleItems.push(result);
+      this.consoleItems = this.consoleItems;
+      console.log(this.consoleItems);
       this.output = result;
     });
-
+    // this.consoleItems.push(code);
+    // console.log(this.consoleItems);
   }
 
 
