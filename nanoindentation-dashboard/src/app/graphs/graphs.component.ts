@@ -19,7 +19,7 @@ export class GraphsComponent {
   constructor(private graphService: GraphService) {
     this.graphService.graphData$.subscribe((data) => {
       if (data?.Indentation) {
-        this.datasets.push({id: 1, name: "Dataset1", data: data.Indentation, labels: data.Time})
+        this.datasets.push({id: 1, name: data.Name, data: data.Indentation, labels: data.Time})
         this.reloadChart();
       }
     })

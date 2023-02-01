@@ -13,6 +13,7 @@ export class SidenavComponent {
   minFrequency: number = null;
   band: number = null;
   uploadedFile: any = [];
+  uploadedCode: any = [];
   customerData: any = [];
   pythonCode: string;
   output: any;
@@ -28,6 +29,14 @@ export class SidenavComponent {
   ]
   selectedFilters: { id: number, name: string, inputs?: string[] }[] = [];
 
+  indShapes: {name: string} []=[
+    {name: "Sphere"},
+    {name: "Cylinder"},
+    {name: "Cone"},
+    {name: "Pyramid"}
+  ]
+  selectedIndShape: {name: string}[] = [];
+
   constructor(private graphService: GraphService) {
   }
 
@@ -36,10 +45,21 @@ export class SidenavComponent {
   }
 
   uploadHandler(event: any) {
+    
     console.log("START UPLOADING")
     this.uploadedFile = event.files;
+    console.log(this.uploadedFile[0].name)
     console.log(this.uploadedFile)
+    event = null;
+    console.log(event)
     this.parseData();
+    
+  }
+
+  codeUploadHandler(event: any) {
+    console.log("START UPLOADING")
+    this.uploadedCode = event.files;
+    console.log(this.uploadedCode)
   }
 
   parseData() {
@@ -56,12 +76,14 @@ export class SidenavComponent {
       let lines = text.split('\n');
       let reached = false;
       let customerData = {
+        "Name": [],
         "Time": [],
         "Load": [],
         "Indentation": [],
         "Cantilever": [],
         "Piezo": []
       };
+      customerData["Name"].push(this.uploadedFile[0].name)
 
       let values;
       for (let line = 0; line < lines.length; line++) {
@@ -92,7 +114,6 @@ export class SidenavComponent {
 
 
   uploadrawHandler(event: any){
-
     console.log("START UPLOADING")
     this.uploadedFile = event.files;
     console.log(this.uploadedFile)

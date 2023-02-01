@@ -20,6 +20,7 @@ import {MatSliderModule} from '@angular/material/slider';
 import {InputTextareaModule} from 'primeng/inputtextarea';
 import {SliderModule} from 'primeng/slider';
 import {ScrollerModule} from 'primeng/scroller';
+import {DropdownModule} from 'primeng/dropdown';
 
 @NgModule({
   declarations: [
@@ -45,7 +46,8 @@ import {ScrollerModule} from 'primeng/scroller';
     MatSliderModule,
     InputTextareaModule,
     SliderModule,
-    ScrollerModule
+    ScrollerModule,
+    DropdownModule
   ],
   providers: [],
   bootstrap: [AppComponent]
