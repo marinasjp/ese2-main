@@ -18,6 +18,10 @@ export class SidenavComponent {
   pythonCode: string;
   output: any;
   result: any;
+  forceIndMin: any;
+  forceIndMax: any;
+  spectraMin: any;
+  spectraMax: any;
 
   filterSelect: number;
   consoleItems: string[];

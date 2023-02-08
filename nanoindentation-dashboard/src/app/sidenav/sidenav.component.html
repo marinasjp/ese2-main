@@ -103,13 +103,51 @@
     <!-- Force-Ind Tab -->
     <p-accordionTab header="Force-Ind">
       <div style="border: 1px solid #383838; border-radius: 5px; padding: 12px">
-        <p-dropdown [options]="indShapes" [(ngModel)]="selectedIndShape" optionLabel="name"></p-dropdown>
+        <p-dropdown [showClear]="true" placeholder="Select Shape" [options]="indShapes" [(ngModel)]="selectedIndShape" optionLabel="name"></p-dropdown>
+        <br><br><h5>Force-Ind Minimum</h5>
+        <p-inputNumber [(ngModel)]="forceIndMin" [showButtons]="true"
+          buttonLayout="horizontal"
+          spinnerMode="horizontal"
+          decrementButtonClass="p-button-primary"
+          incrementButtonClass="p-button-primary"
+          incrementButtonIcon="pi pi-plus"
+          decrementButtonIcon="pi pi-minus">
+        </p-inputNumber><br>
+        <h5>Force-Ind Maximum</h5>
+        <p-inputNumber [(ngModel)]="forceIndMax" [showButtons]="true"
+          buttonLayout="horizontal"
+          spinnerMode="horizontal"
+          decrementButtonClass="p-button-primary"
+          incrementButtonClass="p-button-primary"
+          incrementButtonIcon="pi pi-plus"
+          decrementButtonIcon="pi pi-minus">
+        </p-inputNumber>
       </div>
     </p-accordionTab>
 
     <!-- Elasticity-Spectra Tab -->
     <p-accordionTab header="Elasticity-Spectra">
-      Contact Point
+      <div style="border: 1px solid #383838; border-radius: 5px; padding: 12px">
+        <p-dropdown [showClear]="true" placeholder="(placeholder)" [(ngModel)]="selectedIndShape" optionLabel="name"></p-dropdown>
+        <br><br><h5>Elasticity Spectra Minimum</h5>
+        <p-inputNumber [(ngModel)]="spectraMin" [showButtons]="true"
+          buttonLayout="horizontal"
+          spinnerMode="horizontal"
+          decrementButtonClass="p-button-primary"
+          incrementButtonClass="p-button-primary"
+          incrementButtonIcon="pi pi-plus"
+          decrementButtonIcon="pi pi-minus">
+        </p-inputNumber><br>
+        <h5>Elasticity Spectra Maximum</h5>
+        <p-inputNumber [(ngModel)]="spectraMax" [showButtons]="true"
+          buttonLayout="horizontal"
+          spinnerMode="horizontal"
+          decrementButtonClass="p-button-primary"
+          incrementButtonClass="p-button-primary"
+          incrementButtonIcon="pi pi-plus"
+          decrementButtonIcon="pi pi-minus">
+        </p-inputNumber>
+      </div>
     </p-accordionTab>
 
     <!-- Upload Code Tab -->
