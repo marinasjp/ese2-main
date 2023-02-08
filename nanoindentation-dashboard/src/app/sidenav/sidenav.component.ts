@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, ViewChild} from '@angular/core';
 import {GraphService} from "../services/graph.service";
 
 @Component({
@@ -7,6 +7,7 @@ import {GraphService} from "../services/graph.service";
   styleUrls: ['./sidenav.component.scss'],
 })
 export class SidenavComponent {
+  @ViewChild('fileUpload') fileUpload: any;
 
   useProminency: boolean = true;
   prominency: number = null;
@@ -33,13 +34,13 @@ export class SidenavComponent {
   ]
   selectedFilters: { id: number, name: string, inputs?: string[] }[] = [];
 
-  indShapes: {name: string} []=[
+  indShapes: { name: string } [] = [
     {name: "Sphere"},
     {name: "Cylinder"},
     {name: "Cone"},
     {name: "Pyramid"}
   ]
-  selectedIndShape: {name: string}[] = [];
+  selectedIndShape: { name: string }[] = [];
 
   constructor(private graphService: GraphService) {
   }
@@ -49,15 +50,12 @@ export class SidenavComponent {
   }
 
   uploadHandler(event: any) {
-    
+
     console.log("START UPLOADING")
     this.uploadedFile = event.files;
-    console.log(this.uploadedFile[0].name)
-    console.log(this.uploadedFile)
-    event = null;
-    console.log(event)
     this.parseData();
-    
+    this.fileUpload.clear();
+
   }
 
   codeUploadHandler(event: any) {
@@ -69,7 +67,7 @@ export class SidenavComponent {
   parseData() {
     console.log("PARSE DATA")
     let reader = new FileReader();
-    reader.onload = (e) => {
+    reader.onload = () => {
       console.log("HERE");
       // Entire file
       const text: string = reader.result as string;
@@ -117,14 +115,14 @@ export class SidenavComponent {
   }
 
 
-  uploadrawHandler(event: any){
+  uploadrawHandler(event: any) {
     console.log("START UPLOADING")
     this.uploadedFile = event.files;
     console.log(this.uploadedFile)
     // this.parseRawData();
 
   }
-  
+
   // parseRawData(){
   //   globalThis.pyodide.runPython('print("testing - This should appear on browser console (ctrl+shft-i)")').then((result)=>{console.log(result);});
   // }
@@ -134,7 +132,7 @@ export class SidenavComponent {
     console.log(globalThis.pyodide.runPython());
     globalThis.pyodide.runPython('def multiply(); return 3+4');
     let func = globalThis.pyodide.globals.get('multiply');
-    globalThis.pyodide.runPython(code).then((result)=>{
+    globalThis.pyodide.runPython(code).then((result) => {
       this.consoleItems.push(result);
       this.consoleItems = this.consoleItems;
       console.log(this.consoleItems);
@@ -143,8 +141,6 @@ export class SidenavComponent {
     // this.consoleItems.push(code);
     // console.log(this.consoleItems);
   }
-
-
 };
-  
+
 
