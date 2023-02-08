@@ -8,10 +8,10 @@ deltaX = 2000.0
 Fthreshold = 100.0
 
 
-def calculate(self, x, y):
+def calculate(x, y):
   # calculates CP baed on prime function threshold
   primeth = Athreshold
-  z_false, prime = self.getWeight(x, y)
+  z_false, prime = getWeight(x, y)
   xstep = (max(x) - min(x)) / (len(x) - 1)
   win = 31 * 1e-9
   win = int(win / xstep)
@@ -45,7 +45,7 @@ def calculate(self, x, y):
   return [z[jcp], f[jcp]]
 
 
-def getWeight(self, x, y):
+def getWeight(x, y):
   # Weight is the prime function
   z = x
   f = y

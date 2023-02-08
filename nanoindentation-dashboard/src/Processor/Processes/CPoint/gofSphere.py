@@ -7,10 +7,10 @@ xRagne = 1000.0
 forceThreshold = 10.0
 tipRadius = 1
 
-def calculate(self, x, y):
+def calculate(x, y):
   # Retunrs contact point (z0, f0) based on max R**2
   try:
-    zz_x, r_squared = self.getWeight(x, y)
+    zz_x, r_squared = getWeight(x, y)
   except TypeError:
     return False
   r_best_ind = np.argmax(r_squared)
@@ -19,7 +19,7 @@ def calculate(self, x, y):
 
 
 # Returns min and max indices of f-z data considered
-def getRange(self, x, y):
+def getRange( x, y):
   try:
     jmax = np.argmin((y - forceThreshold * 1e-9) ** 2)
     jmin = np.argmin((x - (x[jmax] - xRagne * 1e-9)) ** 2)
@@ -28,7 +28,7 @@ def getRange(self, x, y):
   return jmin, jmax
 
 
-def getWeight(self, x, y):
+def getWeight(x, y):
   # Retunrs weight array (R**2) and corresponding index array. Uses get_indentation and fit methods defined below
   jmin, jmax = self.getRange(x, y)
   if jmin is False or jmax is False:
@@ -41,15 +41,15 @@ def getWeight(self, x, y):
   j_x = np.arange(jmin, jmax)
   for j in j_x:
     try:
-      ind, Yf = self.get_indentation(x, y, j, win)
-      E_std = self.fit(x, y, ind, Yf)
+      ind, Yf = get_indentation(x, y, j, win)
+      E_std = fit(x, y, ind, Yf)
       r_squared.append(E_std)
     except TypeError:
       return False
   return x[jmin:jmax], r_squared
 
 
-def get_indentation(self, x, y, iContact, win):
+def get_indentation(x, y, iContact, win):
   # Retunrs indentation f and ind from f and z
   z = x
   f = y
@@ -58,13 +58,13 @@ def get_indentation(self, x, y, iContact, win):
     return False
   Zf = z[iContact: iContact + win] - z[iContact]
   Yf = f[iContact: iContact + win] - f[iContact]
-  ind = Zf - Yf / self.curve.spring_constant
+  ind = Zf - Yf / curve.spring_constant
   ind = ind[ind <= 0.1 * R]
   Yf = Yf[ind <= 0.1 * R]  # fit only for small indentations
   return ind, Yf
 
 
-def fit(self, x, y, ind, f):
+def fit( x, y, ind, f):
   seeds = [1000.0 / 1e9]
   try:
     R = tipRadius

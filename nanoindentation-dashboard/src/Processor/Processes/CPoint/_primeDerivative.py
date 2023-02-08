@@ -5,7 +5,7 @@ from scipy.signal import savgol_filter
 window = 51
 order = 4
 
-def calculate(self, x, y):
+def calculate(x, y):
   z = x
   f = y
   rz = np.linspace(min(z), max(z), len(z))
@@ -18,14 +18,14 @@ def calculate(self, x, y):
   if order > iwin:
     return False
   iwin_big = iwin * 5
-  z, ddS = self.getWeight(x, y)
+  z, ddS = getWeight(x, y)
   f = f[iwin_big:-iwin_big]
   best_ind = np.argmax(ddS ** 2)
   jcp = np.argmin((z - z[best_ind]) ** 2)
   return [z[jcp], f[jcp]]
 
 
-def getWeight(self, x, y):
+def getWeight(x, y):
   z = x
   f = y
   rz = np.linspace(min(z), max(z), len(z))
