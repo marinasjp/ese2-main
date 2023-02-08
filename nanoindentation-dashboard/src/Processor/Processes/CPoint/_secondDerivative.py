@@ -6,14 +6,14 @@ window = 20.0
 xRange = 1000.0
 fThreshold = 10.0
 
-def calculate(self, x, y):
-  zz_x, ddf = self.getWeight(x, y)
+def calculate(x, y):
+  zz_x, ddf = getWeight(x, y)
   ddf_best_ind = np.argmin(ddf)
   jdd = np.argmin((x - zz_x[ddf_best_ind]) ** 2)
   return [x[jdd], y[jdd]]
 
 
-def getRange(self, x, y):
+def getRange(x, y):
   try:
     jmax = np.argmin((y - fThreshold * 1e-9) ** 2)
     jmin = np.argmin((x - (x[jmax] - xRange * 1e-9)) ** 2)
@@ -22,8 +22,8 @@ def getRange(self, x, y):
   return jmin, jmax
 
 
-def getWeight(self, x, y):
-  jmin, jmax = self.getRange(x, y)
+def getWeight(x, y):
+  jmin, jmax = getRange(x, y)
   if jmin is False:
     return False
   win = window * 1e-9
