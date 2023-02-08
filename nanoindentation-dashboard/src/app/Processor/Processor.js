@@ -3,6 +3,10 @@ const Processor = {
     processChain: [], //Processes being applied
     currData: {}, //Current dataset dict
 
+    Start: function(){
+        let procPath = ".\Processes"
+        
+    },
     GetScript: function(procName, procType){//Uses the given process name and processes path to give the script
         //find process in dict of known processes
         let typeProcs = this.processes.get(procType);
@@ -31,6 +35,7 @@ const Processor = {
             calculate.destroy(); //release memory
         });
         this.processChain.push((procType,procName)); //add process to known process chain
+        this.currData = out;
         return out;
     },
 
