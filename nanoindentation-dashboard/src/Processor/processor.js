@@ -4,12 +4,15 @@ const Processor = {
     dataSet: {}, //Original datasets dict
     currData: {}, //Current dataset dict
 
-    FindProcess: function(procName,procPath){ //Uses the given process name and processes path to give the script
-        //smth smth find the process script
+    GetScript: function(procName, procType){//Uses the given process name and processes path to give the script
+        //if process can be found in dict of known processes
+        //else error
         //smth smth return script
+        return script;
     },
 
-    DoProcess: function(procScript,dataSet){ //Takes a script and uses pyodide to run it on the dataSet
+    DoProcess: function(procName, procType, dataSet=this.currData){ //Takes a script and uses pyodide to run it on the dataSet
+        procScript = this.GetScript(procName);
         let out = []
         languagePluginLoader.then(function () {
             console.log(pyodide.runPython(`
