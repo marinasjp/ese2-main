@@ -1,11 +1,11 @@
 export interface Process {
-  filter: {},
-  cPoint: {},
-  eModels: {},
-  fModels: {},
+
   procType: EProcType
 }
 
 export enum EProcType {
+  FILTER = 'filter',
+  CPOINT = 'cPoint',
+  EMODELS = 'eModels',
+  FMODELS = 'fModels'
 }
-

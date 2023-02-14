@@ -12,7 +12,7 @@ import {InputSwitchModule} from "primeng/inputswitch";
 import {MultiSelectModule} from "primeng/multiselect";
 import {FileUploadModule} from "primeng/fileupload";
 import {HttpClientModule} from "@angular/common/http";
-import { GraphsComponent } from './graphs/graphs.component';
+import {GraphsComponent} from './graphs/graphs.component';
 import {CardModule} from "primeng/card";
 import {ChartModule} from "primeng/chart";
 import {TooltipModule} from 'primeng/tooltip';
@@ -21,6 +21,7 @@ import {InputTextareaModule} from 'primeng/inputtextarea';
 import {SliderModule} from 'primeng/slider';
 import {ScrollerModule} from 'primeng/scroller';
 import {DropdownModule} from 'primeng/dropdown';
+import {ProgressSpinnerModule} from "primeng/progressspinner";
 
 @NgModule({
   declarations: [
@@ -42,12 +43,13 @@ import {DropdownModule} from 'primeng/dropdown';
     HttpClientModule,
     CardModule,
     TooltipModule,
-    ChartModule, 
+    ChartModule,
     MatSliderModule,
     InputTextareaModule,
     SliderModule,
     ScrollerModule,
-    DropdownModule
+    DropdownModule,
+    ProgressSpinnerModule
   ],
   providers: [],
   bootstrap: [AppComponent]

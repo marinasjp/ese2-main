@@ -4,17 +4,27 @@ import {EProcType, Process} from "../models/process.model";
 const PYODIDE_BASE_URL = 'https://cdn.jsdelivr.net/pyodide/v0.22.0/full/';
 //declare let loadPyodide: any;
 import {loadPyodide} from "pyodide";
+import {BehaviorSubject, Observable} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProcessorService {
+
+  private _loadingPyodide: BehaviorSubject<boolean>;
+
+  public get loadingPyodide$(): Observable<boolean> {
+    return this._loadingPyodide.asObservable();
+  }
+
+
   processes: Process[] //Registered processes dict
   processChain: Process[] //Processes being applied
   currData: {} //Current dataset dict
 
   constructor() {
     this.loadPy();
+    this._loadingPyodide = new BehaviorSubject<boolean>(true);
   }
 
   async loadPy() {
@@ -22,6 +32,7 @@ export class ProcessorService {
       globalThis.pyodide = pyodide;
       console.log(globalThis.pyodide);
       console.log('pyodide loaded');
+      this._loadingPyodide.next(false);
     })
   }
 

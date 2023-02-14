@@ -9,6 +9,6 @@ import {ProcessorService} from "./services/processor.service";
 export class AppComponent {
   title = 'nanoindentation-dashboard';
 
-  constructor(private processorService: ProcessorService) {
+  constructor(public processorService: ProcessorService) {
   }
 }

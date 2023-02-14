@@ -1,11 +1,25 @@
-<div class="flex flex-row" style="overflow-x: hidden">
+<div *ngIf="true else dashboard"
+     class="flex justify-content-center align-items-center"
+     style="width: 100vw; height: 100vh">
 
-
-  <app-sidenav>
-
-    
-  </app-sidenav>
-
-  <app-graphs class="w-full h-full"></app-graphs>
+  <div class="flex flex-column justify-content-center align-items-center">
+    <p-progressSpinner></p-progressSpinner>
+    Initializing Dashboard...
+  </div>
 
 </div>
+
+<ng-template #dashboard>
+
+  <div class="flex flex-row" style="overflow-x: hidden">
+
+
+    <app-sidenav>
+
+    </app-sidenav>
+
+    <app-graphs class="w-full h-full"></app-graphs>
+
+  </div>
+
+</ng-template>
