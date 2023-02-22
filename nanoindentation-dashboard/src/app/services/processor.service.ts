@@ -73,10 +73,13 @@ export class ProcessorService {
             `));
 
       console.log(globalThis.pyodide.runPython(procScript)); //run proc script
+
       let calculate = globalThis.pyodide.globals.get('calculate'); //map calculate method onto js function
+
       out = calculate(dataSet);
       calculate.destroy(); //release memory
     });
+    return out;
   }
 
   newProcessfunction(procName, procType, procScript) {
