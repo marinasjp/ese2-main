@@ -1,4 +1,4 @@
-<div *ngIf="true else dashboard"
+<div *ngIf="processorService.loadingPyodide$|async else dashboard"
      class="flex justify-content-center align-items-center"
      style="width: 100vw; height: 100vh">
 
