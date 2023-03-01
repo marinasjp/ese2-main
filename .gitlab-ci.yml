@@ -1,9 +1,9 @@
 #stages:
  # - test
 
-default:
-  tags:
-    - docker
+#default:
+#  tags:
+#    - docker
 
 
 #unit-test:
