@@ -4,7 +4,7 @@ const Processor = {
     currData: {}, //Current dataset dict
 
     Start: function(){
-        let procPath = ".\Processes"
+        let procPath = "./Processes"
         
     },
     GetScript: function(procName, procType){//Uses the given process name and processes path to give the script

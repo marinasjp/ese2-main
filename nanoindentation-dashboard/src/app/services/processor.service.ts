@@ -37,7 +37,7 @@ export class ProcessorService {
   }
 
   start() {
-    let procPath = ".\Processes"
+    let procPath = "../Procesor/Processes" //Read process scripts
   }
 
   //Uses the given process name and processes path to give the script
