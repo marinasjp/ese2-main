@@ -3,11 +3,12 @@ stages:
 
 default:
   tags:
-    - docker
+    - shell
 
 
 unit-test:
   stage: test
+  image: python 3.10
   script:
     - pip install pytest pytest-cov
     - python -m pytest --cov-report=html --cov=src .
