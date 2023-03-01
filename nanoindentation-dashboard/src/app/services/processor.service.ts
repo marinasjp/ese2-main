@@ -41,10 +41,11 @@ export class ProcessorService {
     })
   }
 
-  // start() {
-  //   this.http.get(procPath + 'CPoint/rov.py', {responseType: 'text'})
-  //     .subscribe(data => console.log(data));
-  // }
+  start() {
+     this.http.get(this.rootPath + 'CPoint/rov.py', {responseType: 'text'})
+       .subscribe(data => console.log(data));
+    return this.processes
+  }
 
   //Uses the given process name and processes path to give the script
   ///// returns void if successful, errorMsgString if error occurred
