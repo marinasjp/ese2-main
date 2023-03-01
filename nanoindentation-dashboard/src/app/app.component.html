@@ -1,10 +1,10 @@
-<div *ngIf="processorService.loadingPyodide$|async else dashboard"
+<div *ngIf="processorService.pyodideInitalized$|async else dashboard"
      class="flex justify-content-center align-items-center"
      style="width: 100vw; height: 100vh">
 
   <div class="flex flex-column justify-content-center align-items-center">
     <p-progressSpinner></p-progressSpinner>
-    Initializing Dashboard...
+    <div class="text-center" [innerHTML]="processorService.pyodideInitializationStatus"></div>
   </div>
 
 </div>
@@ -13,13 +13,22 @@
 
   <div class="flex flex-row" style="overflow-x: hidden">
 
-    <button (click)="test()">TEST</button>
+    <app-sidenav></app-sidenav>
 
-    <app-sidenav>
+    <div *ngIf="processorService.pyodideLoading$|async else graphs"
+         class="flex justify-content-center align-items-center"
+         style="width: 100vw; height: 100vh">
 
-    </app-sidenav>
+      <div class="flex flex-column justify-content-center align-items-center">
+        <p-progressSpinner></p-progressSpinner>
+        <div class="text-center">Calculations running...</div>
+      </div>
 
-    <app-graphs class="w-full h-full"></app-graphs>
+    </div>
+
+    <ng-template #graphs>
+      <app-graphs class="w-full h-full"></app-graphs>
+    </ng-template>
 
   </div>
 

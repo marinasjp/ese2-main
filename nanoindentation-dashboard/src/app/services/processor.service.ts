@@ -12,39 +12,114 @@ const PYODIDE_BASE_URL = 'https://cdn.jsdelivr.net/pyodide/v0.22.0/full/';
 })
 export class ProcessorService {
 
-  private _loadingPyodide: BehaviorSubject<boolean>;
+  private _pyodideInitalized: BehaviorSubject<boolean>;
 
-  public get loadingPyodide$(): Observable<boolean> {
-    return this._loadingPyodide.asObservable();
+  public get pyodideInitalized$(): Observable<boolean> {
+    return this._pyodideInitalized.asObservable();
   }
 
+  pyodideInitializationStatus: string = 'Initializing pyodide...'
 
-  processes: Process[] //Registered processes dict
-  processChain: Process[] //Processes being applied
-  currData: {} //Current dataset dict
+  private _pyodideLoading: BehaviorSubject<boolean>;
+
+  public get pyodideLoading$(): Observable<boolean> {
+    return this._pyodideLoading.asObservable();
+  }
+
+  private _processChain: { filters: Process[], cPoints: Process[], eModels: Process[], fModels: Process[] } = {
+    filters: [],
+    cPoints: [],
+    eModels: [],
+    fModels: []
+  };
+
+  private get processChain(): { filters: Process[], cPoints: Process[], eModels: Process[], fModels: Process[] } {
+    return this._processChain;
+  }
+
+  private set processChain(processChain: { filters: Process[], cPoints: Process[], eModels: Process[], fModels: Process[] }) {
+    this._processChain = processChain;
+    console.log(this.processChain);
+    this.runProcessChain();
+  }
+
+  availableFilters: Process[] = [
+    {id: 'median', name: 'Median', procType: EProcType.FILTER},
+    {id: 'savgol', name: 'Sawitzky Golay', procType: EProcType.FILTER},
+    {id: 'linearDetrend', name: 'Linear Detrending', procType: EProcType.FILTER},
+  ]
+
+  private _selectedFilters: Process[] = [];
+
+  public get selectedFilters(): Process[] {
+    return this._selectedFilters;
+  }
+
+  public set selectedFilters(filters: Process[]) {
+    this._selectedFilters = filters;
+    let processChain = this.processChain;
+    processChain.filters = filters;
+    this.processChain = processChain;
+  }
+
+  initialData: {} = {x: [100, 200, 300, 400], y: [1, 2, 3, 4]};
+  filteredData: {};
 
   rootPath: string = 'assets/Processes/';
 
   constructor(private http: HttpClient) {
-    this.loadPy();
-    this._loadingPyodide = new BehaviorSubject<boolean>(true);
+    this._pyodideInitalized = new BehaviorSubject<boolean>(true);
+    this._pyodideLoading = new BehaviorSubject<boolean>(true);
+    this.initPy();
   }
 
-  async loadPy() {
+  async initPy() {
     loadPyodide({indexURL: PYODIDE_BASE_URL}).then((pyodide) => {
       globalThis.pyodide = pyodide;
-      console.log(globalThis.pyodide);
-      console.log('pyodide loaded');
+      this.pyodideInitializationStatus = 'pyodide initialized ✔<br>Initializing numpy...'
       globalThis.pyodide.loadPackage(['numpy']).then(() => {
-        this._loadingPyodide.next(false);
+        this.pyodideInitializationStatus = 'pyodide initialized ✔<br>numpy initialized ✔<br>Initializing scipy...'
+        globalThis.pyodide.loadPackage(['scipy']).then(() => {
+          this.pyodideInitializationStatus = 'pyodide initialized ✔<br>numpy initialized ✔<br>scipy initialized ✔'
+          this._pyodideInitalized.next(false);
+          this._pyodideLoading.next(false);
+        })
       })
     })
+    // this._pyodideInitalized.next(false);
+    // this._pyodideLoading.next(false);
   }
 
   // start() {
   //   this.http.get(procPath + 'CPoint/rov.py', {responseType: 'text'})
   //     .subscribe(data => console.log(data));
   // }
+
+  runProcessChain() {
+    // let filters = this.processChain.filters;
+    // let filterIndex: number = 0;
+    if (this.processChain.filters.length) {
+      this.filteredData = this.initialData;
+      this.runFilters();
+    }
+  }
+
+  runFilters(index: number = 0, dataSet: any = this.initialData): any {
+    let promise = this.doProcess(this.processChain.filters[index], dataSet);
+    if (typeof promise == 'string') {
+      return promise;
+    } else {
+      promise = promise as Promise<any>;
+      promise.then(result => {
+        if (index < this.processChain.filters.length - 1) {
+          this.runFilters(index + 1, result);
+        } else {
+          this.filteredData = result;
+          console.log(this.filteredData);
+        }
+      })
+    }
+  }
 
   //Uses the given process name and processes path to give the script
   ///// returns void if successful, errorMsgString if error occurred
@@ -54,11 +129,23 @@ export class ProcessorService {
 
     switch (procType) {
       case EProcType.CPOINT: {
-        procPath += 'CPoint/';
+        procPath += 'CPoints/';
+        break;
+      }
+      case EProcType.FILTER: {
+        procPath += 'Filters/';
+        break;
+      }
+      case EProcType.EMODELS: {
+        procPath += 'EModels./';
+        break;
+      }
+      case EProcType.FMODELS: {
+        procPath += 'FModels/';
         break;
       }
       case EProcType.TEST: {
-        procPath += 'Test/';
+        procPath += 'Tests/';
         break;
       }
       default: {
@@ -66,44 +153,41 @@ export class ProcessorService {
       }
     }
 
-    procPath += procName;
+    procPath += procName + '.py';
 
     return this.http.get(procPath, {responseType: 'text'}).toPromise();
   }
 
   //Takes a script and uses pyodide to run it on the dataSet
-  doProcess(procName: string, procType: EProcType, dataSet: any = this.currData): any {
-    this._loadingPyodide.next(true);
+  doProcess(process: Process, dataSet: any = this.initialData): Promise<any> | string {
+    this._pyodideLoading.next(true);
 
-    let getScriptPromise: Promise<string | void> | string = this.getScript(procName, procType); //get the process script
+    let getScriptPromise: Promise<string | void> | string = this.getScript(process.id, process.procType); //get the process script
 
     if (typeof getScriptPromise == "string") {
       return getScriptPromise;
     }
 
-    getScriptPromise = getScriptPromise as Promise<string | void>;
-
-    getScriptPromise
-      .finally(() => {
-        this._loadingPyodide.next(false)
-      })
-      .then(procScript => {
-        let out;
-
-        globalThis.pyodide.runPython(procScript);
-        let calculate = globalThis.pyodide.globals.get('calculate');
-        console.log(dataSet);
-        out = calculate(dataSet.x, dataSet.y);
-        console.log(out);
-
-        calculate.destroy();
-        return out;
-      })
-
+    return new Promise<any>((resolve, reject) => {
+      getScriptPromise = getScriptPromise as Promise<string | void>;
+      getScriptPromise
+        .finally(() => {
+          this._pyodideLoading.next(false)
+        })
+        .then(procScript => {
+          globalThis.pyodide.runPython(procScript);
+          let calculate = globalThis.pyodide.globals.get('calculate');
+          let resultPy = calculate(dataSet.x, dataSet.y);
+          let result = resultPy.toJs();
+          result = {x: result[0], y: result[1]};
+          resultPy.destroy();
+          resolve(result);
+        })
+    })
   }
 
   newProcessfunction(procName, procType, procScript) {
-    this.processes[procType][procName] = procScript //Adds Script to recognised scripts
+    // this.processes[procType][procName] = procScript //Adds Script to recognised scripts
     return;
   }
 }

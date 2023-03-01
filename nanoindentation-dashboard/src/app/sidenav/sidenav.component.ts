@@ -1,5 +1,7 @@
 import {Component} from '@angular/core';
 import {GraphService} from "../services/graph.service";
+import {ProcessorService} from "../services/processor.service";
+import {Process} from "../models/process.model";
 
 @Component({
   selector: 'app-sidenav',
@@ -14,8 +16,6 @@ export class SidenavComponent {
   band: number = null;
   uploadedFile: any = [];
   uploadedCode: any = [];
-  customerData: any = [];
-  pythonCode: string;
   output: any;
   result: any;
   forceIndMin: any;
@@ -27,11 +27,15 @@ export class SidenavComponent {
   consoleItems: string[];
   //consoleItems = new Array(1000);
 
-  filters: { id: number, name: string, inputs?: string[] }[] = [
-    {id: 1, name: "Median Filter", inputs: ["Window Length [nm]", "Polynomical Order (int)"]},
-    {id: 2, name: "Sawitzky Golay", inputs: ["Window Length [nm]"]}
-  ]
-  selectedFilters: { id: number, name: string, inputs?: string[] }[] = [];
+  filters: Process[] = [];
+
+
+
+  // filters: { id: number, name: string, inputs?: string[] }[] = [
+  //   {id: 1, name: "Median Filter", inputs: ["Window Length [nm]", "Polynomical Order (int)"]},
+  //   {id: 2, name: "Sawitzky Golay", inputs: ["Window Length [nm]"]}
+  // ]
+  // selectedFilters: { id: number, name: string, inputs?: string[] }[] = [];
 
   indShapes: {name: string} []=[
     {name: "Sphere"},
@@ -41,15 +45,17 @@ export class SidenavComponent {
   ]
   selectedIndShape: {name: string}[] = [];
 
-  constructor(private graphService: GraphService) {
+  constructor(private graphService: GraphService,
+              public processService: ProcessorService) {
   }
 
   ngOnInit() {
+    this.filters = this.processService.availableFilters;
     this.consoleItems = []
   }
 
   uploadHandler(event: any) {
-    
+
     console.log("START UPLOADING")
     this.uploadedFile = event.files;
     console.log(this.uploadedFile[0].name)
@@ -57,7 +63,7 @@ export class SidenavComponent {
     event = null;
     console.log(event)
     this.parseData();
-    
+
   }
 
   codeUploadHandler(event: any) {
@@ -124,7 +130,7 @@ export class SidenavComponent {
     // this.parseRawData();
 
   }
-  
+
   // parseRawData(){
   //   globalThis.pyodide.runPython('print("testing - This should appear on browser console (ctrl+shft-i)")').then((result)=>{console.log(result);});
   // }
@@ -146,5 +152,5 @@ export class SidenavComponent {
 
 
 };
-  
+
 
