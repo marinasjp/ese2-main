@@ -5,7 +5,7 @@
 #  tags:
 #    - docker
 
-job:
+default:
   tags:
     - shell
 
