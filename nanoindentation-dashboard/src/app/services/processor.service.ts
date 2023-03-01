@@ -90,10 +90,11 @@ export class ProcessorService {
     // this._pyodideLoading.next(false);
   }
 
-  // start() {
-  //   this.http.get(procPath + 'CPoint/rov.py', {responseType: 'text'})
-  //     .subscribe(data => console.log(data));
-  // }
+  start() {
+     this.http.get(this.rootPath + 'CPoint/rov.py', {responseType: 'text'})
+       .subscribe(data => console.log(data));
+    return this.processes
+  }
 
   runProcessChain() {
     // let filters = this.processChain.filters;
