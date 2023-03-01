@@ -8,7 +8,6 @@ default:
 
 unit-test:
   stage: test
-  image: python 3.8
   script:
     - pip install pytest pytest-cov
     - python -m pytest --cov-report=html --cov=src .
