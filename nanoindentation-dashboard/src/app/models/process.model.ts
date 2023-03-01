@@ -7,5 +7,6 @@ export enum EProcType {
   FILTER = 'filter',
   CPOINT = 'cPoint',
   EMODELS = 'eModels',
-  FMODELS = 'fModels'
+  FMODELS = 'fModels',
+  TEST = 'test'
 }
