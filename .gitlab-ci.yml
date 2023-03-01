@@ -5,6 +5,9 @@
 #  tags:
 #    - docker
 
+job:
+  tags:
+    - shell
 
 #unit-test:
   #stage: test
