@@ -1,5 +1,6 @@
 import numpy as np
 
+#User Inputs
 Fthreshold = 10
 windowr = 200
 Xrange = 1000
