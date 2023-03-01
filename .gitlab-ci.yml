@@ -1,8 +1,6 @@
 
-stages:          # List of stages for jobs, and their order of execution
-  - build
+stages:
   - test
-  - deploy
 
 
 unit-test-job:   # This job runs in the test stage.
