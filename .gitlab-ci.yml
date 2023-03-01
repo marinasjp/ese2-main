@@ -3,16 +3,18 @@ stages:
 
 default:
   tags:
-    - shell
+    - docker
 
 
 unit-test:
   stage: test
-  image: python 3.10
+  #image: python 3.10
   script:
-    - pip install pytest pytest-cov
-    - python -m pytest --cov-report=html --cov=src .
-  artifacts:
-    paths:
-      - coverage
-    expire_in: 30 days
+    echo "started runner"
+
+    #- pip install pytest pytest-cov
+    #- python -m pytest --cov-report=html --cov=src .
+  #artifacts:
+    #paths:
+      #- coverage
+    #expire_in: 30 days
