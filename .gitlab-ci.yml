@@ -1,6 +1,11 @@
 stages:
   - test
 
+default:
+  tags:
+    - docker
+
+
 unit-test:
   stage: test
   image: python 3.8
