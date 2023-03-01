@@ -1,16 +1,13 @@
-
 stages:
   - test
 
-
-unit-test-job:   # This job runs in the test stage.
-  stage: test    # It only starts when the job in the build stage completes successfully.
+unit-test:
+  stage: test
   image: python 3.8
   script:
-    - echo "Running unit tests..."
     - pip install pytest pytest-cov
     - python -m pytest --cov-report=html --cov=src .
-    artifacts: 
-        paths: 
-            coverage
-        expire_in: 30 days
+  artifacts:
+    paths:
+      - coverage
+    expire_in: 30 days
