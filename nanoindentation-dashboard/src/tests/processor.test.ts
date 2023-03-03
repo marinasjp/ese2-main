@@ -1,8 +1,10 @@
 import { EProcType } from 'src/app/models/process.model';
 import { GraphService } from 'src/app/services/graph.service';
 import { ProcessorService } from '../app/services/processor.service';
+import * as fs from 'fs';
 
 let testProcess = {id:"test", name: "Test", procType: EProcType.TEST}
+let testStr = fs.readFileSync('/path-to-file', 'utf-8');
 let startPro = {
                 filters: [ //container for filters
                 { id: 'median', name: 'Median', procType: EProcType.FILTER, custom: false },
@@ -13,7 +15,7 @@ let startPro = {
                 eModels: [],//container for eModel
                 fModels: [],//container for fModel
                 test: [     //container for test processess
-                    {id:"test", name: "Test", procType: EProcType.TEST}
+                    {id:"testProcess", name: "Test", procType: EProcType.TEST}
                 ]
             }
 export class processorTest {
@@ -29,7 +31,7 @@ export class processorTest {
     
         // Tests if getScript ... is returning the correct script when given a Process name and type.
         test('TesterProc should return func that adds 1 to dataset', () => {
-            expect(this.processorService.getScript(testProcess)).toBe(testFilterStr);
+            expect(this.processorService.getScript(testProcess)).toBe(testStr);
         });
     
         // Tests if doProces... is running on the given data set.
