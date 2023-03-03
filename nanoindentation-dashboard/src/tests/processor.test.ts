@@ -25,8 +25,8 @@ let outData: { x: number[], y: number[] } = { x: [100, 200, 300, 400], y: [2, 3,
 export class processorTest {
     constructor(private processorService: ProcessorService) {}
 
-    describe(){
     
+        describe(){
         // Tests if the newProcess function is ... a new python script (Process) is added to the data structure.
         test('should return 1', () => { // maybe test if it is at the end?
             expect(this.processorService.addProcess(testProcess)).toBe(startPro);
@@ -41,5 +41,5 @@ export class processorTest {
         test('testing do process should return dataset with +1', () => {
             expect(this.processorService.doProcess(testProcess, testData)).toBe(outData);
         });
-    };
+        };
 }

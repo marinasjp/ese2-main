@@ -167,6 +167,7 @@ export class ProcessorService {
 
     let procPath = this.rootPath;
 
+    // If the process is not recorder, look for it:
     switch (process.procType) {
       case EProcType.CPOINT: {
         procPath += 'CPoints/';
@@ -212,7 +213,7 @@ export class ProcessorService {
           this._pyodideLoading.next(false)
         })
         .then(procScript => {
-          process.script = procScript;
+          process.script = procScript; // Append found script into Process Object
           globalThis.pyodide.runPython(procScript);
           let calculate = globalThis.pyodide.globals.get('calculate');
           let resultPy = calculate(dataSet.x, dataSet.y);
