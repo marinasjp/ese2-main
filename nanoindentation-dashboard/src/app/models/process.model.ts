@@ -3,7 +3,7 @@ export interface Process {
   procType: EProcType
 }
 
-export enum EProcType {
+export enum EProcType { //Types of processes
   FILTER = 'filter',
   CPOINT = 'cPoint',
   EMODELS = 'eModels',
