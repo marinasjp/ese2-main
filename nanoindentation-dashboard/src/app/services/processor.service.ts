@@ -4,6 +4,7 @@ import {EProcType, Process} from "../models/process.model";
 import {loadPyodide} from "pyodide";
 import {BehaviorSubject, Observable} from "rxjs";
 import {HttpClient} from "@angular/common/http";
+import {GraphService} from "./graph.service";
 
 const PYODIDE_BASE_URL = 'https://cdn.jsdelivr.net/pyodide/v0.22.0/full/';
 
@@ -39,7 +40,6 @@ export class ProcessorService {
 
   private set processChain(processChain: { filters: Process[], cPoints: Process[], eModels: Process[], fModels: Process[] }) {
     this._processChain = processChain;
-    console.log(this.processChain);
     this.runProcessChain();
   }
 
@@ -62,12 +62,11 @@ export class ProcessorService {
     this.processChain = processChain;
   }
 
-  initialData: {} = {x: [100, 200, 300, 400], y: [1, 2, 3, 4]};
-  filteredData: {};
-
+  initialData: { x: number[], y: number[] } = {x: [100, 200, 300, 400], y: [1, 2, 3, 4]};
   rootPath: string = 'assets/Processes/';
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient,
+              private graphService: GraphService) {
     this._pyodideInitalized = new BehaviorSubject<boolean>(true);
     this._pyodideLoading = new BehaviorSubject<boolean>(true);
     this.initPy();
@@ -86,17 +85,23 @@ export class ProcessorService {
         })
       })
     })
-    // this._pyodideInitalized.next(false);
-    // this._pyodideLoading.next(false);
   }
 
   runProcessChain() {
-    // let filters = this.processChain.filters;
-    // let filterIndex: number = 0;
     if (this.processChain.filters.length) {
-      this.filteredData = this.initialData;
+      this.updateFilteredDataset(this.initialData.x, this.initialData.y);
       this.runFilters();
     }
+  }
+
+  updateFilteredDataset(x: number[], y: number[]) {
+    let filteredData = this.graphService.filteredData;
+    console.log(filteredData);
+    filteredData.x = x;
+    filteredData.y = y;
+    this.graphService.filteredData = filteredData;
+    console.log(x);
+    console.log(y);
   }
 
   runFilters(index: number = 0, dataSet: any = this.initialData): any {
@@ -109,8 +114,7 @@ export class ProcessorService {
         if (index < this.processChain.filters.length - 1) {
           this.runFilters(index + 1, result);
         } else {
-          this.filteredData = result;
-          console.log(this.filteredData);
+          this.updateFilteredDataset(result.x, result.y);
         }
       })
     }
@@ -118,11 +122,11 @@ export class ProcessorService {
 
   //Uses the given process name and processes path to give the script
   ///// returns void if successful, errorMsgString if error occurred
-  getScript(procName: string, procType: EProcType): Promise<void | string> | string {
+  getScript(process: Process): Promise<void | string> | string {
 
     let procPath = this.rootPath;
 
-    switch (procType) {
+    switch (process.procType) {
       case EProcType.CPOINT: {
         procPath += 'CPoints/';
         break;
@@ -148,18 +152,18 @@ export class ProcessorService {
       }
     }
 
-    procPath += procName + '.py';
+    procPath += process.name + '.py';
 
     return this.http.get(procPath, {responseType: 'text'}).toPromise();
   }
 
   //Takes a script and uses pyodide to run it on the dataSet
   //procName: Name of proces, procType: Type of process, dataSet: (optional) dataset to be processed if not given uses this.currData
-  doProcess(procName: string, procType: EProcType, dataSet: any = this.currData): any {
-    this._loadingPyodide.next(true); //check if pyodide is loaded
+  doProcess(process: Process, dataSet: any = this.initialData): any {
+    this._pyodideLoading.next(true); //check if pyodide is loaded
 
 
-    let getScriptPromise: Promise<string | void> | string = this.getScript(process.id, process.procType); //get the process script
+    let getScriptPromise: Promise<string | void> | string = this.getScript(process); //get the process script
 
     if (typeof getScriptPromise == "string") {
       return getScriptPromise;
@@ -181,10 +185,5 @@ export class ProcessorService {
           resolve(result);
         })
     })
-  }
-
-  newProcessfunction(procName, procType, procScript) {
-    // this.processes[procType][procName] = procScript //Adds Script to recognised scripts
-    return;
   }
 }
