@@ -9,6 +9,7 @@ image: python:3.8
 
 before_script:
   - pip install numpy
+  - pip install scipy
 
 unit-test:
   stage: test
