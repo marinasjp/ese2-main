@@ -1,10 +1,10 @@
-import { EProcType } from 'src/app/models/process.model';
+import { EProcType } from '../app/models/process.model';
 import { GraphService } from 'src/app/services/graph.service';
 import { ProcessorService } from '../app/services/processor.service';
 import * as fs from 'fs';
 
 let testProcess = {id:"test", name: "Test", procType: EProcType.TEST}
-let testStr = fs.readFileSync('/path-to-file', 'utf-8');
+let testStr = fs.readFileSync('../assets/Processes/Tests/testProcess.py', 'utf-8');
 let startPro = {
                 filters: [ //container for filters
                 { id: 'median', name: 'Median', procType: EProcType.FILTER, custom: false },
@@ -18,6 +18,8 @@ let startPro = {
                     {id:"testProcess", name: "Test", procType: EProcType.TEST}
                 ]
             }
+    let testData: { x: number[], y: number[] } = { x: [100, 200, 300, 400], y: [1, 2, 3, 4] };
+    let outData: { x: number[], y: number[] } = { x: [100, 200, 300, 400], y: [2, 3, 4, 5] };
 export class processorTest {
     constructor(private processorService: ProcessorService) {
     }
@@ -36,7 +38,7 @@ export class processorTest {
     
         // Tests if doProces... is running on the given data set.
         test('testing do process should return dataset with +1', () => {
-            expect(this.processorService.doProcess(testProcess.name,  testProcess.procType, testData)).toBe(editedData);
+            expect(this.processorService.doProcess(testProcess, testData)).toBe(outData);
         });
     };
 }

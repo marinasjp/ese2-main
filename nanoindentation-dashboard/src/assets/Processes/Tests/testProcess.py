@@ -1,7 +1,7 @@
 import numpy as np
 
 def calculate( x, y):
-  return x, y
+  return x, y+1
 
 
 def getRange(x, y):
