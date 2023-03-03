@@ -28,7 +28,7 @@ install:
     # - npm i -g @angular/cli@14.2.10
     - npm install
     # - ./node_modules/.bin/ng build --prod
-    - npm install -D typescript @angular/cli@14.2.10 @angular/compiler
+    - npm install -D typescript @angular/cli@15.2.1 @angular/compiler
   artifacts:
     paths:
       - node_modules/
