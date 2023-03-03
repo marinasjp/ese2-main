@@ -1,9 +1,11 @@
-#stages:
- # - test
+stages:
+  - build
+  - test
 
 #default:
 #  tags:
 #    - docker
+
 
 image: python:3.8
 
@@ -11,7 +13,21 @@ before_script:
   - pip install numpy
   - pip install scipy
 
-unit-test:
+
+build:
+  stage: build
+  script:
+    - yarn
+  cache:
+    paths:
+      - node_modules/
+  artifacts:
+    expire_in: 1 days
+    when: on_success
+    paths:
+      - node_modules/
+
+pytest-test:
   stage: test
   script:
     - pip install pytest pytest-cov
@@ -20,6 +36,22 @@ unit-test:
     paths:
       - coverage
     expire_in: 30 days
+
+
+javascript:
+  image: node:latest
+  stage: test
+  before_script:
+    - 'yarn global add jest'
+    - 'yarn add --dev jest-junit'
+  script:
+    - 'jest --ci --reporters=default --reporters=jest-junit'
+  artifacts:
+    when: always
+    reports:
+      junit:
+        - junit.xml
+
 
 
 # build-job:
