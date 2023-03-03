@@ -6,14 +6,18 @@ stages:
 #  tags:
 #    - docker
 
-
 image: python:3.8
 
 before_script:
   - pip install numpy
   - pip install scipy
 
-
+# Cache modules in between jobs
+cache:
+  image: node:latest
+  key: $CI_COMMIT_REF_SLUG
+  paths:
+    - .npm/
 # build:
 #   stage: build
 #   script:
