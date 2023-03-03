@@ -54,6 +54,12 @@ test:
   artifacts:
     paths:
       - node_modules/
+  cache:
+    key:
+      files:
+        - package-lock.json
+    paths:
+      - node_modules
 
 
 # image: python:3.8
