@@ -9,16 +9,17 @@ stages:
 image: node:latest
 image: python:3.8
 
+# Cache modules in between jobs
+cache:
+  paths:
+    - .npm/
+
 before_script:
   - pip install numpy
   - pip install scipy
   - npm install --save-dev ts-jest
 
-# Cache modules in between jobs
-cache:
-  key: $CI_COMMIT_REF_SLUG
-  paths:
-    - .npm/
+
 # build:
 #   stage: build
 #   script:
