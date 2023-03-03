@@ -27,7 +27,7 @@ test:
     - npm run test
   artifacts:
     paths:
-      - node_modules/
+      - nanoindentation-dashboard/node_modules/
 
 
 # image: python:3.8
