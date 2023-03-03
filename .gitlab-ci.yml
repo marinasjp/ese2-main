@@ -50,16 +50,17 @@ install:
 test:
   stage: test
   script:
+    - cd nanoindentation-dashboard
     - npm run test
   artifacts:
     paths:
-      - nanoindentation-dashboard/node_modules/
+      - node_modules/
   cache:
     key:
       files:
         - package-lock.json
     paths:
-      - nanoindentation-dashboard/node_modules
+      - node_modules
 
 
 # image: python:3.8
