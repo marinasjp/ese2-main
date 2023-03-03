@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { EProcType, Process } from "../models/process.model";
-//declare let loadPyodide: any;
 import { loadPyodide } from "pyodide";
 import { BehaviorSubject, Observable } from "rxjs";
 import { HttpClient } from "@angular/common/http";
@@ -107,7 +106,7 @@ export class ProcessorService {
     this.initPy();
   }
 
-  async initPy() {
+  async initPy() { //initialise Pyodide
     loadPyodide({ indexURL: PYODIDE_BASE_URL }).then((pyodide) => {
       globalThis.pyodide = pyodide;
       this.pyodideInitializationStatus = 'pyodide initialized ✔<br>Initializing numpy...'
@@ -122,6 +121,7 @@ export class ProcessorService {
     })
   }
 
+  //run the process chain recorded
   runProcessChain() {
     if (this.processChain.filters.length) {
       this.updateFilteredDataset(this.initialData.x, this.initialData.y);
@@ -129,12 +129,13 @@ export class ProcessorService {
     }
   }
 
+  //Update dataset in graphservice
   updateFilteredDataset(x: number[], y: number[]) {
-    let filteredData = this.graphService.filteredData;
+    let filteredData = this.graphService.graphData;
     console.log(filteredData);
     filteredData.x = x;
     filteredData.y = y;
-    this.graphService.filteredData = filteredData;
+    this.graphService.graphData = filteredData;
     console.log(x);
     console.log(y);
   }
@@ -145,7 +146,7 @@ export class ProcessorService {
       return promise;
     } else {
       promise = promise as Promise<any>;
-      promise.then(result => {
+      promise.then((result: { x: number[]; y: number[]; }) => {
         if (index < this.processChain.filters.length - 1) {
           this.runFilters(index + 1, result);
         } else {
@@ -156,7 +157,7 @@ export class ProcessorService {
   }
 
   //Uses the given process name and processes path to give the script
-  // returns void if successful, errorMsgString if error occurred
+  // returns script or promise of script if successful, -1 if error occurred
   getScript(process: Process): Promise<string> | string {
 
     if (process.script) { //if process has a script recorded
