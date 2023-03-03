@@ -12,6 +12,7 @@ image: python:3.8
 before_script:
   - pip install numpy
   - pip install scipy
+  - npm install --save-dev ts-jest
 
 # Cache modules in between jobs
 cache:
