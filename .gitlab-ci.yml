@@ -6,7 +6,7 @@ stages:
 #  tags:
 #    - docker
 
-image: node:14.5.0-alpine
+image: node:14.2.0-alpine
 
 
 # before_script:
