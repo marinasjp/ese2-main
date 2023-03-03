@@ -6,7 +6,7 @@ stages:
 #  tags:
 #    - docker
 
-image: node:14.20
+image: circleci/node:14.20-browsers
 
 
 # before_script:
@@ -50,6 +50,7 @@ install:
 test:
   stage: test
   script:
+    - export CHROME_BIN=/usr/bin/google-chrome
     - cd nanoindentation-dashboard
     - npm run test -- --watch=false --browsers=ChromeHeadless
   artifacts:
