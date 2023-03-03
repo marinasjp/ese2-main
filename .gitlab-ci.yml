@@ -9,8 +9,7 @@ stages:
 image: node:latest
 
 
-before_script:
-  cd nanoindentation-dashboard
+# before_script:
 #   - pip install numpy
 #   - pip install scipy
 #   - npm install
@@ -21,6 +20,7 @@ before_script:
 install:
   stage: install
   script:
+    - cd nanoindentation-dashboard
     - npm cache clean --force
     # - npm i -g @angular/cli@14.2.10
     - npm install
@@ -28,10 +28,10 @@ install:
     - npm install -D typescript @angular/cli@15.0.1 @angular/compiler@15.0.1
   artifacts:
     paths:
-      - node_modules/
+      - nanoindentation-dashboard/node_modules/
   cache:
     paths:
-      -  node_modules/
+      -  nanoindentation-dashboard/node_modules/
 
 # install_dependencies:
 #   image: node:12-alpine
@@ -53,13 +53,13 @@ test:
     - npm run test
   artifacts:
     paths:
-      - node_modules/
+      - nanoindentation-dashboard/node_modules/
   cache:
     key:
       files:
         - package-lock.json
     paths:
-      - node_modules
+      - nanoindentation-dashboard/node_modules
 
 
 # image: python:3.8
