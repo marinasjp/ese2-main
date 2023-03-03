@@ -1,3 +1,6 @@
+from scipy.signal import savgol_filter
+
+
 def calculate( x, y, curve=None):
   window = float(25) #window is a user input but 25 is the default value.
   order = 3 #order is a user input but 3 is the default value
