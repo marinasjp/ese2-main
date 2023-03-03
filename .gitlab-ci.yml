@@ -51,7 +51,7 @@ test:
   stage: test
   script:
     - cd nanoindentation-dashboard
-    - npm run test
+    - npm run test --browsers=ChromeHeadless --watch=false
   artifacts:
     paths:
       - node_modules/
