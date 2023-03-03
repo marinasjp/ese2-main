@@ -71,9 +71,9 @@
       </div>
 
       <div style="border: 1px solid #383838; border-radius: 5px; padding: 12px; margin-top: 12px">
-        <p-multiSelect [options]="filters" [(ngModel)]="selectedFilters" optionLabel="name"
+        <p-multiSelect [options]="filters" [(ngModel)]="processService.selectedFilters" optionLabel="name"
           defaultLabel="Other Filters"></p-multiSelect>
-        <ng-container *ngFor="let filter of selectedFilters">
+        <ng-container *ngFor="let filter of processService.selectedFilters">
           <h4 class="mt-4">{{filter.name}}</h4>
           <div *ngFor="let input of filter.inputs">
             <h5 class="mt-2">{{input}}</h5>
