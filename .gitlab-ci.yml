@@ -1,5 +1,5 @@
 stages:
-  - build
+  - install
   - test
 
 #default:
@@ -11,15 +11,32 @@ image: node:latest
 # Cache modules in between jobs
 cache:
   paths:
-    - .npm/
+    - node_modules/
+
+install:
+  stage: install
+  script:
+    - npm install
+  artifacts:
+    paths:
+      - node_modules/
+
+test:
+  stage: test
+  script:
+    - npm run test
+  artifacts:
+    paths:
+      - node_modules/
+
 
 # image: python:3.8
 
-before_script:
-  # - pip install numpy
-  # - pip install scipy
-  - npm install
-  - npm install --save-dev ts-jest
+# before_script:
+#   - pip install numpy
+#   - pip install scipy
+#   - npm install
+#   - npm install --save-dev ts-jest
 
 
 # build:
@@ -46,19 +63,19 @@ before_script:
 #     expire_in: 30 days
 
 
-javascript:
-  image: node:latest
-  stage: test
-  before_script:
-    - 'yarn global add jest'
-    - 'yarn add --dev jest-junit'
-  script:
-    - 'jest --ci --reporters=default --reporters=jest-junit'
-  artifacts:
-    when: always
-    reports:
-      junit:
-        - junit.xml
+# javascript:
+#   # image: node:latest
+#   stage: test
+#   before_script:
+#     - 'yarn global add jest'
+#     - 'yarn add --dev jest-junit'
+#   script:
+#     - 'jest --ci --reporters=default --reporters=jest-junit'
+#   artifacts:
+#     when: always
+#     reports:
+#       junit:
+#         - junit.xml
 
 
 
