@@ -25,6 +25,8 @@ install:
   stage: install
   script:
     - npm install
+    - npm i -g @angular/cli
+    - ./node_modules/.bin/ng build -prod
   artifacts:
     paths:
       - node_modules/
