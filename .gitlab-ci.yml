@@ -14,18 +14,18 @@ before_script:
   - pip install scipy
 
 
-build:
-  stage: build
-  script:
-    - yarn
-  cache:
-    paths:
-      - node_modules/
-  artifacts:
-    expire_in: 1 days
-    when: on_success
-    paths:
-      - node_modules/
+# build:
+#   stage: build
+#   script:
+#     - yarn
+#   cache:
+#     paths:
+#       - node_modules/
+#   artifacts:
+#     expire_in: 1 days
+#     when: on_success
+#     paths:
+#       - node_modules/
 
 pytest-test:
   stage: test
