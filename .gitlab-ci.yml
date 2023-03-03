@@ -24,10 +24,10 @@ cache:
 install:
   stage: install
   script:
-    - npm install
     - npm cache clean --force
     - npm i -g @angular/cli@14.2.10
-    # - ./node_modules/.bin/ng build -prod
+    - npm install
+    - ./node_modules/.bin/ng build --prod
   artifacts:
     paths:
       - node_modules/
