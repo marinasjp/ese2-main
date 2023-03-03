@@ -6,6 +6,7 @@ stages:
 #  tags:
 #    - docker
 
+image: node:latest
 image: python:3.8
 
 before_script:
@@ -14,7 +15,6 @@ before_script:
 
 # Cache modules in between jobs
 cache:
-  image: node:latest
   key: $CI_COMMIT_REF_SLUG
   paths:
     - .npm/
