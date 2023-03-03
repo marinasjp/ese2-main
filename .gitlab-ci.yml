@@ -58,9 +58,9 @@ test:
   cache:
     key:
       files:
-        - package-lock.json
+        - nanoindentation-dashboard/package-lock.json
     paths:
-      - node_modules
+      - nanoindentation-dashboard/node_modules
 
 
 # image: python:3.8
