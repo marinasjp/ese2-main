@@ -4,7 +4,8 @@ import { ProcessorService } from '../app/services/processor.service';
 import * as fs from 'fs';
 
 let testProcess = {id:"test", name: "Test", procType: EProcType.TEST}
-let testStr = fs.readFileSync('../assets/Processes/Tests/testProcess.py', 'utf-8');
+//let testStr = fs.readFileSync('../assets/Processes/Tests/testProcess.py', 'utf-8');
+let testStr = "def calculate( x, y): \n return x, y+1"
 let startPro = {
                 filters: [ //container for filters
                 { id: 'median', name: 'Median', procType: EProcType.FILTER, custom: false },
@@ -20,9 +21,9 @@ let startPro = {
             }
     let testData: { x: number[], y: number[] } = { x: [100, 200, 300, 400], y: [1, 2, 3, 4] };
     let outData: { x: number[], y: number[] } = { x: [100, 200, 300, 400], y: [2, 3, 4, 5] };
+
 export class processorTest {
-    constructor(private processorService: ProcessorService) {
-    }
+    constructor(private processorService: ProcessorService) {}
 
     describe(){
     
