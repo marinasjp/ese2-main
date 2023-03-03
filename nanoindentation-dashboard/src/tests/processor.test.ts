@@ -19,8 +19,8 @@ let startPro = {
                     {id:"testProcess", name: "Test", procType: EProcType.TEST}
                 ]
             }
-    let testData: { x: number[], y: number[] } = { x: [100, 200, 300, 400], y: [1, 2, 3, 4] };
-    let outData: { x: number[], y: number[] } = { x: [100, 200, 300, 400], y: [2, 3, 4, 5] };
+let testData: { x: number[], y: number[] } = { x: [100, 200, 300, 400], y: [1, 2, 3, 4] };
+let outData: { x: number[], y: number[] } = { x: [100, 200, 300, 400], y: [2, 3, 4, 5] };
 
 export class processorTest {
     constructor(private processorService: ProcessorService) {}

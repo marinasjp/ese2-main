@@ -202,8 +202,7 @@ export class ProcessorService {
   //procName: Name of proces, procType: Type of process, dataSet: (optional) dataset to be processed if not given uses this.currData
   doProcess(process: Process, dataSet: any = this.initialData): any {
     this._pyodideLoading.next(true); //check if pyodide is loaded
-
-
+    
     let getScriptPromise: Promise<string> | string = this.getScript(process); //get the process script
 
     return new Promise<any>((resolve, reject) => {
