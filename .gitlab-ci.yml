@@ -11,7 +11,7 @@ image: node:latest
 # Cache modules in between jobs
 cache:
   paths:
-    - node_modules/
+    -  nanoindentation-dashboard/node_modules/
 
 install:
   stage: install
