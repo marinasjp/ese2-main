@@ -8,10 +8,18 @@ stages:
 
 image: node:latest
 
+
+before_script:
+  cd nanoindentation-dashboard
+#   - pip install numpy
+#   - pip install scipy
+#   - npm install
+#   - npm install --save-dev ts-jest
+
 # Cache modules in between jobs
 cache:
   paths:
-    -  nanoindentation-dashboard/node_modules/
+    -  node_modules/
 
 install:
   stage: install
@@ -19,7 +27,7 @@ install:
     - npm install
   artifacts:
     paths:
-      - nanoindentation-dashboard/node_modules/
+      - node_modules/
 
 test:
   stage: test
@@ -27,16 +35,11 @@ test:
     - npm run test
   artifacts:
     paths:
-      - nanoindentation-dashboard/node_modules/
+      - node_modules/
 
 
 # image: python:3.8
 
-# before_script:
-#   - pip install numpy
-#   - pip install scipy
-#   - npm install
-#   - npm install --save-dev ts-jest
 
 
 # build:
