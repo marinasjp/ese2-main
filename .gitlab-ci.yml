@@ -25,12 +25,27 @@ install:
   stage: install
   script:
     - npm cache clean --force
-    - npm i -g @angular/cli@14.2.10
+    # - npm i -g @angular/cli@14.2.10
     - npm install
-    - ./node_modules/.bin/ng build --prod
+    # - ./node_modules/.bin/ng build --prod
+    - npm install -D typescript @angular/cli@14.2.10 @angular/compiler
   artifacts:
     paths:
       - node_modules/
+
+# install_dependencies:
+#   image: node:12-alpine
+#   stage: dependencies
+#   script:
+#     - npm install
+#   only:
+#     - master
+#   cache:
+#     key:
+#       files:
+#         - package-lock.json
+#     paths:
+#       - node_modules
 
 test:
   stage: test
