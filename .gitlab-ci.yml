@@ -17,9 +17,6 @@ before_script:
 #   - npm install --save-dev ts-jest
 
 # Cache modules in between jobs
-cache:
-  paths:
-    -  node_modules/
 
 install:
   stage: install
@@ -32,6 +29,9 @@ install:
   artifacts:
     paths:
       - node_modules/
+  cache:
+    paths:
+      -  node_modules/
 
 # install_dependencies:
 #   image: node:12-alpine
