@@ -19,7 +19,7 @@ install:
     - npm install
   artifacts:
     paths:
-      - node_modules/
+      - nanoindentation-dashboard/node_modules/
 
 test:
   stage: test
