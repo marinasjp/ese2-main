@@ -6,7 +6,9 @@ stages:
 #  tags:
 #    - docker
 
-image: juanje/angular-cli-chrome
+# image: juanje/angular-cli-chrome
+
+image: node:alpine
 
 
 # before_script:
@@ -31,7 +33,7 @@ install:
       - nanoindentation-dashboard/node_modules/
   cache:
     paths:
-      -  nanoindentation-dashboard/node_modules/
+      - nanoindentation-dashboard/node_modules/
 
 # install_dependencies:
 #   image: node:12-alpine
@@ -51,10 +53,14 @@ test:
   stage: test
   script:
     - cd nanoindentation-dashboard
-    - npm run test -- --watch=false --browsers=ChromeHeadless
+    - npm run test-ci -- --watch=false --browsers=ChromeHeadless
+  # artifacts:
+  #   paths:
+  #     - node_modules/
+
   artifacts:
-    paths:
-      - node_modules/
+    reports:
+      junit: junit.xml
   cache:
     key:
       files:
