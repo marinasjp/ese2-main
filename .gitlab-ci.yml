@@ -10,16 +10,17 @@ build:
     - yarn
   cache:
     paths:
-      - node_modules/
+      -  nanoindentation-dashboard/node_modules/
   artifacts:
     expire_in: 1 days
     when: on_success
     paths:
-      - node_modules/
+      -  nanoindentation-dashboard/node_modules/
 
 test:
   stage: test
   dependencies:
     - build
   script:
-    - yarn test:ci
+      - cd  nanoindentation-dashboard
+      - yarn test:ci
