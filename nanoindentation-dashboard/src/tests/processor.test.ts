@@ -24,17 +24,17 @@ let outData: { x: number[], y: number[] } = { x: [100, 200, 300, 400], y: [2, 3,
 let service: ProcessorService;
 
  describe('ProcessorService', () => {
-   
+
     // Tests if the newProcess function is ... a new python script (Process) is added to the data structure.
     test('should return 1', () => { // maybe test if it is at the end?
         expect(service.addProcess(testProcess)).toBe(startPro);
     });
-    
+
     // Tests if getScript ... is returning the correct script when given a Process name and type.
     test('TesterProc should return func that adds 1 to dataset', () => {
         expect(service.getScript(testProcess)).toBe(testStr);
      });
-    
+
     // Tests if doProces... is running on the given data set.
     test('testing do process should return dataset with +1', () => {
         expect(service.doProcess(testProcess, testData)).toBe(outData);
