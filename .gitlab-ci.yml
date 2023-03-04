@@ -1,4 +1,4 @@
-image: node:latest
+image: node:16
 
 stages:
   - build
@@ -20,7 +20,7 @@ build:
       -  nanoindentation-dashboard/node_modules/
 
 test:
-    image: node:latest
+    image: node:16
     stage: test
     dependencies:
         - build
