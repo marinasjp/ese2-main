@@ -1,4 +1,4 @@
-image: node:14.20
+image: node:15
 
 stages:
   - build
@@ -8,7 +8,7 @@ build:
   stage: build
   script:
       - cd nanoindentation-dashboard
-      - yarn
+    #   - yarn
       - npm ci
   cache:
     paths:
@@ -24,6 +24,6 @@ test:
   dependencies:
     - build
   script:
-      - cd  nanoindentation-dashboard
+      - cd nanoindentation-dashboard
       - npm run test:ci
     #   - yarn test:ci
