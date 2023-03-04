@@ -8,6 +8,7 @@ build:
   stage: build
   script:
     - yarn
+    - npm ci
   cache:
     paths:
       -  nanoindentation-dashboard/node_modules/
@@ -23,4 +24,5 @@ test:
     - build
   script:
       - cd  nanoindentation-dashboard
-      - yarn test:ci
+      - npm run test:ci
+    #   - yarn test:ci
