@@ -7,8 +7,9 @@ stages:
 build:
   stage: build
   script:
-    - yarn
-    - npm ci
+      - cd nanoindentation
+      - yarn
+      - npm ci
   cache:
     paths:
       -  nanoindentation-dashboard/node_modules/
