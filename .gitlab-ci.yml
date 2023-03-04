@@ -20,10 +20,12 @@ build:
       -  nanoindentation-dashboard/node_modules/
 
 test:
-  stage: test
-  dependencies:
-    - build
-  script:
+    image: node:latest
+    stage: test
+    dependencies:
+        - build
+    script:
       - cd nanoindentation-dashboard
+      - npm i string.prototype.replaceall
       - npm run test:ci
     #   - yarn test:ci
