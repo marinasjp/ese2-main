@@ -4,12 +4,6 @@
 //     testRegex: '/tests/.*\\.(test|spec)?\\.(ts|tsx)$',
 //     moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node']
 //   };
-import '@testing-library/jest-dom';
-//@ts-ignore
-import replaceAllInserter from 'string.prototype.replaceall';
-
-replaceAllInserter.shim();
-
 
 module.exports = {
   // "collectCoverageFrom": ["src/**/*.js", "!**/node_modules/**"],
