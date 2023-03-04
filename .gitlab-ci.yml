@@ -1,14 +1,11 @@
 image: python:3.8
 
 stages:
-  - install
   - test
 
-installs:
-  stage: install
-  script:
-    - pip install numpy
-    - pip install scipy
+before_script:
+  - pip install numpy
+  - pip install scipy
 
 unit-test:
   stage: test
