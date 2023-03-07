@@ -210,7 +210,7 @@ export class ProcessorService {
       this.errorHandler.Retry(e, attempt, max_attempt);
       attempt++; //add to attempt counter
     }finally{
-      this.Handler.RetryFailed();
+      this.errorHandler.RetryFailed();
       return "";
     }
   }
