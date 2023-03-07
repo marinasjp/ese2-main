@@ -1,0 +1,32 @@
+image: node:16
+
+stages:
+  - build
+  - test
+
+build:
+  stage: build
+  script:
+      - cd nanoindentation-dashboard
+    #   - yarn
+      - npm ci
+  cache:
+    paths:
+      -  nanoindentation-dashboard/node_modules/
+  artifacts:
+    expire_in: 1 days
+    when: on_success
+    paths:
+      -  nanoindentation-dashboard/node_modules/
+
+test:
+    image: node:16
+    stage: test
+    dependencies:
+        - build
+    script:
+      - cd nanoindentation-dashboard
+      - npm i string.prototype.replaceall
+      - npm run test
+      # - npm run test:ci
+    #   - yarn test:ci

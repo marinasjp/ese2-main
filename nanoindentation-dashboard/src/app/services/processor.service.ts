@@ -1,10 +1,10 @@
 import {Injectable} from '@angular/core';
 import {EProcType, Process} from "../models/process.model";
-//declare let loadPyodide: any;
 import {loadPyodide} from "pyodide";
 import {BehaviorSubject, Observable} from "rxjs";
 import {HttpClient} from "@angular/common/http";
 import {GraphService} from "./graph.service";
+import {ErrorHandler} from "./handler.service";
 
 const PYODIDE_BASE_URL = 'https://cdn.jsdelivr.net/pyodide/v0.22.0/full/';
 
@@ -12,6 +12,7 @@ const PYODIDE_BASE_URL = 'https://cdn.jsdelivr.net/pyodide/v0.22.0/full/';
   providedIn: 'root'
 })
 export class ProcessorService {
+  private Handler: ErrorHandler;
 
   private _pyodideInitalized: BehaviorSubject<boolean>;
 
@@ -43,11 +44,46 @@ export class ProcessorService {
     this.runProcessChain();
   }
 
-  availableFilters: Process[] = [
-    {id: 'median', name: 'Median', procType: EProcType.FILTER},
-    {id: 'savgol', name: 'Sawitzky Golay', procType: EProcType.FILTER},
-    {id: 'linearDetrend', name: 'Linear Detrending', procType: EProcType.FILTER},
-  ]
+  private availableProcesses: { filters: Process[], cPoints: Process[], eModels: Process[], fModels: Process[], test: Process[] } = {
+    filters: [ //container for processes
+      {id: 'median', name: 'Median', procType: EProcType.FILTER, custom: false},
+      {id: 'savgol', name: 'Sawitzky Golay', procType: EProcType.FILTER, custom: false},
+      {id: 'linearDetrend', name: 'Linear Detrending', procType: EProcType.FILTER, custom: false},
+    ],
+    cPoints: [],//container for cPoints
+    eModels: [],//container for eModel
+    fModels: [],//container for fModel
+    test: []     //container for test processess
+  }
+
+  public addProcess(process: Process) { //adds a process definition to the data struct
+    switch (process.procType) { //add to the correct container acording to process type
+      case EProcType.CPOINT: {
+        this.availableProcesses.cPoints.push(process);
+        break;
+      }
+      case EProcType.FILTER: {
+        this.availableProcesses.filters.push(process);
+        break;
+      }
+      case EProcType.EMODELS: {
+        this.availableProcesses.eModels.push(process);
+        break;
+      }
+      case EProcType.FMODELS: {
+        this.availableProcesses.fModels.push(process);
+        break;
+      }
+      case EProcType.TEST: {
+        this.availableProcesses.test.push(process);
+        break;
+      }
+      default: {
+        return 'ERROR: ProcType error'
+      }
+    }
+    return this.availableProcesses;
+  };
 
   private _selectedFilters: Process[] = [];
 
@@ -65,28 +101,30 @@ export class ProcessorService {
   initialData: { x: number[], y: number[] } = {x: [100, 200, 300, 400], y: [1, 2, 3, 4]};
   rootPath: string = 'assets/Processes/';
 
-  constructor(private http: HttpClient,
-              private graphService: GraphService) {
+  constructor(//constructor for object
+    private http: HttpClient,
+    private graphService: GraphService) {
     this._pyodideInitalized = new BehaviorSubject<boolean>(true);
     this._pyodideLoading = new BehaviorSubject<boolean>(true);
     this.initPy();
   }
 
-  async initPy() {
-    // loadPyodide({indexURL: PYODIDE_BASE_URL}).then((pyodide) => {
-    //   globalThis.pyodide = pyodide;
-    //   this.pyodideInitializationStatus = 'pyodide initialized ✔<br>Initializing numpy...'
-    //   globalThis.pyodide.loadPackage(['numpy']).then(() => {
-    //     this.pyodideInitializationStatus = 'pyodide initialized ✔<br>numpy initialized ✔<br>Initializing scipy...'
-    //     globalThis.pyodide.loadPackage(['scipy']).then(() => {
-    //       this.pyodideInitializationStatus = 'pyodide initialized ✔<br>numpy initialized ✔<br>scipy initialized ✔'
-    this._pyodideInitalized.next(false);
-    this._pyodideLoading.next(false);
-    //     })
-    //   })
-    // })
+  async initPy() { //initialise Pyodide
+    loadPyodide({indexURL: PYODIDE_BASE_URL}).then((pyodide) => {
+      globalThis.pyodide = pyodide;
+      this.pyodideInitializationStatus = 'pyodide initialized ✔<br>Initializing numpy...'
+      globalThis.pyodide.loadPackage(['numpy']).then(() => {
+        this.pyodideInitializationStatus = 'pyodide initialized ✔<br>numpy initialized ✔<br>Initializing scipy...'
+        globalThis.pyodide.loadPackage(['scipy']).then(() => {
+          this.pyodideInitializationStatus = 'pyodide initialized ✔<br>numpy initialized ✔<br>scipy initialized ✔'
+          this._pyodideInitalized.next(false);
+          this._pyodideLoading.next(false);
+        })
+      })
+    })
   }
 
+  //run the process chain recorded
   runProcessChain() {
     if (this.processChain.filters.length) {
       this.updateFilteredDataset(this.initialData.x, this.initialData.y);
@@ -94,8 +132,15 @@ export class ProcessorService {
     }
   }
 
-  // TODO: IMPLEMENT;
+  //Update dataset in graphservice
   updateFilteredDataset(x: number[], y: number[]) {
+    let filteredData = this.graphService.graphData;
+    console.log(filteredData);
+    filteredData.x = x;
+    filteredData.y = y;
+    this.graphService.graphData = filteredData;
+    console.log(x);
+    console.log(y);
   }
 
   runFilters(index: number = 0, dataSet: any = this.initialData): any {
@@ -104,7 +149,7 @@ export class ProcessorService {
       return promise;
     } else {
       promise = promise as Promise<any>;
-      promise.then(result => {
+      promise.then((result: { x: number[]; y: number[]; }) => {
         if (index < this.processChain.filters.length - 1) {
           this.runFilters(index + 1, result);
         } else {
@@ -115,40 +160,58 @@ export class ProcessorService {
   }
 
   //Uses the given process name and processes path to give the script
-  ///// returns void if successful, errorMsgString if error occurred
-  getScript(process: Process): Promise<void | string> | string {
-
-    let procPath = this.rootPath;
-
-    switch (process.procType) {
-      case EProcType.CPOINT: {
-        procPath += 'CPoints/';
-        break;
-      }
-      case EProcType.FILTER: {
-        procPath += 'Filters/';
-        break;
-      }
-      case EProcType.EMODELS: {
-        procPath += 'EModels./';
-        break;
-      }
-      case EProcType.FMODELS: {
-        procPath += 'FModels/';
-        break;
-      }
-      case EProcType.TEST: {
-        procPath += 'Tests/';
-        break;
-      }
-      default: {
-        return 'ERROR: ProcType error'
+  // returns script or promise of script if successful, -1 if error occurred
+  getScript(process: Process): Promise<string> | string {
+    try{
+      if (process.script) { //if process has a script recorded
+        //get process from data sytem
+        return process.script; //return script stored in process
       }
     }
+    catch (e: any){
+      this.Handler.Fatal(e); //fatal error if data system could be reached
+      return "";
+    }
+    let attempt = 1;
+    let max_attempt = 5;
+    let procPath = this.rootPath;
 
-    procPath += process.name + '.py';
+    try{
+      // If the process is not recorder, look for it:
+      switch (process.procType) {
+        case EProcType.CPOINT: {
+          procPath += 'CPoints/';
+          break;
+        }
+        case EProcType.FILTER: {
+          procPath += 'Filters/';
+          break;
+        }
+        case EProcType.EMODELS: {
+          procPath += 'EModels/';
+          break;
+        }
+        case EProcType.FMODELS: {
+          procPath += 'FModels/';
+          break;
+        }
+        case EProcType.TEST: {
+          procPath += 'Tests/';
+          break;
+        }
+        default: {
+          return 'ERROR: ProcType error'
+        }
+      }
 
-    return this.http.get(procPath, {responseType: 'text'}).toPromise();
+      procPath += process.name + '.py'; //add file name to path to get path to file
+      let promiseScript = this.http.get(procPath, { responseType: 'text' }).toPromise(); //return as promise
+      return promiseScript;
+    }catch(e:any){
+      //Retry as ther may be another issue that could go away with a retry
+      this.Handler.Retry(e,attempt,max_attempt);
+      attempt++; //add to attempt counter
+    }
   }
 
   //Takes a script and uses pyodide to run it on the dataSet
@@ -156,25 +219,21 @@ export class ProcessorService {
   doProcess(process: Process, dataSet: any = this.initialData): any {
     this._pyodideLoading.next(true); //check if pyodide is loaded
 
-
-    let getScriptPromise: Promise<string | void> | string = this.getScript(process); //get the process script
-
-    if (typeof getScriptPromise == "string") {
-      return getScriptPromise;
-    }
+    let getScriptPromise: Promise<string> | string = this.getScript(process); //get the process script
 
     return new Promise<any>((resolve, reject) => {
-      getScriptPromise = getScriptPromise as Promise<string | void>;
+      getScriptPromise = getScriptPromise as Promise<string>;
       getScriptPromise
         .finally(() => {
           this._pyodideLoading.next(false)
         })
         .then(procScript => {
+          process.script = procScript; // Append found script into Process Object
           globalThis.pyodide.runPython(procScript);
           let calculate = globalThis.pyodide.globals.get('calculate');
           let resultPy = calculate(dataSet.x, dataSet.y);
           let result = resultPy.toJs();
-          result = {x: result[0], y: result[1]};
+          result = { x: result[0], y: result[1] };
           resultPy.destroy();
           resolve(result);
         })
