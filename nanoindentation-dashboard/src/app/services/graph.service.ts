@@ -4,11 +4,18 @@ import {Dataset} from "../models/dataset.model";
 import {SampleDataService} from "./sample-data.service";
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {environment} from "../../environments/environment";
+import {finalize} from "rxjs/operators";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class GraphService {
+
+  private _uploadingDataLoading: BehaviorSubject<boolean>;
+
+  public get uploadingDataLoading$(): Observable<boolean> {
+    return this._uploadingDataLoading.asObservable();
+  }
 
   start: number;
   end: number;
@@ -36,7 +43,6 @@ export class GraphService {
 
   public set filteredData(dataset: Dataset[]) {
     this._filteredData.next(dataset);
-    console.log(dataset);
   }
 
 
@@ -44,19 +50,20 @@ export class GraphService {
               private http: HttpClient) {
     this._inputData = new BehaviorSubject<Dataset[]>([]);
     this._filteredData = new BehaviorSubject<Dataset[]>([]);
+    this._uploadingDataLoading = new BehaviorSubject<boolean>(false);
+  }
 
-
-// TODO: REMOVE: FOR TESTING ONLY
-    let sampleData = [];
-    const sampleDataIndentation = this.sampleDataService.sampleDataIndentation;
-    const sampleDataLoad = this.sampleDataService.sampleDataLoad;
+  prepareUserInputData(dataset): any {
+    let data = [];
+    const dataIndentation = dataset.Indentation;
+    const dataLoad = dataset.Load;
     let start: number;
     let end: number;
 
-    sampleDataIndentation.forEach((dataset, index) => {
+    dataIndentation.forEach((dataset, index) => {
       let datasetPoints: { x: number, y: number }[] = [];
-      let datasetIndentation = sampleDataIndentation[index];
-      let datasetLoad = sampleDataLoad[index];
+      let datasetIndentation = dataIndentation[index];
+      let datasetLoad = dataLoad[index];
 
       dataset.forEach((datapoint, index) => {
         if (!start || datasetIndentation[index] < start) {
@@ -73,10 +80,10 @@ export class GraphService {
         datasetPoints.push(valuePair);
       })
 
-      sampleData.push(datasetPoints);
+      data.push(datasetPoints);
     })
 
-    this._inputData.next(sampleData);
+    this._inputData.next(data);
 
     this.start = start;
     this.end = end;
@@ -84,6 +91,7 @@ export class GraphService {
 
 
   uploadData(file: any): void {
+    this._uploadingDataLoading.next(true);
 
     const formData = new FormData();
     formData.append('file', file);
@@ -94,9 +102,12 @@ export class GraphService {
     this.http.post(environment.apiURL + 'send_data', formData, {
       headers: headers,
       responseType: "json"
-    }).subscribe((response) => {
-      console.log('FINISHED')
-    })
+    }).pipe(finalize(() => this._uploadingDataLoading.next(false)))
+      .subscribe(
+        (response) => {
+          this.prepareUserInputData(response);
+        }, () => {
+        })
   }
 
 
