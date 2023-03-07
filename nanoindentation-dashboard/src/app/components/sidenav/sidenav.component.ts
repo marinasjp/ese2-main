@@ -121,18 +121,9 @@ export class SidenavComponent {
 
 
   uploadrawHandler(event: any) {
-    console.log("START UPLOADING")
-    this.uploadedFile = event.files;
-    console.log(this.uploadedFile)
-    this.graphService.uploadData(this.uploadedFile);
-    // this.parseRawData();
-
+    const file = event.files && event.files[0];
+    this.graphService.uploadData(file);
   }
-
-  // parseRawData(){
-  //   globalThis.pyodide.runPython('print("testing - This should appear on browser console (ctrl+shft-i)")').then((result)=>{console.log(result);});
-  // }
-
 
   runCode(code: string) {
     console.log(globalThis.pyodide.runPython());
@@ -144,8 +135,6 @@ export class SidenavComponent {
       console.log(this.consoleItems);
       this.output = result;
     });
-    // this.consoleItems.push(code);
-    // console.log(this.consoleItems);
   }
 
 

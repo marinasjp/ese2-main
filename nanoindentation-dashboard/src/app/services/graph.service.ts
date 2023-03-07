@@ -84,16 +84,18 @@ export class GraphService {
 
 
   uploadData(file: any): void {
+
     const formData = new FormData();
     formData.append('file', file);
+
     const headers = new HttpHeaders();
     headers.append('Content-Type', 'multipart/form-data');
-    console.log(environment.apiURL + 'send_data');
+
     this.http.post(environment.apiURL + 'send_data', formData, {
       headers: headers,
       responseType: "json"
     }).subscribe((response) => {
-      console.log(response);
+      console.log('FINISHED')
     })
   }
 
