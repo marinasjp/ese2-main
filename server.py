@@ -32,12 +32,7 @@ def send_data():
     customerData = {"Name": [], "Time": [], "Load": [], "Indentation": [], "Cantilever": [], "Piezo": []}
     customerData['Name'].append("test")
 
-    # customerData['Time'].append(data[1]['time'].tolist())
-    # customerData['Load'].append(data[1]['force'].tolist())
-    # customerData['Piezo'].append(data[1]['height (piezo)'].tolist())
-    # customerData['Indentation'].append(data[1]['height (measured)'].tolist())
-    # customerData['Cantilever'].append(data[1]['segment'].tolist())
-
+  
 
     for i in range(len(data)):
         customerData['Time'].append(data[i]['time'].tolist())
@@ -46,12 +41,7 @@ def send_data():
         customerData['Indentation'].append(data[i]['height (measured)'].tolist())
         customerData['Cantilever'].append(data[i]['segment'].tolist())
 
-    customerData['Time'] = [item for sublist in customerData['Time'] for item in sublist]
-    customerData['Load'] = [item for sublist in customerData['Load'] for item in sublist]
-    customerData['Piezo'] = [item for sublist in customerData['Piezo'] for item in sublist]
-    customerData['Indentation'] = [item for sublist in customerData['Indentation'] for item in sublist]
-    customerData['Cantilever'] = [item for sublist in customerData['Cantilever'] for item in sublist]
-
+   
     print(type(customerData['Time'][0]))
     print(type(customerData['Load'][0]))
     print(type(customerData['Piezo'][0]))
