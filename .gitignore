@@ -1,2 +1,7 @@
 
 venv/*
+
+# python env
+/Scripts
+/lib
+pyvenv.cfg
