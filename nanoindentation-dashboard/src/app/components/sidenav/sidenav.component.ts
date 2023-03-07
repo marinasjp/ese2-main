@@ -50,7 +50,7 @@ export class SidenavComponent {
   }
 
   ngOnInit() {
-    this.filters = this.processService.availableFilters;
+    this.filters = this.processService.availableProcesses.filters;
     this.consoleItems = []
   }
 

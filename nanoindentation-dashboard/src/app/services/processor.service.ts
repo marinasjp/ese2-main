@@ -42,7 +42,7 @@ export class ProcessorService {
     this.runProcessChain();
   }
 
-  private availableProcesses: { filters: Process[], cPoints: Process[], eModels: Process[], fModels: Process[], test: Process[] } = {
+  public availableProcesses: { filters: Process[], cPoints: Process[], eModels: Process[], fModels: Process[], test: Process[] } = {
     filters: [ //container for processes
       {id: 'median', name: 'Median', procType: EProcType.FILTER, custom: false},
       {id: 'savgol', name: 'Sawitzky Golay', procType: EProcType.FILTER, custom: false},
