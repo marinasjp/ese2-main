@@ -1,11 +1,11 @@
-import { Injectable } from '@angular/core';
-import { EProcType, Process } from "../models/process.model";
-import { ErrorType, Error } from "../models/error.model";
-import { loadPyodide } from "pyodide";
-import { BehaviorSubject, Observable } from "rxjs";
-import { HttpClient } from "@angular/common/http";
-import { GraphService } from "./graph.service";
-import { ErrorHandler } from "./handler.service";
+import {Injectable} from '@angular/core';
+import {EProcType, Process} from "../models/process.model";
+import {EErrorType, Error} from "../models/error.model";
+import {loadPyodide} from "pyodide";
+import {BehaviorSubject, Observable} from "rxjs";
+import {HttpClient} from "@angular/common/http";
+import {GraphService} from "./graph.service";
+import {ErrorHandlerService} from "./error-handler.service";
 
 const PYODIDE_BASE_URL = 'https://cdn.jsdelivr.net/pyodide/v0.22.0/full/';
 
@@ -102,7 +102,7 @@ export class ProcessorService {
 
   constructor(//constructor for object
     private http: HttpClient,
-    private errorHandler: ErrorHandler,
+    private errorHandlerService: ErrorHandlerService,
     private graphService: GraphService) {
     this._pyodideInitalized = new BehaviorSubject<boolean>(true);
     this._pyodideLoading = new BehaviorSubject<boolean>(true);
@@ -168,7 +168,7 @@ export class ProcessorService {
         return process.script; //return script stored in process
       }
     } catch (e: any) {
-      this.errorHandler.Fatal(e); //fatal error if data system could be reached
+      this.errorHandlerService.Fatal(e); //fatal error if data system could be reached
       return;
     }
     let attempt = 1;
@@ -207,10 +207,10 @@ export class ProcessorService {
       return this.http.get(procPath, {responseType: 'text'}).toPromise(); //return as promise
     } catch (e: any) {
       //Retry as ther may be another issue that could go away with a retry
-      this.errorHandler.Retry(e, attempt, max_attempt);
+      this.errorHandlerService.Retry(e, attempt, max_attempt);
       attempt++; //add to attempt counter
-    }finally{
-      this.errorHandler.RetryFailed();
+    } finally {
+      this.errorHandlerService.RetryFailed();
       return "";
     }
   }
