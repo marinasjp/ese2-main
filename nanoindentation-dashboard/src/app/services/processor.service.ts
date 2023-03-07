@@ -12,8 +12,6 @@ const PYODIDE_BASE_URL = 'https://cdn.jsdelivr.net/pyodide/v0.22.0/full/';
   providedIn: 'root'
 })
 export class ProcessorService {
-  private Handler: ErrorHandler;
-
   private _pyodideInitalized: BehaviorSubject<boolean>;
 
   public get pyodideInitalized$(): Observable<boolean> {
@@ -103,6 +101,7 @@ export class ProcessorService {
 
   constructor(//constructor for object
     private http: HttpClient,
+    private errorHandler: ErrorHandler,
     private graphService: GraphService) {
     this._pyodideInitalized = new BehaviorSubject<boolean>(true);
     this._pyodideLoading = new BehaviorSubject<boolean>(true);
@@ -134,13 +133,13 @@ export class ProcessorService {
 
   //Update dataset in graphservice
   updateFilteredDataset(x: number[], y: number[]) {
-    let filteredData = this.graphService.graphData;
-    console.log(filteredData);
-    filteredData.x = x;
-    filteredData.y = y;
-    this.graphService.graphData = filteredData;
-    console.log(x);
-    console.log(y);
+    // let filteredData = this.graphService.filteredData;
+    // console.log(filteredData);
+    // filteredData.x = x;
+    // filteredData.y = y;
+    // this.graphService.filteredData = filteredData;
+    // console.log(x);
+    // console.log(y);
   }
 
   runFilters(index: number = 0, dataSet: any = this.initialData): any {
@@ -161,22 +160,21 @@ export class ProcessorService {
 
   //Uses the given process name and processes path to give the script
   // returns script or promise of script if successful, -1 if error occurred
-  getScript(process: Process): Promise<string> | string {
-    try{
+  getScript(process: Process): Promise<string> | string | void {
+    try {
       if (process.script) { //if process has a script recorded
         //get process from data sytem
         return process.script; //return script stored in process
       }
-    }
-    catch (e: any){
-      this.Handler.Fatal(e); //fatal error if data system could be reached
-      return "";
+    } catch (e: any) {
+      this.errorHandler.Fatal(e); //fatal error if data system could be reached
+      return;
     }
     let attempt = 1;
     let max_attempt = 5;
     let procPath = this.rootPath;
 
-    try{
+    try {
       // If the process is not recorder, look for it:
       switch (process.procType) {
         case EProcType.CPOINT: {
@@ -205,11 +203,10 @@ export class ProcessorService {
       }
 
       procPath += process.name + '.py'; //add file name to path to get path to file
-      let promiseScript = this.http.get(procPath, { responseType: 'text' }).toPromise(); //return as promise
-      return promiseScript;
-    }catch(e:any){
+      return this.http.get(procPath, {responseType: 'text'}).toPromise(); //return as promise
+    } catch (e: any) {
       //Retry as ther may be another issue that could go away with a retry
-      this.Handler.Retry(e,attempt,max_attempt);
+      this.errorHandler.Retry(e, attempt, max_attempt);
       attempt++; //add to attempt counter
     }
   }
@@ -219,7 +216,7 @@ export class ProcessorService {
   doProcess(process: Process, dataSet: any = this.initialData): any {
     this._pyodideLoading.next(true); //check if pyodide is loaded
 
-    let getScriptPromise: Promise<string> | string = this.getScript(process); //get the process script
+    let getScriptPromise: Promise<string> | string | void = this.getScript(process); //get the process script
 
     return new Promise<any>((resolve, reject) => {
       getScriptPromise = getScriptPromise as Promise<string>;
@@ -233,7 +230,7 @@ export class ProcessorService {
           let calculate = globalThis.pyodide.globals.get('calculate');
           let resultPy = calculate(dataSet.x, dataSet.y);
           let result = resultPy.toJs();
-          result = { x: result[0], y: result[1] };
+          result = {x: result[0], y: result[1]};
           resultPy.destroy();
           resolve(result);
         })
