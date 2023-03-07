@@ -23,6 +23,7 @@ import {ScrollerModule} from 'primeng/scroller';
 import {DropdownModule} from 'primeng/dropdown';
 import {ProgressSpinnerModule} from "primeng/progressspinner";
 import {GraphComponent} from './components/graphs/graph/graph.component';
+import {FilesTabComponent} from './components/sidenav/files-tab/files-tab.component';
 
 @NgModule({
   declarations: [
@@ -30,6 +31,7 @@ import {GraphComponent} from './components/graphs/graph/graph.component';
     SidenavComponent,
     GraphsComponent,
     GraphComponent,
+    FilesTabComponent,
   ],
   imports: [
     BrowserModule,

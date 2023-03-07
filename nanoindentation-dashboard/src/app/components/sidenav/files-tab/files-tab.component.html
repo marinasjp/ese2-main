@@ -1,0 +1,45 @@
+<p-accordionTab header="Files">
+
+  <!--  LOADING -->
+  <ng-container *ngIf="graphService.uploadingDataLoading$|async else notLoading">
+    <div class="flex flex-column justify-content-center align-items-center">
+      <div style="width: 240px">
+        <p-progressBar [style]="{'height': '6px'}" mode="indeterminate"></p-progressBar>
+      </div>
+      <div class="text-center mt-3" [innerHTML]="'Uploading files...'"></div>
+    </div>
+  </ng-container>
+
+
+  <ng-template #notLoading>
+
+    <!--  UPLOAD TEXT FILE -->
+    <h4 class="mt-2">Upload a File</h4>
+
+    <p-fileUpload (uploadHandler)="uploadHandler($event)"
+                  mode="basic"
+                  [auto]="true"
+                  [customUpload]="true"
+                  chooseLabel="Upload File"
+                  name="myfile[]"
+                  pTooltip="Upload your .txt file containing your nano-indentation data"
+                  tooltipPosition="right">
+    </p-fileUpload>
+
+
+    <!--  UPLOAD JPK FORCEMAP FILE -->
+    <h4 class="mt-2">Upload a JPK-Force-Map file</h4>
+
+    <p-fileUpload (uploadHandler)="uploadrawHandler($event)"
+                  mode="basic"
+                  [auto]="true"
+                  [customUpload]="true"
+                  chooseLabel="Upload raw File"
+                  name="myfileRaw[]"
+                  pTooltip="Upload your raw file containing your nano-indentation data"
+                  tooltipPosition="right">
+    </p-fileUpload>
+
+  </ng-template>
+
+</p-accordionTab>
