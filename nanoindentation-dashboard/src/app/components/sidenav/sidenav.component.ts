@@ -124,6 +124,7 @@ export class SidenavComponent {
     console.log("START UPLOADING")
     this.uploadedFile = event.files;
     console.log(this.uploadedFile)
+    this.graphService.uploadData(this.uploadedFile);
     // this.parseRawData();
 
   }
