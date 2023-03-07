@@ -73,18 +73,18 @@ export class ProcessorService {
   }
 
   async initPy() {
-    loadPyodide({indexURL: PYODIDE_BASE_URL}).then((pyodide) => {
-      globalThis.pyodide = pyodide;
-      this.pyodideInitializationStatus = 'pyodide initialized ✔<br>Initializing numpy...'
-      globalThis.pyodide.loadPackage(['numpy']).then(() => {
-        this.pyodideInitializationStatus = 'pyodide initialized ✔<br>numpy initialized ✔<br>Initializing scipy...'
-        globalThis.pyodide.loadPackage(['scipy']).then(() => {
-          this.pyodideInitializationStatus = 'pyodide initialized ✔<br>numpy initialized ✔<br>scipy initialized ✔'
-          this._pyodideInitalized.next(false);
-          this._pyodideLoading.next(false);
-        })
-      })
-    })
+    // loadPyodide({indexURL: PYODIDE_BASE_URL}).then((pyodide) => {
+    //   globalThis.pyodide = pyodide;
+    //   this.pyodideInitializationStatus = 'pyodide initialized ✔<br>Initializing numpy...'
+    //   globalThis.pyodide.loadPackage(['numpy']).then(() => {
+    //     this.pyodideInitializationStatus = 'pyodide initialized ✔<br>numpy initialized ✔<br>Initializing scipy...'
+    //     globalThis.pyodide.loadPackage(['scipy']).then(() => {
+    //       this.pyodideInitializationStatus = 'pyodide initialized ✔<br>numpy initialized ✔<br>scipy initialized ✔'
+    this._pyodideInitalized.next(false);
+    this._pyodideLoading.next(false);
+    //     })
+    //   })
+    // })
   }
 
   runProcessChain() {
@@ -94,14 +94,8 @@ export class ProcessorService {
     }
   }
 
+  // TODO: IMPLEMENT;
   updateFilteredDataset(x: number[], y: number[]) {
-    let filteredData = this.graphService.filteredData;
-    console.log(filteredData);
-    filteredData.x = x;
-    filteredData.y = y;
-    this.graphService.filteredData = filteredData;
-    console.log(x);
-    console.log(y);
   }
 
   runFilters(index: number = 0, dataSet: any = this.initialData): any {
