@@ -1,10 +1,11 @@
-import {Injectable} from '@angular/core';
-import {EProcType, Process} from "../models/process.model";
-import {loadPyodide} from "pyodide";
-import {BehaviorSubject, Observable} from "rxjs";
-import {HttpClient} from "@angular/common/http";
-import {GraphService} from "./graph.service";
-import {ErrorHandler} from "./handler.service";
+import { Injectable } from '@angular/core';
+import { EProcType, Process } from "../models/process.model";
+import { ErrorType, Error } from "../models/error.model";
+import { loadPyodide } from "pyodide";
+import { BehaviorSubject, Observable } from "rxjs";
+import { HttpClient } from "@angular/common/http";
+import { GraphService } from "./graph.service";
+import { ErrorHandler } from "./handler.service";
 
 const PYODIDE_BASE_URL = 'https://cdn.jsdelivr.net/pyodide/v0.22.0/full/';
 
@@ -208,6 +209,9 @@ export class ProcessorService {
       //Retry as ther may be another issue that could go away with a retry
       this.errorHandler.Retry(e, attempt, max_attempt);
       attempt++; //add to attempt counter
+    }finally{
+      this.Handler.RetryFailed();
+      return "";
     }
   }
 
