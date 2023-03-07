@@ -4,6 +4,7 @@ import { loadPyodide } from "pyodide";
 import { BehaviorSubject, Observable } from "rxjs";
 import { HttpClient } from "@angular/common/http";
 import { GraphService } from "./graph.service";
+import { ErrorHandler } from "./handler.service";
 
 const PYODIDE_BASE_URL = 'https://cdn.jsdelivr.net/pyodide/v0.22.0/full/';
 
@@ -11,6 +12,7 @@ const PYODIDE_BASE_URL = 'https://cdn.jsdelivr.net/pyodide/v0.22.0/full/';
   providedIn: 'root'
 })
 export class ProcessorService {
+  private Handler: ErrorHandler;
 
   private _pyodideInitalized: BehaviorSubject<boolean>;
 
@@ -54,8 +56,8 @@ export class ProcessorService {
     test: []     //container for test processess
   }
 
-  public addProcess(process: Process) {
-    switch(process.procType){
+  public addProcess(process: Process) { //adds a process definition to the data struct
+    switch(process.procType){ //add to the correct container acording to process type
       case EProcType.CPOINT: {
         this.availableProcesses.cPoints.push(process);
         break;
@@ -99,7 +101,8 @@ export class ProcessorService {
   initialData: { x: number[], y: number[] } = { x: [100, 200, 300, 400], y: [1, 2, 3, 4] };
   rootPath: string = 'assets/Processes/';
 
-  constructor(private http: HttpClient,
+  constructor(//constructor for object
+    private http: HttpClient, 
     private graphService: GraphService) {
     this._pyodideInitalized = new BehaviorSubject<boolean>(true);
     this._pyodideLoading = new BehaviorSubject<boolean>(true);
@@ -159,44 +162,56 @@ export class ProcessorService {
   //Uses the given process name and processes path to give the script
   // returns script or promise of script if successful, -1 if error occurred
   getScript(process: Process): Promise<string> | string {
-
-    if (process.script) { //if process has a script recorded
-      //get process from data sytem
-      return process.script; //return script stored in process
+    try{
+      if (process.script) { //if process has a script recorded
+        //get process from data sytem
+        return process.script; //return script stored in process
+      }
     }
-
+    catch (e: any){
+      this.Handler.Fatal(e); //fatal error if data system could be reached
+      return "";
+    }
+    let attempt = 1;
+    let max_attempt = 5;
     let procPath = this.rootPath;
 
-    // If the process is not recorder, look for it:
-    switch (process.procType) {
-      case EProcType.CPOINT: {
-        procPath += 'CPoints/';
-        break;
+    try{
+      // If the process is not recorder, look for it:
+      switch (process.procType) {
+        case EProcType.CPOINT: {
+          procPath += 'CPoints/';
+          break;
+        }
+        case EProcType.FILTER: {
+          procPath += 'Filters/';
+          break;
+        }
+        case EProcType.EMODELS: {
+          procPath += 'EModels/';
+          break;
+        }
+        case EProcType.FMODELS: {
+          procPath += 'FModels/';
+          break;
+        }
+        case EProcType.TEST: {
+          procPath += 'Tests/';
+          break;
+        }
+        default: {
+          return 'ERROR: ProcType error'
+        }
       }
-      case EProcType.FILTER: {
-        procPath += 'Filters/';
-        break;
-      }
-      case EProcType.EMODELS: {
-        procPath += 'EModels/';
-        break;
-      }
-      case EProcType.FMODELS: {
-        procPath += 'FModels/';
-        break;
-      }
-      case EProcType.TEST: {
-        procPath += 'Tests/';
-        break;
-      }
-      default: {
-        return 'ERROR: ProcType error'
-      }
-    }
 
-    procPath += process.name + '.py';
-    let promiseScript = this.http.get(procPath, { responseType: 'text' }).toPromise();
-    return promiseScript;
+      procPath += process.name + '.py'; //add file name to path to get path to file
+      let promiseScript = this.http.get(procPath, { responseType: 'text' }).toPromise(); //return as promise
+      return promiseScript;
+    }catch(e:any){
+      //Retry as ther may be another issue that could go away with a retry
+      this.Handler.Retry(e,attempt,max_attempt);
+      attempt++; //add to attempt counter
+    }
   }
 
   //Takes a script and uses pyodide to run it on the dataSet
