@@ -1,12 +1,12 @@
 import {Injectable} from '@angular/core';
-import {Error, EErrorType} from "../models/error.model";
+import {CustomError, EErrorType} from "../models/error.model";
 
 @Injectable({
   providedIn: 'root'
 })
 export class ErrorHandlerService {
 
-  private errors: Error[]; //Container for errors 
+  private errors: CustomError[]; //Container for errors
   private errorID: -1;    //ID that counts up for each error found
 
   //New error that id added to the container
@@ -20,8 +20,8 @@ export class ErrorHandlerService {
     return this.errors[id];
   }
 
-      //Changes Type of error
-  public setType(err: Error, errType: EErrorType) {
+  //Changes Type of error
+  public setType(err: CustomError, errType: EErrorType) {
     err.errType = errType;
     return err;
   }
@@ -30,22 +30,22 @@ export class ErrorHandlerService {
   public Fatal(error: any) {
     //ADD UI PROMPT
     console.log("Fatal error: " + error + " was caught, skipping process");
-    return this.newError(error,EErrorType.FATAL); //Adds error to record
+    return this.newError(error, EErrorType.FATAL); //Adds error to record
   };
 
   //Records a non-fatal error and adds to container
-  public Retry(error: any, attempt: number, max_attempt: number, errID?:number) {
+  public Retry(error: any, attempt: number, max_attempt: number, errID?: number) {
     //ADD UI PROMPT
     console.log("Error: " + error + " occurred. Attempting retry: " + attempt + 1 + "/" + max_attempt)
-    if (attempt == 1){
+    if (attempt == 1) {
       return this.newError(error, EErrorType.RETRY);
-    }else{
+    } else {
       return this.getError(errID);
     }
   };
 
   //Records a failed retry and changes type of error
-  public RetryFailed(errID:number) {
+  public RetryFailed(errID: number) {
     //ADD UI PROPMT
     console.log("Max attempts reached. Quitting method.");
     let error = this.getError(errID);

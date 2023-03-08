@@ -1,11 +1,11 @@
 import {Injectable} from '@angular/core';
 import {EProcType, Process} from "../models/process.model";
-import {EErrorType, Error} from "../models/error.model";
 import {loadPyodide} from "pyodide";
 import {BehaviorSubject, Observable} from "rxjs";
 import {HttpClient} from "@angular/common/http";
 import {GraphService} from "./graph.service";
 import {ErrorHandlerService} from "./error-handler.service";
+import {EErrorType, CustomError} from "../models/error.model";
 
 const PYODIDE_BASE_URL = 'https://cdn.jsdelivr.net/pyodide/v0.22.0/full/';
 
@@ -56,34 +56,34 @@ export class ProcessorService {
   }
 
   public addProcess(process: Process) { //adds a process definition to the data struct
-    try{
-    switch (process.procType) { //add to the correct container acording to process type
-      case EProcType.CPOINT: {
-        this.availableProcesses.cPoints.push(process);
-        break;
+    try {
+      switch (process.procType) { //add to the correct container acording to process type
+        case EProcType.CPOINT: {
+          this.availableProcesses.cPoints.push(process);
+          break;
+        }
+        case EProcType.FILTER: {
+          this.availableProcesses.filters.push(process);
+          break;
+        }
+        case EProcType.EMODELS: {
+          this.availableProcesses.eModels.push(process);
+          break;
+        }
+        case EProcType.FMODELS: {
+          this.availableProcesses.fModels.push(process);
+          break;
+        }
+        case EProcType.TEST: {
+          this.availableProcesses.test.push(process);
+          break;
+        }
+        default: {
+          throw Error('ERROR: ProcType error');
+        }
       }
-      case EProcType.FILTER: {
-        this.availableProcesses.filters.push(process);
-        break;
-      }
-      case EProcType.EMODELS: {
-        this.availableProcesses.eModels.push(process);
-        break;
-      }
-      case EProcType.FMODELS: {
-        this.availableProcesses.fModels.push(process);
-        break;
-      }
-      case EProcType.TEST: {
-        this.availableProcesses.test.push(process);
-        break;
-      }
-      default: {
-        throw Error('ERROR: ProcType error');
-      }
-    }
-    return this.availableProcesses;
-    }catch(e:any){
+      return this.availableProcesses;
+    } catch (e: any) {
       return this.errorHandlerService.Fatal(e);
     }
   };
@@ -165,7 +165,7 @@ export class ProcessorService {
 
   //Uses the given process name and processes path to give the script
   // returns script or promise of script if successful, -1 if error occurred
-  getScript(process: Process): Promise<string> | string | Error {
+  getScript(process: Process): Promise<string> | string | CustomError {
     try {
       if (process.script) { //if process has a script recorded
         //get process from data sytem
@@ -175,13 +175,13 @@ export class ProcessorService {
       return this.errorHandlerService.Fatal(e); //fatal error if data system could be reached
     }
 
-    let attempt = 1;//1st attempt at filesystem 
+    let attempt = 1;//1st attempt at filesystem
     let max_attempt = 5;
     let procPath = this.rootPath;
-    let foundError:Error; //variable for if error is found
+    let foundError: CustomError; //variable for if error is found
 
-    do{//repeat until max attempts
-        
+    do {//repeat until max attempts
+
       try {
         // If the process is not recorder, look for it:
         switch (process.procType) {
@@ -214,8 +214,8 @@ export class ProcessorService {
         foundError = this.errorHandlerService.Retry(e, attempt, max_attempt);
         attempt++; //add to attempt counter
 
-      } 
-  }while(attempt<max_attempt);
+      }
+    } while (attempt < max_attempt);
     return this.errorHandlerService.RetryFailed(foundError.id);//return the error
   }
 
@@ -224,11 +224,11 @@ export class ProcessorService {
   doProcess(process: Process, dataSet: any = this.initialData): any {
     this._pyodideLoading.next(true); //check if pyodide is loaded
 
-    let getScriptPromise: Promise<string> | string | Error = this.getScript(process); //get the process script
-    if (getScriptPromise instanceof Error){
+    let getScriptPromise: Promise<string> | string | CustomError = this.getScript(process); //get the process script
+    if (!(getScriptPromise instanceof Promise || getScriptPromise instanceof String)) {
       return getScriptPromise; //return the error that was caught
     }
-    
+
     return new Promise<any>((resolve, reject) => {
       getScriptPromise = getScriptPromise as Promise<string>;
       getScriptPromise
