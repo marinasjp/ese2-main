@@ -1,0 +1,18 @@
+image: python:3.8
+
+stages:
+  - test
+
+before_script:
+  - pip install numpy
+  - pip install scipy
+
+unit-test:
+  stage: test
+  script:
+    - pip install pytest pytest-cov
+    - python -m pytest --cov-report=html --cov=src .
+  artifacts:
+    paths:
+      - coverage
+    expire_in: 30 days

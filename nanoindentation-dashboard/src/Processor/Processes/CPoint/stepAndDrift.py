@@ -1,5 +1,5 @@
 from scipy.signal import savgol_filter
-
+#User Inputs
 window = 101
 threshold = 10
 thratio = 25

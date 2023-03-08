@@ -1,5 +1,6 @@
 import numpy as np
 
+#User Inputs
 deltaX = 2000
 Athreshold = 10
 Fthreshold = 100
