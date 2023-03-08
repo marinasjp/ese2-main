@@ -1,11 +1,6 @@
 from scipy.optimize import curve_fit
 import numpy as np
 
-#User Inputs
-fitWindow = 200.0
-xRagne = 1000.0
-forceThreshold = 10.0
-tipRadius = 1
 
 def calculate(x, y):
   # Retunrs contact point (z0, f0) based on max R**2
@@ -19,7 +14,7 @@ def calculate(x, y):
 
 
 # Returns min and max indices of f-z data considered
-def getRange( x, y):
+def getRange(x, y, xRagne = 1000.0, forceThreshold = 10.0):
   try:
     jmax = np.argmin((y - forceThreshold * 1e-9) ** 2)
     jmin = np.argmin((x - (x[jmax] - xRagne * 1e-9)) ** 2)
@@ -28,9 +23,9 @@ def getRange( x, y):
   return jmin, jmax
 
 
-def getWeight(x, y):
+def getWeight(x, y, fitWindow = 200.0):
   # Retunrs weight array (R**2) and corresponding index array. Uses get_indentation and fit methods defined below
-  jmin, jmax = self.getRange(x, y)
+  jmin, jmax = getRange(x, y)
   if jmin is False or jmax is False:
     return False
   zwin = fitWindow * 1e-9
@@ -49,7 +44,7 @@ def getWeight(x, y):
   return x[jmin:jmax], r_squared
 
 
-def get_indentation(x, y, iContact, win):
+def get_indentation(x, y, iContact, win, tipRadius = 1):
   # Retunrs indentation f and ind from f and z
   z = x
   f = y
@@ -64,7 +59,7 @@ def get_indentation(x, y, iContact, win):
   return ind, Yf
 
 
-def fit( x, y, ind, f):
+def fit(ind, f, tipRadius = 1):
   seeds = [1000.0 / 1e9]
   try:
     R = tipRadius
