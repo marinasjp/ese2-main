@@ -1,13 +1,7 @@
 import numpy as np
 
-#User Inputs
-deltaX = 2000
-Athreshold = 10
-Fthreshold = 100
-shift = 0
 
-
-def calculate(x, y):
+def calculate(x, y, deltaX = 2000, Athreshold = 10, Fthreshold = 100,shift = 0):
   yth = Athreshold * 1e-9
   if yth > np.max(y) or yth < np.min(y):
     return False
@@ -34,7 +28,7 @@ def calculate(x, y):
       jcp = j
       break
   if jcp == 0:
-    return False
+    return 3
   sh = shift * 1e-9
   xcp = x[jcp] + sh
   ycp = y[np.argmin((x - xcp) ** 2)]
