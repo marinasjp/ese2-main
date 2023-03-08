@@ -1,9 +1,7 @@
 import numpy as np
 
-#User Input
-ZeroRange = 500.0
 
-def calculate(x, y):
+def calculate(x, y, ZeroRange = 500.0):
   deg = 0
   worky = np.copy(y)
   xtarget = np.min(x) + ZeroRange * 1e-9
