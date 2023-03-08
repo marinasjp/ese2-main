@@ -1,14 +1,9 @@
 import numpy as np
 from scipy.optimize import curve_fit
 
-# input from user
-poisson = 0.5
-geometry = 'sphere'
-radius = 1
-angle = 1
 
 
-def theory(x, *parameters):
+def theory(x, *parameters, poisson = 0.5, geometry = 'sphere', radius = 1, angle = 1):
   if geometry == 'sphere':
     R = radius
     return (4.0 / 3.0) * (parameters[0] / (1 - poisson ** 2)) * np.sqrt(R * x ** 3)
