@@ -6,36 +6,50 @@ import {Error, EErrorType} from "../models/error.model";
 })
 export class ErrorHandlerService {
 
-  private errors: Error[];
-  private errorID: -1;
+  private errors: Error[]; //Container for errors 
+  private errorID: -1;    //ID that counts up for each error found
 
-  public addError(err: any, errType: EErrorType) {
+  //New error that id added to the container
+  public newError(err: any, errType: EErrorType) {
     this.errors.push({id: this.errorID++, errType: errType, error: err});
     return {id: this.errorID++, errType: errType, error: err};
   }
 
+  //Retrieves error object by its ID
   public getError(id: number) {
     return this.errors[id];
   }
 
+      //Changes Type of error
   public setType(err: Error, errType: EErrorType) {
     err.errType = errType;
     return err;
   }
 
+  //Records a fatal error and adds to container
   public Fatal(error: any) {
-
+    //ADD UI PROMPT
     console.log("Fatal error: " + error + " was caught, skipping process");
-    return
+    return this.newError(error,EErrorType.FATAL); //Adds error to record
   };
 
-  public Retry(error: any, attempt: number, max_attempt: number) {
+  //Records a non-fatal error and adds to container
+  public Retry(error: any, attempt: number, max_attempt: number, errID?:number) {
+    //ADD UI PROMPT
     console.log("Error: " + error + " occurred. Attempting retry: " + attempt + 1 + "/" + max_attempt)
-    return
+    if (attempt == 1){
+      return this.newError(error, EErrorType.RETRY);
+    }else{
+      return this.getError(errID);
+    }
   };
 
-  public RetryFailed() {
-    console.log("Max attempts reached. Quitting method.")
+  //Records a failed retry and changes type of error
+  public RetryFailed(errID:number) {
+    //ADD UI PROPMT
+    console.log("Max attempts reached. Quitting method.");
+    let error = this.getError(errID);
+    return this.setType(error, EErrorType.FATAL);
   };
 
   constructor() {
