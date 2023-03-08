@@ -1,5 +1,6 @@
 from scipy.signal import savgol_filter
 
+
 # window and order are user inputs
 def calculate(x, y, window=25, order=3):
   win = window * 1e-9

@@ -2,13 +2,8 @@ import numpy as np
 from scipy.signal import find_peaks
 from scipy.interpolate import interp1d
 
-# USER INPUT
-band = 30
-pro = 40
-threshold = 25
 
-
-def calculate(x, y):
+def calculate(x, y, band=30, pro=40, threshold=25):
   ff = np.fft.rfft(y, norm=None)
   idex = find_peaks(np.log(np.abs(ff)), prominence=pro)
   xgood = np.ones(len(ff.real)) > 0.5
