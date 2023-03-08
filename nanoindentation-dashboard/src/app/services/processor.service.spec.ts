@@ -4,6 +4,8 @@ import { GraphService } from 'src/app/services/graph.service';
 import { ProcessorService } from 'src/app/services/processor.service';
 import * as fs from 'fs';
 
+//Will not be used!!
+
 let testProcess = {id:"test", name: "Test", procType: EProcType.TEST}
 //let testStr = fs.readFileSync('../assets/Processes/Tests/testProcess.py', 'utf-8');
 let testStr = "def calculate( x, y): \n return x, y+1"
