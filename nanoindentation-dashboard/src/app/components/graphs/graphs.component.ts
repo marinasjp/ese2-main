@@ -59,6 +59,7 @@ export class GraphsComponent {
       },
       plugins: {
         decimation: this.decimation,
+        legend: {display: false},
       },
       scales: {
         x: {
