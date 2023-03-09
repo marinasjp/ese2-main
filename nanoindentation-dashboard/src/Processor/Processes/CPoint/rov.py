@@ -3,8 +3,6 @@ import numpy as np
 
 def calculate(x, y):
   zz_x, rov = getWeight(x, y)
-  print(zz_x)
-  print(rov)
   rov_best_ind = np.argmax(rov)
   j_rov = np.argmin((x - zz_x[rov_best_ind]) ** 2)
   return [x[j_rov], y[j_rov]]
@@ -32,10 +30,3 @@ def getWeight(x, y, windowr = 200):
   for j in range(jmin, jmax):
     rov.append((np.var(y[j + 1: j + win])) / (np.var(y[j - win: j - 1])))
   return x[jmin:jmax], rov
-
-
-# test_array = [4, 5, 7, 2, 23, 6, 7, 32, 4, 5, 7, 2, 23, 6, 7, 32, 4, 5, 7, 2, 23, 6, 7, 324, 5, 7, 2, 23, 6, 7, 324,
-#                 2, 23, 6, 7, 324, 5, 7, 2, 23, 6, 7, 324, 5, 7, 2, 23, 6, 7, 324, 5, 7, 2, 23, 6, 7, 324, 5, 7, 2, 23,
-#                 324, 5, 7, 2, 23, 6, 7, 324, 5, 7, 2, 23, 6, 7, 324, 5, 7, 2, 23, 6, 7, 324, 5, 7, 2, 23, 6, 7, 324, 5,
-#                 23, 6, 7, 32]
-# calculate(np.array(test_array), np.array([1, 2, 1e-09, 3, 1e-08, 1]))
