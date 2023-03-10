@@ -34,12 +34,15 @@ def send_data():
 
   
 
-    for i in range(len(data)):
-        customerData['Time'].append(data[i]['time'].tolist())
-        customerData['Load'].append(data[i]['force'].tolist())
-        customerData['Piezo'].append(data[i]['height (piezo)'].tolist())
-        customerData['Indentation'].append(data[i]['height (measured)'].tolist())
-        customerData['Cantilever'].append(data[i]['segment'].tolist())
+    for i in range(len(data)-1):
+        fd = afmformats.mod_force_distance.AFMForceDistance(
+            data[i]._raw_data, data[i].metadata, diskcache=False)
+        customerData['Time'].append(0)   #data[i]['time'].tolist())
+        customerData['Load'].append((fd.appr['force']*1e9).tolist() + (fd.retr['force']*1e9).tolist())
+        customerData['Piezo'].append(0)   #[i]['height (piezo)'].tolist())
+        
+        customerData['Indentation'].append((-1*(fd.appr['height (measured)']*1e9)).tolist() + (-1*(fd.retr['height (measured)']*1e9).tolist()))
+        customerData['Cantilever'].append(0)   #data[i]['segment'].tolist())
 
    
     print(type(customerData['Time'][0]))
