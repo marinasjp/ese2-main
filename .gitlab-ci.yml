@@ -12,6 +12,6 @@ unit-test:
   script:
     - python -m pytest --import-mode=append ./nanoindentation-dashboard/src/Processor/Processes/
   cache:
-  key: "$CI_COMMIT_REF_SLUG"
-  paths:
-    - cache/
+    key: "$CI_COMMIT_REF_SLUG"
+    paths:
+      - cache/
