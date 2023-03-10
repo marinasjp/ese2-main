@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, OnChanges, SimpleChanges} from '@angular/core';
 import {GraphService} from "../../services/graph.service";
 import {ProcessorService} from "../../services/processor.service";
 import {Process} from "../../models/process.model";
@@ -9,7 +9,7 @@ import {Dataset} from "../../models/dataset.model";
   templateUrl: './sidenav.component.html',
   styleUrls: ['./sidenav.component.scss'],
 })
-export class SidenavComponent {
+export class SidenavComponent implements OnChanges{
 
   useProminency: boolean = true;
   prominency: number = null;
@@ -23,12 +23,17 @@ export class SidenavComponent {
   spectraMin: any;
   spectraMax: any;
 
-  filterSelect: number;
+  sliderVal: number;
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes) {
+      console.log(this.sliderVal);
+    }
+  }
+
   consoleItems: string[];
   //consoleItems = new Array(1000);
 
   filters: Process[] = [];
-
 
   // filters: { id: number, name: string, inputs?: string[] }[] = [
   //   {id: 1, name: "Median Filter", inputs: ["Window Length [nm]", "Polynomical Order (int)"]},
@@ -47,6 +52,7 @@ export class SidenavComponent {
   constructor(public graphService: GraphService,
               public processService: ProcessorService) {
   }
+
 
   ngOnInit() {
     this.filters = this.processService.availableProcesses.filters;
@@ -76,7 +82,9 @@ export class SidenavComponent {
     });
   }
 
-
+  test() {
+    this.graphService.sliderVal = this.sliderVal;
+  }
 };
 
 

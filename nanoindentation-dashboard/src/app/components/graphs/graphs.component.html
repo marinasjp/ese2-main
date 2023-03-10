@@ -2,15 +2,25 @@
 
   <!--  FILTERED CURVES -->
   <!--  <app-graph [data]="dataTemplate" [options]="graphOptions"></app-graph>-->
-
-
-  <p-chart type="line"
-           width="800px"
-           height="600px"
-           #chart
-           [data]="dataTemplate"
-           [options]="graphOptions">
-  </p-chart>
+  <div>
+    <h3>Force-Displacement</h3>
+    <p-chart type="line"
+             width="40vh"
+             height="40vh"
+             #chart1
+             [data]="dataTemplate"
+             [options]="graphOptions">
+    </p-chart>
+    <!-- Slide Through Graph -->
+    <p-chart type="line"
+             width="40vh"
+             height="40vh"
+             #chart2
+             [data]="slideTemplate"
+             [options]="graphOptions">
+    </p-chart>
+  </div>
+  
 
   <button (click)="test()">TEST</button>
 

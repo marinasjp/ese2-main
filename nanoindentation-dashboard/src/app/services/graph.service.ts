@@ -17,6 +17,9 @@ export class GraphService {
     return this._uploadingDataLoading.asObservable();
   }
 
+  // sliderVal: number;
+  sliderVal = 5;
+
   start: number;
   end: number;
 
@@ -92,7 +95,6 @@ export class GraphService {
 
   uploadData(file: any): void {
     this._uploadingDataLoading.next(true);
-
     const formData = new FormData();
     formData.append('file', file);
 

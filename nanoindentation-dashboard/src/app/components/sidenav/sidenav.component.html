@@ -73,8 +73,8 @@
 
       <div style="border: 1px solid #383838; border-radius: 5px; padding: 12px; margin-top: 12px">
         Filter-Select
-        <h5>Selected: {{filterSelect}}</h5>
-        <p-slider [(ngModel)]="filterSelect"></p-slider>
+        <h5>Selected: {{sliderVal}}</h5>
+        <p-slider [(ngModel)]="sliderVal"></p-slider>
       </div>
     </p-accordionTab>
     <!-- Contact Point Tab -->
@@ -167,5 +167,5 @@
       </div>
     </p-accordionTab>
   </p-accordion>
-
+  <button (click)="test()">TEST</button>
 </div>
