@@ -36,7 +36,7 @@ let outData: { x: number[], y: number[] } = { x: [100, 200, 300, 400], y: [2, 3,
     let graph = new GraphService(sample, http);
 
     beforeEach(() => {
-        mockProcessorService = new ProcessorService(http, errorHandler, graph);
+        mockProcessorService = new ProcessorService(http, errorHandler, new GraphService(sample, http));
     });
 
     // Tests if the newProcess function is ... a new python script (Process) is added to the data structure.

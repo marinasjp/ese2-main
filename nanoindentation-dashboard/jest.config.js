@@ -1,9 +1,11 @@
 module.exports = {
-    transform: {'^.+\\.ts?$': 'ts-jest'},
-    testEnvironment: 'node',
-    testRegex: '/tests/.*\\.(test|spec)?\\.(ts|tsx)$',
-    moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node']
-  };
+  preset: 'ts-jest/presets/js-with-ts',
+  transform: {'^.+\\.ts?$': 'ts-jest'},
+  testEnvironment: 'node',
+  testRegex: '/tests/.*\\.(test|spec)?\\.(ts|tsx)$',
+  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
+  transformIgnorePatterns: ["node_modules/(?!variables/.*)"]
+};
 
 // module.exports = {
 //   transform: {'^.+\\.ts?$': 'ts-jest'},
