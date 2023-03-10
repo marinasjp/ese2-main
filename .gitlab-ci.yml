@@ -6,13 +6,13 @@ stages:
 before_script:
   - pip install numpy
   - pip install scipy
+  - pip install pytest
 
 unit-test:
   stage: test
   script:
-    - pip install pytest pytest-cov
-    - python -m pytest --cov-report=html --cov=src .
-  artifacts:
+    - python -m pytest --import-mode=append ./nanoindentation-dashboard/src/Processor/Processes/
+  cache:
+    key: "$CI_COMMIT_REF_SLUG"
     paths:
-      - coverage
-    expire_in: 30 days
+      - cache/
