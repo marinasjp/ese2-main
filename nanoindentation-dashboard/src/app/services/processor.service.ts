@@ -184,6 +184,18 @@ export class ProcessorService {
   initialData: { x: number[], y: number[] } = {x: [100, 200, 300, 400], y: [1, 2, 3, 4]};
   rootPath: string = 'assets/Processes/';
 
+  private _processedData: {x:number[], y:number[]};//container for most recent processed dataset
+
+  //getter for processed dataset
+  public get processedData(): {x:number[], y:number[]}{
+    return this._processedData;
+  }
+
+  //setter for processed dataset
+  public set processedData( data:{x:number[], y:number[]} ){
+    this._processedData = data;
+  }
+
   constructor(//constructor for object
     private http: HttpClient,
     private errorHandlerService: ErrorHandlerService,
@@ -210,9 +222,21 @@ export class ProcessorService {
 
   //run the process chain recorded
   runProcessChain() {
-    if (this.processChain.filters.length) {
-      this.updateFilteredDataset(this.initialData.x, this.initialData.y);
-      this.runFilters();
+    this._processedData = this.initialData; //reset processed data to the initial
+    if (this.processChain.filters.length) { //if there are filters, 
+      this.runAll(this._processChain.filters); //run all filters
+    }
+    if (this.processChain.cPoints.length) {
+      this.runAll(this._processChain.cPoints);
+    }
+    if (this.processChain.fModels.length) {
+      this.runAll(this._processChain.fModels);
+    }
+    if (this.processChain.eModels.length) {
+      this.runAll(this._processChain.eModels);
+    }
+    if (this.processChain.test.length) {
+      this.runAll(this._processChain.test);
     }
   }
 
@@ -227,28 +251,21 @@ export class ProcessorService {
     // console.log(y);
   }
 
-  runFilters(index: number = 0, dataSet: any = this.initialData): any {
+  //runs all the processes in a given set
+  runAll(processes: Process[], dataSet: any = this._processedData): any {
     let promise: any;
-    for (let i = 0; i < this.processChain.filters.length; i++) {// for each filter in process chain
-      let currProc = this.processChain.filters[i];
+    for (let i = 0; i < processes.length; i++) {// for each filter in process chain
+      let currProc = processes[i];
       if (currProc.inUse) { //doprocess if in use
         promise = this.doProcess(currProc, dataSet);
         if (promise.type == 'customerror') {
           continue; //if error, skip filter
-          return promise; //If error, return error
         }
-        promise = promise as Promise<any>;
-        promise.then((result: { x: number[]; y: number[]; }) => {
-          if (index < this.processChain.filters.length - 1) {
-            this.runFilters(index + 1, result);
-          } else {
-            this.updateFilteredDataset(result.x, result.y);
-          }
-        })
       } else { // else move to the next filter
         continue;
       }
     }
+    return this.processedData; //return processed data
   }
 
   //Uses the given process name and processes path to give the script
@@ -309,7 +326,7 @@ export class ProcessorService {
 
   //Takes a script and uses pyodide to run it on the dataSet
   //procName: Name of proces, procType: Type of process, dataSet: (optional) dataset to be processed if not given uses this.currData
-  doProcess(process: Process, dataSet: any = this.initialData): any {
+  doProcess(process: Process, dataSet: any = this._processedData): any {
     this._pyodideLoading.next(true); //check if pyodide is loaded
 
     let getScriptPromise: Promise<string> | string | CustomError = this.getScript(process); //get the process script
@@ -330,6 +347,7 @@ export class ProcessorService {
           let resultPy = calculate(dataSet.x, dataSet.y); //run function on the dataset
           let result = resultPy.toJs(); //translate result to JS
           result = {x: result[0], y: result[1]}; //map result onto container
+          this._processedData = result; //set result as the processedData 
           resultPy.destroy();//free the function used
           process.inUse = true; //set the process to be in use
           this.addToChain(process); //add process to the chain for record
