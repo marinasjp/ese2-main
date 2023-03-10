@@ -11,4 +11,4 @@ unit-test:
   stage: test
   script:
     - pip install pytest pytest-cov
-    - python -m pytest --import-mode=append .nanoindentation-dashboard/src/Processor/Processes/
+    - python -m pytest --import-mode=append ./nanoindentation-dashboard/src/Processor/Processes/
