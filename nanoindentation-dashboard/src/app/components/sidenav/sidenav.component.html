@@ -74,14 +74,12 @@
       <div style="border: 1px solid #383838; border-radius: 5px; padding: 12px; margin-top: 12px">
         Filter-Select
         <h5>Selected: {{sliderVal}}</h5>
-        <p-slider [max]="(graphService.inputData$|async).length - 1" (onChange)="graphService.sliderValue = sliderVal"
+        <p-slider [max]="(graphService.datasets$|async).length - 1" (onChange)="graphService.sliderValue = sliderVal"
                   [(ngModel)]="sliderVal"></p-slider>
       </div>
     </p-accordionTab>
     <!-- Contact Point Tab -->
-    <p-accordionTab header="Contact Point">
-      Contact Point
-    </p-accordionTab>
+    <app-contact-point-tab></app-contact-point-tab>
 
     <!-- Force-Ind Tab -->
     <p-accordionTab header="Force-Ind">

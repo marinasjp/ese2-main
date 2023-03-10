@@ -7,8 +7,8 @@
     <p-chart type="line"
              width="40vh"
              height="40vh"
-             #chart1
-             [data]="dataTemplate"
+             #displacementForceFilteredChart
+             [data]="displacementForceFilteredData"
              [options]="graphOptions">
     </p-chart>
     <!-- Slide Through Graph -->
@@ -20,7 +20,7 @@
              [options]="graphOptions">
     </p-chart>
   </div>
-  
+
 
   <button (click)="test()">TEST</button>
 

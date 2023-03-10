@@ -1,5 +1,4 @@
 import {Component} from '@angular/core';
-import {Dataset} from "../../../models/dataset.model";
 import {GraphService} from "../../../services/graph.service";
 
 @Component({
@@ -44,7 +43,6 @@ export class FilesTabComponent {
       let values;
       for (let line = 0; line < lines.length; line++) {
         if (reached) {
-          //ta.push(lines[line].split("\t"));
           values = lines[line].split("\t");
           customerData["Time"].push(values[0]);
           customerData["Load"].push(values[1]);
@@ -61,12 +59,6 @@ export class FilesTabComponent {
           }
         }
       }
-
-      let dataset: Dataset
-
-
-      // this.graphService.inputData.x = customerData["Indentation"];
-      // this.graphService.inputData.y = customerData["Load"];
     }
 
     reader.readAsText(this.uploadedFile[0]);

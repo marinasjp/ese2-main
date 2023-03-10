@@ -1,0 +1,9 @@
+<p-accordionTab header="Contact Point">
+  Contact Point
+
+  <p-dropdown [options]="availableCPointProcesses" [(ngModel)]="processorService.selectedCPointProcess"
+              optionLabel="name">
+  </p-dropdown>
+
+  <button (click)="test()">TEST</button>
+</p-accordionTab>

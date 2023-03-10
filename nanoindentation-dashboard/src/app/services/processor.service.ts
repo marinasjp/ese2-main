@@ -27,8 +27,37 @@ export class ProcessorService {
     return this._pyodideLoading.asObservable();
   }
 
+  private _selectedFilters: Process[] = [];
+
+  public get selectedFilters(): Process[] {
+    return this._selectedFilters;
+  }
+
+  public set selectedFilters(filters: Process[]) {
+    this._selectedFilters = filters;
+    let processChain = this.processChain;
+    processChain.filters = filters;
+    this.processChain = processChain;
+  }
+
+  selectedCPointProcess: Process = null;
+
+  public availableProcesses: { filters: Process[], cPoints: Process[], eModels: Process[], fModels: Process[], test: Process[] } = {
+    filters: [ //container for processes
+      {id: 'median', name: 'Median', procType: EProcType.FILTER, custom: false},
+      {id: 'savgol', name: 'Sawitzky Golay', procType: EProcType.FILTER, custom: false},
+      {id: 'linearDetrend', name: 'Linear Detrending', procType: EProcType.FILTER, custom: false},
+    ],
+    cPoints: [//container for cPoints
+      {id: 'rov', name: 'Rov', procType: EProcType.CPOINT, custom: false}
+    ],
+    eModels: [],//container for eModel
+    fModels: [],//container for fModel
+    test: []     //container for test processess
+  }
+
   //Container for processes thats been run
-  private _processChain: { filters: Process[], cPoints: Process[], eModels: Process[], fModels: Process[], test: Process[]} = {
+  private _processChain: { filters: Process[], cPoints: Process[], eModels: Process[], fModels: Process[], test: Process[] } = {
     filters: [],
     cPoints: [],
     eModels: [],
@@ -84,18 +113,6 @@ export class ProcessorService {
       return this.errorHandlerService.Fatal(e);
     }
   };
-
-  public availableProcesses: { filters: Process[], cPoints: Process[], eModels: Process[], fModels: Process[], test: Process[] } = {
-    filters: [ //container for processes
-      {id: 'median', name: 'Median', procType: EProcType.FILTER, custom: false},
-      {id: 'savgol', name: 'Sawitzky Golay', procType: EProcType.FILTER, custom: false},
-      {id: 'linearDetrend', name: 'Linear Detrending', procType: EProcType.FILTER, custom: false},
-    ],
-    cPoints: [],//container for cPoints
-    eModels: [],//container for eModel
-    fModels: [],//container for fModel
-    test: []     //container for test processess
-  }
 
   public addProcess(process: Process) { //adds a process definition to the data struct
     try {
@@ -162,18 +179,7 @@ export class ProcessorService {
       return this.errorHandlerService.Fatal(e);
     }
   }
-  private _selectedFilters: Process[] = [];
 
-  public get selectedFilters(): Process[] {
-    return this._selectedFilters;
-  }
-
-  public set selectedFilters(filters: Process[]) {
-    this._selectedFilters = filters;
-    let processChain = this.processChain;
-    processChain.filters = filters;
-    this.processChain = processChain;
-  }
 
   initialData: { x: number[], y: number[] } = {x: [100, 200, 300, 400], y: [1, 2, 3, 4]};
   rootPath: string = 'assets/Processes/';
@@ -223,11 +229,11 @@ export class ProcessorService {
 
   runFilters(index: number = 0, dataSet: any = this.initialData): any {
     let promise: any;
-    for (let i = 0; i<this.processChain.filters.length; i++) {// for each filter in process chain
+    for (let i = 0; i < this.processChain.filters.length; i++) {// for each filter in process chain
       let currProc = this.processChain.filters[i];
-      if (currProc.inUse){ //doprocess if in use
+      if (currProc.inUse) { //doprocess if in use
         promise = this.doProcess(currProc, dataSet);
-        if (promise.type == 'customerror')  {
+        if (promise.type == 'customerror') {
           continue; //if error, skip filter
           return promise; //If error, return error
         }
@@ -239,7 +245,7 @@ export class ProcessorService {
             this.updateFilteredDataset(result.x, result.y);
           }
         })
-      }else{ // else move to the next filter
+      } else { // else move to the next filter
         continue;
       }
     }

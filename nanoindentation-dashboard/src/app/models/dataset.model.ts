@@ -1,4 +1,8 @@
+import {Datapoint} from "./datapoint.model";
+
 export interface Dataset {
-  x: number[];
-  y: number[];
+  contactPoint: Datapoint;
+  displacementForceData: Datapoint[];
+  displacementForceFilteredData: Datapoint[];
+  indentationForceData: Datapoint[];
 }
