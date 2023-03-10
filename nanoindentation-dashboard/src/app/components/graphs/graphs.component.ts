@@ -30,6 +30,14 @@ export class GraphsComponent {
     this.setDataTemplate();
     if (this.chart1)
       this.chart1.reinit();
+
+    this.graphService.inputData$.subscribe(() => {
+      this.reloadMultipleLineGraphs();
+    })
+
+    this.graphService.sliderValue$.subscribe(() => {
+      this.reloadSingleLineGraphs();
+    })
   }
 
   setGraphOptions(): void {
@@ -99,27 +107,38 @@ export class GraphsComponent {
   setDataTemplate(): void {
     this.dataTemplate = {
       labels: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16],
-      datasets: [
-      ]
+      datasets: []
     };
     this.slideTemplate = {
       labels: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16],
-      datasets: [
-      ]
+      datasets: []
     };
   }
 
-  test() {
+  reloadMultipleLineGraphs(): void {
+    this.dataTemplate.datasets = [];
     for (let inputData of this.graphService.inputData) {
       this.dataTemplate.datasets.push(this.getNewData());
       this.dataTemplate.datasets[this.dataTemplate.datasets.length - 1].data = inputData;
     }
-    //Slider Graph
-    this.slideTemplate.datasets.push(this.getNewData());
-    this.slideTemplate.datasets[this.slideTemplate.datasets.length - 1].data = this.graphService.inputData[this.graphService.sliderVal];
-    
-    console.log(this.graphService.sliderVal);
-    this.chart1.reinit();
-    this.chart2.reinit();
+    if (this.chart1) {
+      this.chart1.reinit();
+    }
+    this.reloadSingleLineGraphs();
+  }
+
+  reloadSingleLineGraphs(): void {
+    if (!this.dataTemplate?.datasets || !this.dataTemplate.datasets[this.graphService.sliderValue]) {
+      return;
+    }
+    this.slideTemplate.datasets = [this.dataTemplate.datasets[this.graphService.sliderValue]];
+    if (this.chart2) {
+      this.chart2.reinit();
+    }
+  }
+
+  test() {
+    this.reloadMultipleLineGraphs();
+    this.reloadSingleLineGraphs();
   }
 }

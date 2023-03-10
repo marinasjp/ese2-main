@@ -2,14 +2,13 @@ import {Component, OnChanges, SimpleChanges} from '@angular/core';
 import {GraphService} from "../../services/graph.service";
 import {ProcessorService} from "../../services/processor.service";
 import {Process} from "../../models/process.model";
-import {Dataset} from "../../models/dataset.model";
 
 @Component({
   selector: 'app-sidenav',
   templateUrl: './sidenav.component.html',
   styleUrls: ['./sidenav.component.scss'],
 })
-export class SidenavComponent implements OnChanges{
+export class SidenavComponent {
 
   useProminency: boolean = true;
   prominency: number = null;
@@ -24,11 +23,6 @@ export class SidenavComponent implements OnChanges{
   spectraMax: any;
 
   sliderVal: number;
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes) {
-      console.log(this.sliderVal);
-    }
-  }
 
   consoleItems: string[];
   //consoleItems = new Array(1000);
@@ -80,10 +74,6 @@ export class SidenavComponent implements OnChanges{
       console.log(this.consoleItems);
       this.output = result;
     });
-  }
-
-  test() {
-    this.graphService.sliderVal = this.sliderVal;
   }
 };
 

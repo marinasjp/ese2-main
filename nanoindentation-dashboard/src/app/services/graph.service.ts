@@ -17,9 +17,6 @@ export class GraphService {
     return this._uploadingDataLoading.asObservable();
   }
 
-  // sliderVal: number;
-  sliderVal = 5;
-
   start: number;
   end: number;
 
@@ -48,12 +45,26 @@ export class GraphService {
     this._filteredData.next(dataset);
   }
 
+  private _sliderValue: BehaviorSubject<number>;
+
+  public get sliderValue$(): Observable<number> {
+    return this._sliderValue.asObservable();
+  }
+
+  public get sliderValue(): number {
+    return this._sliderValue.value;
+  }
+
+  public set sliderValue(index: number) {
+    this._sliderValue.next(index);
+  }
 
   constructor(private sampleDataService: SampleDataService,
               private http: HttpClient) {
     this._inputData = new BehaviorSubject<Dataset[]>([]);
     this._filteredData = new BehaviorSubject<Dataset[]>([]);
     this._uploadingDataLoading = new BehaviorSubject<boolean>(false);
+    this._sliderValue = new BehaviorSubject<number>(0);
   }
 
   prepareUserInputData(dataset): any {

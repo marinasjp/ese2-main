@@ -5,7 +5,7 @@ import {BehaviorSubject, Observable} from "rxjs";
 import {HttpClient} from "@angular/common/http";
 import {GraphService} from "./graph.service";
 import {ErrorHandlerService} from "./error-handler.service";
-import {EErrorType, CustomError} from "../models/error.model";
+import {CustomError} from "../models/error.model";
 
 const PYODIDE_BASE_URL = 'https://cdn.jsdelivr.net/pyodide/v0.22.0/full/';
 
@@ -150,7 +150,7 @@ export class ProcessorService {
   runFilters(index: number = 0, dataSet: any = this.initialData): any {
     let promise = this.doProcess(this.processChain.filters[index], dataSet);
 
-    if (promise.type == 'customerror')  {
+    if (promise.type == 'customerror') {
       return promise; //If error, return error
     }
 
