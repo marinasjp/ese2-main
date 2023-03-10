@@ -222,9 +222,21 @@ export class ProcessorService {
 
   //run the process chain recorded
   runProcessChain() {
-    if (this.processChain.filters.length) {
-      this.updateFilteredDataset(this.initialData.x, this.initialData.y);
-      this.runFilters();
+    this._processedData = this.initialData; //reset processed data to the initial
+    if (this.processChain.filters.length) { //if there are filters, 
+      this.runAll(this._processChain.filters); //run all filters
+    }
+    if (this.processChain.cPoints.length) {
+      this.runAll(this._processChain.cPoints);
+    }
+    if (this.processChain.fModels.length) {
+      this.runAll(this._processChain.fModels);
+    }
+    if (this.processChain.eModels.length) {
+      this.runAll(this._processChain.eModels);
+    }
+    if (this.processChain.test.length) {
+      this.runAll(this._processChain.test);
     }
   }
 
@@ -239,28 +251,21 @@ export class ProcessorService {
     // console.log(y);
   }
 
-  runFilters(index: number = 0, dataSet: any = this.initialData): any {
+  //runs all the processes in a given set
+  runAll(processes: Process[], dataSet: any = this._processedData): any {
     let promise: any;
-    for (let i = 0; i < this.processChain.filters.length; i++) {// for each filter in process chain
-      let currProc = this.processChain.filters[i];
+    for (let i = 0; i < processes.length; i++) {// for each filter in process chain
+      let currProc = processes[i];
       if (currProc.inUse) { //doprocess if in use
         promise = this.doProcess(currProc, dataSet);
         if (promise.type == 'customerror') {
           continue; //if error, skip filter
-          return promise; //If error, return error
         }
-        promise = promise as Promise<any>;
-        promise.then((result: { x: number[]; y: number[]; }) => {
-          if (index < this.processChain.filters.length - 1) {
-            this.runFilters(index + 1, result);
-          } else {
-            this.updateFilteredDataset(result.x, result.y);
-          }
-        })
       } else { // else move to the next filter
         continue;
       }
     }
+    return this.processedData; //return processed data
   }
 
   //Uses the given process name and processes path to give the script
