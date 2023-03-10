@@ -11,8 +11,8 @@ export class ErrorHandlerService {
 
   //New error that id added to the container
   public newError(err: any, errType: EErrorType) {
-    this.errors.push({id: this.errorID++, errType: errType, error: err});
-    return {id: this.errorID++, errType: errType, error: err};
+    this.errors.push({id: this.errorID++, errType: errType, error: err, type:'customerror'}); //attatches 'customerror' typing to object
+    return {id: this.errorID++, errType: errType, error: err, type:'customerror'};
   }
 
   //Retrieves error object by its ID

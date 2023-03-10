@@ -149,18 +149,19 @@ export class ProcessorService {
 
   runFilters(index: number = 0, dataSet: any = this.initialData): any {
     let promise = this.doProcess(this.processChain.filters[index], dataSet);
-    if (typeof promise == 'string') {
-      return promise;
-    } else {
-      promise = promise as Promise<any>;
-      promise.then((result: { x: number[]; y: number[]; }) => {
-        if (index < this.processChain.filters.length - 1) {
-          this.runFilters(index + 1, result);
-        } else {
-          this.updateFilteredDataset(result.x, result.y);
-        }
-      })
+
+    if (promise.type == 'customerror')  {
+      return promise; //If error, return error
     }
+
+    promise = promise as Promise<any>;
+    promise.then((result: { x: number[]; y: number[]; }) => {
+      if (index < this.processChain.filters.length - 1) {
+        this.runFilters(index + 1, result);
+      } else {
+        this.updateFilteredDataset(result.x, result.y);
+      }
+    })
   }
 
   //Uses the given process name and processes path to give the script
@@ -176,8 +177,8 @@ export class ProcessorService {
     }
 
     let attempt = 1;//1st attempt at filesystem
-    let max_attempt = 5;
-    let procPath = this.rootPath;
+    let max_attempt = 5;//max attempts
+    let procPath = this.rootPath; //path to filesystem
     let foundError: CustomError; //variable for if error is found
 
     do {//repeat until max attempts
@@ -210,13 +211,13 @@ export class ProcessorService {
         return this.http.get(procPath, {responseType: 'text'}).toPromise(); //return as promise
 
       } catch (e: any) {
-        //Retry as ther may be another issue that could go away with a retry
+        //Retry as there may be another issue that could go away with a retry
         foundError = this.errorHandlerService.Retry(e, attempt, max_attempt);
         attempt++; //add to attempt counter
 
       }
     } while (attempt < max_attempt);
-    return this.errorHandlerService.RetryFailed(foundError.id);//return the error
+    return this.errorHandlerService.RetryFailed(foundError.id);//return the error if unsuccessful
   }
 
   //Takes a script and uses pyodide to run it on the dataSet
@@ -237,13 +238,13 @@ export class ProcessorService {
         })
         .then(procScript => {
           process.script = procScript; // Append found script into Process Object
-          globalThis.pyodide.runPython(procScript);
-          let calculate = globalThis.pyodide.globals.get('calculate');
-          let resultPy = calculate(dataSet.x, dataSet.y);
-          let result = resultPy.toJs();
-          result = {x: result[0], y: result[1]};
-          resultPy.destroy();
-          resolve(result);
+          globalThis.pyodide.runPython(procScript); //Running the code
+          let calculate = globalThis.pyodide.globals.get('calculate'); //map the function from the global variables onto 'calculate'
+          let resultPy = calculate(dataSet.x, dataSet.y); //run function on the dataset
+          let result = resultPy.toJs(); //translate result to JS
+          result = {x: result[0], y: result[1]}; //map result onto container
+          resultPy.destroy();//free the function used
+          resolve(result); //return result as promise resolve
         })
     })
   }
