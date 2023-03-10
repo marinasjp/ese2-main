@@ -178,6 +178,18 @@ export class ProcessorService {
   initialData: { x: number[], y: number[] } = {x: [100, 200, 300, 400], y: [1, 2, 3, 4]};
   rootPath: string = 'assets/Processes/';
 
+  private _processedData: {x:number[], y:number[]};//container for most recent processed dataset
+
+  //getter for processed dataset
+  public get processedData(): {x:number[], y:number[]}{
+    return this._processedData;
+  }
+
+  //setter for processed dataset
+  public set processedData( data:{x:number[], y:number[]} ){
+    this._processedData = data;
+  }
+
   constructor(//constructor for object
     private http: HttpClient,
     private errorHandlerService: ErrorHandlerService,
@@ -303,7 +315,7 @@ export class ProcessorService {
 
   //Takes a script and uses pyodide to run it on the dataSet
   //procName: Name of proces, procType: Type of process, dataSet: (optional) dataset to be processed if not given uses this.currData
-  doProcess(process: Process, dataSet: any = this.initialData): any {
+  doProcess(process: Process, dataSet: any = this._processedData): any {
     this._pyodideLoading.next(true); //check if pyodide is loaded
 
     let getScriptPromise: Promise<string> | string | CustomError = this.getScript(process); //get the process script
@@ -324,6 +336,7 @@ export class ProcessorService {
           let resultPy = calculate(dataSet.x, dataSet.y); //run function on the dataset
           let result = resultPy.toJs(); //translate result to JS
           result = {x: result[0], y: result[1]}; //map result onto container
+          this._processedData = result; //set result as the processedData 
           resultPy.destroy();//free the function used
           process.inUse = true; //set the process to be in use
           this.addToChain(process); //add process to the chain for record
