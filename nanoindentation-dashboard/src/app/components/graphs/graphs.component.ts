@@ -8,11 +8,17 @@ import {UIChart} from "primeng/chart";
   styleUrls: ['./graphs.component.scss']
 })
 export class GraphsComponent {
-  @ViewChild("chart1") chart1: UIChart;
+  @ViewChild("displacementForceFilteredChart") displacementForceFilteredChart: UIChart;
   @ViewChild("chart2") chart2: UIChart;
   graphOptions;
-  dataTemplate;
   slideTemplate;
+
+  dataTemplate = {
+    labels: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+    datasets: []
+  };
+
+  displacementForceFilteredData: any;
 
   // datasets: { id: number, name: string, data: any, labels: any }[] = []
   // selectedDatasets: { id: number, name: string, data: any, labels: any }[] = []
@@ -27,17 +33,14 @@ export class GraphsComponent {
 
   ngOnInit() {
     this.setGraphOptions();
-    this.setDataTemplate();
-    if (this.chart1)
-      this.chart1.reinit();
 
-    this.graphService.inputData$.subscribe(() => {
+    this.graphService.datasets$.subscribe(() => {
       this.reloadMultipleLineGraphs();
     })
 
-    this.graphService.sliderValue$.subscribe(() => {
-      this.reloadSingleLineGraphs();
-    })
+    // this.graphService.sliderValue$.subscribe(() => {
+    //   this.reloadSingleLineGraphs();
+    // })
   }
 
   setGraphOptions(): void {
@@ -103,28 +106,20 @@ export class GraphsComponent {
     }
   }
 
-
-  setDataTemplate(): void {
-    this.dataTemplate = {
-      labels: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16],
-      datasets: []
-    };
-    this.slideTemplate = {
-      labels: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16],
-      datasets: []
-    };
+  setDisplacementForceFiltered(): void {
+    this.displacementForceFilteredData = this.dataTemplate;
+    this.displacementForceFilteredData.dataTemplate = [];
+    for (let dataset of this.graphService.datasets) {
+      this.displacementForceFilteredData.datasets.push(this.getNewData());
+      this.displacementForceFilteredData.datasets[this.dataTemplate.datasets.length - 1].data = dataset.displacementForceFilteredData;
+    }
+    if (this.displacementForceFilteredChart) {
+      this.displacementForceFilteredChart.reinit();
+    }
   }
 
   reloadMultipleLineGraphs(): void {
-    this.dataTemplate.datasets = [];
-    for (let inputData of this.graphService.inputData) {
-      this.dataTemplate.datasets.push(this.getNewData());
-      this.dataTemplate.datasets[this.dataTemplate.datasets.length - 1].data = inputData;
-    }
-    if (this.chart1) {
-      this.chart1.reinit();
-    }
-    this.reloadSingleLineGraphs();
+    this.setDisplacementForceFiltered();
   }
 
   reloadSingleLineGraphs(): void {
@@ -138,7 +133,6 @@ export class GraphsComponent {
   }
 
   test() {
-    this.reloadMultipleLineGraphs();
-    this.reloadSingleLineGraphs();
+    console.log(this.dataTemplate.datasets[0].data);
   }
 }
