@@ -8,11 +8,11 @@ import {UIChart} from "primeng/chart";
   styleUrls: ['./graphs.component.scss']
 })
 export class GraphsComponent {
-  @ViewChild("chart") chart: UIChart;
-
-
+  @ViewChild("chart1") chart1: UIChart;
+  @ViewChild("chart2") chart2: UIChart;
   graphOptions;
   dataTemplate;
+  slideTemplate;
 
   // datasets: { id: number, name: string, data: any, labels: any }[] = []
   // selectedDatasets: { id: number, name: string, data: any, labels: any }[] = []
@@ -28,10 +28,9 @@ export class GraphsComponent {
   ngOnInit() {
     this.setGraphOptions();
     this.setDataTemplate();
-    if (this.chart)
-      this.chart.reinit();
+    if (this.chart1)
+      this.chart1.reinit();
   }
-
 
   setGraphOptions(): void {
     this.graphOptions = {
@@ -91,7 +90,7 @@ export class GraphsComponent {
     return {
       data: [],
       fill: false,
-      borderColor: '#' + (0x1000000 + Math.random() * 0xffffff).toString(16).substr(1, 6),
+      borderColor: '#' + (0x1000000 + Math.random() * 0x00ff00).toString(16).substr(1, 6),
       tension: .4
     }
   }
@@ -101,72 +100,11 @@ export class GraphsComponent {
     this.dataTemplate = {
       labels: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16],
       datasets: [
-        // {
-        // label: 'First Dataset',
-        //
-        //   data: [{x: 1, y: 1}, {x: 2, y: 2}, {x: 3, y: 3}, {x: 4, y: 4}, {x: 5, y: 5}, {x: 6, y: 6}, {
-        //     x: 7,
-        //     y: 7
-        //   }, {x: 8, y: 8}],
-        //   fill: true,
-        //   borderColor: '#42A5F5',
-        //   tension: .4
-        // },
-        // {
-        //   label: 'First Dataset',
-        //
-        //   data: [{x: 1, y: 1}, {x: 2, y: 2}, {x: 3, y: 3}, {x: 4, y: 4}, {x: 5, y: 5}, {x: 6, y: 6}, {
-        //     x: 7,
-        //     y: 7
-        //   }, {x: 8, y: 8}],
-        //   fill: true,
-        //   borderColor: '#ff0055',
-        //   tension: .4
-        // },
-        // {
-        //   label: 'First Dataset',
-        //
-        //   data: [{x: 1, y: 1}, {x: 2, y: 2}, {x: 3, y: 3}, {x: 4, y: 4}, {x: 5, y: 5}, {x: 6, y: 6}, {
-        //     x: 7,
-        //     y: 7
-        //   }, {x: 8, y: 8}],
-        //   fill: true,
-        //   borderColor: '#7fff67',
-        //   tension: .4
-        // },
-        // {
-        //   label: 'First Dataset',
-        //
-        //   data: [{x: 1, y: 1}, {x: 2, y: 2}, {x: 3, y: 3}, {x: 4, y: 4}, {x: 5, y: 5}, {x: 6, y: 6}, {
-        //     x: 7,
-        //     y: 7
-        //   }, {x: 8, y: 8}],
-        //   fill: true,
-        //   borderColor: '#42A5F5',
-        //   tension: .4
-        // },
-        // {
-        //   label: 'First Dataset',
-        //
-        //   data: [{x: 1, y: 1}, {x: 2, y: 2}, {x: 3, y: 3}, {x: 4, y: 4}, {x: 5, y: 5}, {x: 6, y: 6}, {
-        //     x: 7,
-        //     y: 7
-        //   }, {x: 8, y: 8}],
-        //   fill: true,
-        //   borderColor: '#ff0055',
-        //   tension: .4
-        // },
-        // {
-        //   label: 'First Dataset',
-        //
-        //   data: [{x: 1, y: 1}, {x: 2, y: 2}, {x: 3, y: 3}, {x: 4, y: 4}, {x: 5, y: 5}, {x: 6, y: 6}, {
-        //     x: 7,
-        //     y: 7
-        //   }, {x: 8, y: 8}],
-        //   fill: true,
-        //   borderColor: '#7fff67',
-        //   tension: .4
-        // }
+      ]
+    };
+    this.slideTemplate = {
+      labels: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16],
+      datasets: [
       ]
     };
   }
@@ -176,6 +114,12 @@ export class GraphsComponent {
       this.dataTemplate.datasets.push(this.getNewData());
       this.dataTemplate.datasets[this.dataTemplate.datasets.length - 1].data = inputData;
     }
-    this.chart.reinit();
+    //Slider Graph
+    this.slideTemplate.datasets.push(this.getNewData());
+    this.slideTemplate.datasets[this.slideTemplate.datasets.length - 1].data = this.graphService.inputData[this.graphService.sliderVal];
+    
+    console.log(this.graphService.sliderVal);
+    this.chart1.reinit();
+    this.chart2.reinit();
   }
 }

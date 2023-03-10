@@ -4,8 +4,11 @@ module.exports = {
   testEnvironment: 'node',
   testRegex: '/tests/.*\\.(test|spec)?\\.(ts|tsx)$',
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
-  transformIgnorePatterns: ["node_modules/(?!variables/.*)"]
+  extensionsToTreatAsEsm: ['.ts'],
+  transformIgnorePatterns: ["node_modules/(?!angular/.*)"]
 };
+
+//command to execute jest: node --experimental-vm-modules node_modules/.bin/jest
 
 // module.exports = {
 //   transform: {'^.+\\.ts?$': 'ts-jest'},
