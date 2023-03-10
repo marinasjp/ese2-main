@@ -1,6 +1,7 @@
 import numpy as np
 import scipy
 
+
 # THIS IS BROKEN CUSTOMER CODE
 # window = 101  # INPUT FROM USER
 # threshold = 10
@@ -23,5 +24,8 @@ import scipy
 #   return [x[:k], y[:k]]
 
 def calculate(x):
-  detrendedData = scipy.signal.detrend(data=x, axis=-1, type='linear', bp=0, overwrite_data=False)
+  # detrendedData = scipy.signal.detrend(data=x, axis=-1, type='linear', bp=0, overwrite_data=False)
+  detrendedData = []
+  for i in x:
+    detrendedData.append(i + 10)
   return detrendedData
