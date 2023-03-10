@@ -5,10 +5,10 @@ stages:
 
 before_script:
   - pip install numpy
-  - pip install scipy
 
 unit-test:
   stage: test
   script:
+    - pip install scipy
     - pip install pytest pytest-cov
     - python -m pytest --import-mode=append ./nanoindentation-dashboard/src/Processor/Processes/
