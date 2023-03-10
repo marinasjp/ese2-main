@@ -41,4 +41,12 @@ Our main communication system will be over teams and through group meetings.
 - **Alexander Lake** - UX designer
 
 ## How to get it running
-First install NodeJS, and then install Angular15. After this, open the nanoindentation-dashboard  folder inside the NodeJS command prompt and run npm install. This will install the rest of the dependencies.
+First thing to do is install NodeJS. This can be done via https://nodejs.org/en/.
+After this, you will need to install Angular 15 via https://angular.io/.
+
+Once these packages are installed, the project can be opened. In the terminal, cd to /ese2-main/nanoindentation-dashboard/ and run npm install. This will install all of the node dependencies required to run the program. After this, the command ng serve can be run in order to open the website.
+The page can be visited on http://localhost:4200/.
+
+In order to run the flask backend, navigate to the Server.py file in the ese2-main folder. Run this file. This will enable the backend which is required for the processing of AFMFormats.
+
+## How to use
