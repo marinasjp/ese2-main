@@ -180,9 +180,20 @@ export class ProcessorService {
     }
   }
 
+  //holds initial input dataset
+  private _initialData: { x: number[], y: number[] } = {x: [100, 200, 300, 400], y: [1, 2, 3, 4]};
 
-  initialData: { x: number[], y: number[] } = {x: [100, 200, 300, 400], y: [1, 2, 3, 4]};
-  rootPath: string = 'assets/Processes/';
+  //getter for initial dataset
+  public get initialdData(): {x:number[], y:number[]}{
+    return this._initialData;
+  }
+
+  //setter for initial dataset
+  public set initialData( data:{x:number[], y:number[]} ){
+    this._initialData = data;
+  }
+
+  private rootPath: string = 'assets/Processes/';
 
   private _processedData: {x:number[], y:number[]};//container for most recent processed dataset
 
