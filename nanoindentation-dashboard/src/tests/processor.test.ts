@@ -1,3 +1,5 @@
+import {jest} from '@jest/globals';
+
 import { EProcType } from '../app/models/process.model';
 import { GraphService } from '../app/services/graph.service';
 import { ProcessorService } from '../app/services/processor.service';
@@ -5,6 +7,7 @@ import * as fs from 'fs';
 import { ErrorHandlerService } from '../app/services/error-handler.service';
 import { SampleDataService } from '../app/services/sample-data.service';
 import { HttpClient, HttpHandler } from '@angular/common/http';
+
 
 let testProcess = {id:"test", name: "Test", procType: EProcType.TEST}
 //let testStr = fs.readFileSync('../assets/Processes/Tests/testProcess.py', 'utf-8');

@@ -1,10 +1,14 @@
-import {TestBed} from '@angular/core/testing';
+import {NgModule} from '@angular/core';
+import {TestBed, async} from '@angular/core/testing';
 import { EProcType } from 'src/app/models/process.model';
 import { GraphService } from 'src/app/services/graph.service';
 import { ProcessorService } from 'src/app/services/processor.service';
-import * as fs from 'fs';
-
-//Will not be used!!
+import { ErrorHandlerService } from 'src/app/services/error-handler.service';
+import { SampleDataService } from 'src/app/services/sample-data.service';
+import { HttpClient, HttpHandler } from '@angular/common/http';
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import {HttpClientModule} from '@angular/common/http';
+//import * as fs from 'fs';
 
 let testProcess = {id:"test", name: "Test", procType: EProcType.TEST}
 //let testStr = fs.readFileSync('../assets/Processes/Tests/testProcess.py', 'utf-8');
@@ -26,29 +30,61 @@ let startPro = {
     let outData: { x: number[], y: number[] } = { x: [100, 200, 300, 400], y: [2, 3, 4, 5] };
 
 
-describe('ProcessorService', () => {
-  let service: ProcessorService;
 
-  beforeEach(() => {
-    TestBed.configureTestingModule({});
-    service = TestBed.inject(ProcessorService);
-  });
+  describe('ProcessorService', () => {
 
-  it('should be created', () => {
-    expect(service).toBeTruthy();
-  });
+   
+    let errorHandler = new ErrorHandlerService();
+    let sample = new SampleDataService();
+    let http: HttpClient;
+    let graph = new GraphService(sample, http);
 
-  test('should return 1', () => { // maybe test if it is at the end?
-    expect(service.addProcess(testProcess)).toBe(startPro);
-});
+    let process: ProcessorService;
 
-// Tests if getScript ... is returning the correct script when given a Process name and type.
-test('TesterProc should return func that adds 1 to dataset', () => {
-    expect(service.getScript(testProcess)).toBe(testStr);
-});
+    beforeEach(async() => {
+        //mockProcessorService = new ProcessorService(http, errorHandler, new GraphService(sample, http));
+        
+       /* TestBed.configureTestingModule({
+          declarations: [
+          ],
+          providers: [
+            GraphService, 
+            ErrorHandlerService, 
+            SampleDataService,
+            ProcessorService
+          ],
+       }).compileComponents();*/
+       TestBed.configureTestingModule({
+        imports:[
+          HttpClientTestingModule
+        ],
+        providers: [
+          GraphService, 
+          ErrorHandlerService, 
+          SampleDataService,
+          ProcessorService
+        ],
+       });
 
-// Tests if doProces... is running on the given data set.
-test('testing do process should return dataset with +1', () => {
-    expect(service.doProcess(testProcess, testData)).toBe(outData);
-});
+       process = new ProcessorService(http, errorHandler, graph);
+    });
+
+
+    // Tests if the newProcess function is ... a new python script (Process) is added to the data structure.
+    it('should return 1', () => { // maybe test if it is at the end?
+      const service: ProcessorService = TestBed.get(ProcessorService);
+      expect(service.addProcess(testProcess)).toBe(startPro);
+    });
+
+    // Tests if getScript ... is returning the correct script when given a Process name and type.
+    it('TesterProc should return func that adds 1 to dataset', () => {
+      const service: ProcessorService = TestBed.get(ProcessorService);
+      expect(service.getScript(testProcess)).toBe(testStr);
+     });
+
+    // Tests if doProces... is running on the given data set.
+    it('testing do process should return dataset with +1', () => {
+      const service: ProcessorService = TestBed.get(ProcessorService);
+      expect(service.doProcess(testProcess, testData)).toBe(outData);
+    });
 });
