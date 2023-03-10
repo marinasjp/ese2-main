@@ -5,6 +5,8 @@ export interface Process {
   inputs?: any,
   custom?: boolean, //whether the process is custom
   script?: string; //script of the process
+  chainID?: number; //Index on where the proc is in the proc chain
+  inUse?: boolean; //Whether the process is being used
 }
 
 export enum EProcType { //Types of processes

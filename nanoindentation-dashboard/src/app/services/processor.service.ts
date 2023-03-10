@@ -27,21 +27,63 @@ export class ProcessorService {
     return this._pyodideLoading.asObservable();
   }
 
-  private _processChain: { filters: Process[], cPoints: Process[], eModels: Process[], fModels: Process[] } = {
+  //Container for processes thats been run
+  private _processChain: { filters: Process[], cPoints: Process[], eModels: Process[], fModels: Process[], test: Process[]} = {
     filters: [],
     cPoints: [],
     eModels: [],
-    fModels: []
+    fModels: [],
+    test: []
   };
 
-  private get processChain(): { filters: Process[], cPoints: Process[], eModels: Process[], fModels: Process[] } {
+  //Getter for process chain
+  private get processChain(): { filters: Process[], cPoints: Process[], eModels: Process[], fModels: Process[], test: Process[] } {
     return this._processChain;
   }
 
-  private set processChain(processChain: { filters: Process[], cPoints: Process[], eModels: Process[], fModels: Process[] }) {
+  //setter for process chain
+  private set processChain(processChain: { filters: Process[], cPoints: Process[], eModels: Process[], fModels: Process[], test: Process[] }) {
     this._processChain = processChain;
     this.runProcessChain();
   }
+
+  private addToChain(process: Process) { //adds a process to process chain
+    try {
+      switch (process.procType) { //add to the correct container acording to process type
+        case EProcType.CPOINT: {
+          process.chainID = this.processChain.cPoints.length;//set the chainID
+          this._processChain.cPoints.push(process);//send in container
+          break;
+        }
+        case EProcType.FILTER: {
+          process.chainID = this.processChain.filters.length;
+          this._processChain.filters.push(process);
+          break;
+        }
+        case EProcType.EMODELS: {
+          process.chainID = this.processChain.eModels.length;
+          this._processChain.eModels.push(process);
+          break;
+        }
+        case EProcType.FMODELS: {
+          process.chainID = this.processChain.fModels.length;
+          this._processChain.fModels.push(process);
+          break;
+        }
+        case EProcType.TEST: {
+          process.chainID = this.processChain.test.length;
+          this._processChain.test.push(process);
+          break;
+        }
+        default: {
+          throw Error('ERROR: ProcType error');
+        }
+      }
+      return this.processChain;
+    } catch (e: any) {
+      return this.errorHandlerService.Fatal(e);
+    }
+  };
 
   public availableProcesses: { filters: Process[], cPoints: Process[], eModels: Process[], fModels: Process[], test: Process[] } = {
     filters: [ //container for processes
@@ -79,15 +121,47 @@ export class ProcessorService {
           break;
         }
         default: {
-          throw Error('ERROR: ProcType error');
+          throw Error('ERROR: ProcType error'); //throw error if type isnt found
         }
       }
       return this.availableProcesses;
     } catch (e: any) {
-      return this.errorHandlerService.Fatal(e);
+      return this.errorHandlerService.Fatal(e); //catch any errors
     }
   };
 
+  public changeProcessUse(process: Process, use: boolean) { //finds and disables a process in the proc chain
+    try {
+      switch (process.procType) { //find correct container acording to process type
+        case EProcType.CPOINT: {
+          this._processChain.cPoints[process.chainID].inUse = use;//set to use
+          break;
+        }
+        case EProcType.FILTER: {
+          this._processChain.filters[process.chainID].inUse = use;
+          break;
+        }
+        case EProcType.EMODELS: {
+          this._processChain.eModels[process.chainID].inUse = use;
+          break;
+        }
+        case EProcType.FMODELS: {
+          this._processChain.fModels[process.chainID].inUse = use;
+          break;
+        }
+        case EProcType.TEST: {
+          this._processChain.test[process.chainID].inUse = use;
+          break;
+        }
+        default: {
+          throw Error('ERROR: ProcType error');
+        }
+      }
+      return this.processChain;
+    } catch (e: any) {
+      return this.errorHandlerService.Fatal(e);
+    }
+  }
   private _selectedFilters: Process[] = [];
 
   public get selectedFilters(): Process[] {
@@ -148,20 +222,27 @@ export class ProcessorService {
   }
 
   runFilters(index: number = 0, dataSet: any = this.initialData): any {
-    let promise = this.doProcess(this.processChain.filters[index], dataSet);
-
-    if (promise.type == 'customerror') {
-      return promise; //If error, return error
-    }
-
-    promise = promise as Promise<any>;
-    promise.then((result: { x: number[]; y: number[]; }) => {
-      if (index < this.processChain.filters.length - 1) {
-        this.runFilters(index + 1, result);
-      } else {
-        this.updateFilteredDataset(result.x, result.y);
+    let promise: any;
+    for (let i = 0; i<this.processChain.filters.length; i++) {// for each filter in process chain
+      let currProc = this.processChain.filters[i];
+      if (currProc.inUse){ //doprocess if in use
+        promise = this.doProcess(currProc, dataSet);
+        if (promise.type == 'customerror')  {
+          continue; //if error, skip filter
+          return promise; //If error, return error
+        }
+        promise = promise as Promise<any>;
+        promise.then((result: { x: number[]; y: number[]; }) => {
+          if (index < this.processChain.filters.length - 1) {
+            this.runFilters(index + 1, result);
+          } else {
+            this.updateFilteredDataset(result.x, result.y);
+          }
+        })
+      }else{ // else move to the next filter
+        continue;
       }
-    })
+    }
   }
 
   //Uses the given process name and processes path to give the script
@@ -244,6 +325,8 @@ export class ProcessorService {
           let result = resultPy.toJs(); //translate result to JS
           result = {x: result[0], y: result[1]}; //map result onto container
           resultPy.destroy();//free the function used
+          process.inUse = true; //set the process to be in use
+          this.addToChain(process); //add process to the chain for record
           resolve(result); //return result as promise resolve
         })
     })
