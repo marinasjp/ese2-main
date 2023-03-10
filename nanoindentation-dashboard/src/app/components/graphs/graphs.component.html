@@ -7,22 +7,38 @@
     <p-chart type="line"
              width="40vh"
              height="40vh"
-             #displacementForceFilteredChart
-             [data]="displacementForceFilteredData"
+             #displacementForceFilteredChartMultiple
+             [data]="displacementForceFilteredDataMultiple"
              [options]="graphOptions">
     </p-chart>
     <!-- Slide Through Graph -->
     <p-chart type="line"
              width="40vh"
              height="40vh"
-             #chart2
-             [data]="slideTemplate"
+             #displacementForceFilteredChartSingle
+             [data]="displacementForceFilteredDataSingle"
              [options]="graphOptions">
     </p-chart>
   </div>
 
-
-  <button (click)="test()">TEST</button>
+  <div>
+    <h3>Force-Indentation</h3>
+    <p-chart type="line"
+             width="40vh"
+             height="40vh"
+             #indentationForceChartMultiple
+             [data]="indentationForceDataMultiple"
+             [options]="graphOptions">
+    </p-chart>
+    <!-- Slide Through Graph -->
+    <p-chart type="line"
+             width="40vh"
+             height="40vh"
+             #indentationForceChartSingle
+             [data]="indentationForceDataSingle"
+             [options]="graphOptions">
+    </p-chart>
+  </div>
 
   <!--  <div>-->
   <!--    <p-chart type="line"-->

@@ -8,17 +8,23 @@ import {UIChart} from "primeng/chart";
   styleUrls: ['./graphs.component.scss']
 })
 export class GraphsComponent {
-  @ViewChild("displacementForceFilteredChart") displacementForceFilteredChart: UIChart;
-  @ViewChild("chart2") chart2: UIChart;
+  @ViewChild("displacementForceFilteredChartMultiple") displacementForceFilteredChartMultiple: UIChart;
+  @ViewChild("displacementForceFilteredChartSingle") displacementForceFilteredChartSingle: UIChart;
+  @ViewChild("indentationForceChartMultiple") indentationForceChartMultiple: UIChart;
+  @ViewChild("indentationForceChartSingle") indentationForceChartSingle: UIChart;
+
   graphOptions;
-  slideTemplate;
 
   dataTemplate = {
-    labels: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+    labels: [],
     datasets: []
   };
 
-  displacementForceFilteredData: any;
+  displacementForceFilteredDataMultiple: any;
+  displacementForceFilteredDataSingle: any;
+  indentationForceDataMultiple: any;
+  indentationForceDataSingle: any;
+
 
   // datasets: { id: number, name: string, data: any, labels: any }[] = []
   // selectedDatasets: { id: number, name: string, data: any, labels: any }[] = []
@@ -38,9 +44,9 @@ export class GraphsComponent {
       this.reloadMultipleLineGraphs();
     })
 
-    // this.graphService.sliderValue$.subscribe(() => {
-    //   this.reloadSingleLineGraphs();
-    // })
+    this.graphService.sliderValue$.subscribe(() => {
+      this.reloadSingleLineGraphs();
+    })
   }
 
   setGraphOptions(): void {
@@ -106,33 +112,59 @@ export class GraphsComponent {
     }
   }
 
-  setDisplacementForceFiltered(): void {
-    this.displacementForceFilteredData = this.dataTemplate;
-    this.displacementForceFilteredData.dataTemplate = [];
+  setDisplacementForceFilteredMultiple(): void {
+    this.displacementForceFilteredDataMultiple = {...this.dataTemplate};
     for (let dataset of this.graphService.datasets) {
-      this.displacementForceFilteredData.datasets.push(this.getNewData());
-      this.displacementForceFilteredData.datasets[this.dataTemplate.datasets.length - 1].data = dataset.displacementForceFilteredData;
+      this.displacementForceFilteredDataMultiple.datasets.push(this.getNewData());
+      this.displacementForceFilteredDataMultiple.datasets[this.displacementForceFilteredDataMultiple.datasets.length - 1].data = dataset.displacementForceFilteredData;
     }
-    if (this.displacementForceFilteredChart) {
-      this.displacementForceFilteredChart.reinit();
+    if (this.displacementForceFilteredChartMultiple) {
+      this.displacementForceFilteredChartMultiple.reinit();
     }
+  }
+
+  setDisplacementForceFilteredSingle(): void {
+    if (!this.displacementForceFilteredDataMultiple?.datasets || !this.displacementForceFilteredDataMultiple.datasets[this.graphService.sliderValue]) {
+      return;
+    }
+    this.displacementForceFilteredDataSingle = {...this.dataTemplate};
+    this.displacementForceFilteredDataSingle.datasets = [this.displacementForceFilteredDataMultiple.datasets[this.graphService.sliderValue]];
+    if (this.displacementForceFilteredChartSingle) {
+      this.displacementForceFilteredChartSingle.reinit();
+    }
+  }
+
+  setIndentationForceMultiple(): void {
+    // this.indentationForceDataMultiple = {...this.dataTemplate};
+    // for (let dataset of this.graphService.datasets) {
+    //   this.indentationForceDataMultiple.datasets.push(this.getNewData());
+    //   this.indentationForceDataMultiple.datasets[this.indentationForceDataMultiple.datasets.length - 1].data = dataset.indentationForceData;
+    // }
+    // if (this.indentationForceChartMultiple) {
+    //   this.indentationForceChartMultiple.reinit();
+    // }
+  }
+
+  setIndentationForceSingle(): void {
+    // if (!this.indentationForceDataMultiple?.datasets || !this.indentationForceDataMultiple.datasets[this.graphService.sliderValue]) {
+    //   return;
+    // }
+    // this.displacementForceFilteredDataSingle = {...this.dataTemplate};
+    // this.indentationForceDataSingle.datasets = [this.indentationForceDataMultiple.datasets[this.graphService.sliderValue]];
+    // if (this.indentationForceChartSingle) {
+    //   this.indentationForceChartSingle.reinit();
+    // }
   }
 
   reloadMultipleLineGraphs(): void {
-    this.setDisplacementForceFiltered();
+    this.setDisplacementForceFilteredMultiple();
+    this.setIndentationForceMultiple();
+
+    this.reloadSingleLineGraphs();
   }
 
   reloadSingleLineGraphs(): void {
-    if (!this.dataTemplate?.datasets || !this.dataTemplate.datasets[this.graphService.sliderValue]) {
-      return;
-    }
-    this.slideTemplate.datasets = [this.dataTemplate.datasets[this.graphService.sliderValue]];
-    if (this.chart2) {
-      this.chart2.reinit();
-    }
-  }
-
-  test() {
-    console.log(this.dataTemplate.datasets[0].data);
+    this.setDisplacementForceFilteredSingle();
+    this.setIndentationForceSingle()
   }
 }
