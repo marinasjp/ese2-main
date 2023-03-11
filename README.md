@@ -1,9 +1,7 @@
 # Team Organisation
-___
-## Team Members
+### Team Members
 
 - **Alex Markopoulou** -    2550454m@student.gla.ac.uk
-
 - **Raphael Nekam** - 2575686n@student.gla.ac.uk
 
 - **Kyle Watt** - 2555811w@student.gla.ac.uk
@@ -16,37 +14,68 @@ ___
 
 - **Alexander Lake** - 2576885l@student.gla.ac.uk
 ***
-## Team Coach
+### Team Coach
 - **Tim Storer** - Timothy.Storer@glasgow.ac.uk
-***
 
-## Communication
-Our main communication system will be over teams and through group meetings.
+# Getting Started
 
-***
-## Team Structure and Roles
+### 1.-Install NodeJS
 
-- **Alex Markopoulou** - Developer
+You can download the executable through the website: https://nodejs.org/en/download/. For Windows, we recommend installing the .mpi file and for MacOS, the .pkg. For Linux OS, 
+Node.js has a guide for each Linux distribution1: https://github.com/nodesource/distributions/blob/master/README.md. 
 
-- **Raphael Nekam** - Product owner
+Run the executable to start the installation process.
 
-- **Kyle Watt** - Quality assurance manager
+After that is finished, you can run the following commands in the terminal to check that the installation has been successful.
 
-- **Marina San Jose Pena** - Toolsmith
+To check the node version:
+```console
+foo@bar:~$ Node -v
+v14.15.0
+```
 
-- **Djan Tanova** - Chief architect
+To check the npm version:
 
-- **Anthony Rainey** - Team manager
+```console
+foo@bar:~$ npm -v
+6.14.8
+```
 
-- **Alexander Lake** - UX designer
+If you already have Node.js installed, you can update it with the following terminal command:
 
-## How to get it running
-First thing to do is install NodeJS. This can be done via https://nodejs.org/en/.
-After this, you will need to install Angular 15 via https://angular.io/.
+```console
+foo@bar:~$ npm install -g npm@latest
+```
 
-Once these packages are installed, the project can be opened. In the terminal, cd to /ese2-main/nanoindentation-dashboard/ and run npm install. This will install all of the node dependencies required to run the program. After this, the command ng serve can be run in order to open the website.
+### 2.- Install Angular 15 CLI
+
+You can use the Angular client to aid with the installation.
+```console
+foo@bar:~$ npm install -g @angular/cli@15
+```
+
+### 3.- Install remaining dependencies
+There is a package.json file that holds the dependencies used. To install them, navigate to the folder /ese2-main/nanoindentation-dashboard/ and run npm install.
+
+```console
+foo@bar:~$ cd /ese2-main/nanoindentation-dashboard/
+foo@bar:~$ npm install
+```
+
+### 4.- Build application
+
+To build and serve the application:
+```console
+foo@bar:~$ ng serve
+```
 The page can be visited on http://localhost:4200/.
 
-In order to run the flask backend, navigate to the Server.py file in the ese2-main folder. Run this file. This will enable the backend which is required for the processing of AFMFormats.
+### 5.- Run Backend
 
-## How to use
+The backend is built on Flask and is used for the AFMFormats library. 
+
+Run the Server.py file in the root directory of the project. This will enable the backend which is required for the processing of AFMFormats.
+
+```console
+foo@bar:~$ python server.py
+```
