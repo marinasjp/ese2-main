@@ -1,23 +1,28 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
-
+import { HttpClient, HttpHandler } from '@angular/common/http';
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import {HttpClientModule} from '@angular/common/http';
 import {FilesTabComponent} from './files-tab.component';
+import { CommonModule } from '@angular/common';
 
 describe('FilesTabComponent', () => {
-  let component: FilesTabComponent;
-  let fixture: ComponentFixture<FilesTabComponent>;
+  //let component: FilesTabComponent;
+  //let fixture: ComponentFixture<FilesTabComponent>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [FilesTabComponent]
-    })
-      .compileComponents();
-
-    fixture = TestBed.createComponent(FilesTabComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+    TestBed.configureTestingModule({
+      imports:[
+        HttpClientModule,
+      ],
+      providers:[
+        FilesTabComponent],
+    }).compileComponents();
   });
 
   it('should create', () => {
+    const fixture = TestBed.createComponent(FilesTabComponent);
+    const component = fixture.componentInstance;
+    fixture.detectChanges();
     expect(component).toBeTruthy();
   });
 });

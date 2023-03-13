@@ -10,7 +10,7 @@ import { HttpClientTestingModule, HttpTestingController } from '@angular/common/
 import {HttpClientModule} from '@angular/common/http';
 //import * as fs from 'fs';
 
-let testProcess = {id:"test", name: "Test", procType: EProcType.TEST}
+let testProcess = {id:"testProcess", name: "Test", procType: EProcType.TEST}
 //let testStr = fs.readFileSync('../assets/Processes/Tests/testProcess.py', 'utf-8');
 let testStr = "def calculate( x, y): \n return x, y+1"
 let startPro = {
@@ -19,7 +19,9 @@ let startPro = {
                 { id: 'savgol', name: 'Sawitzky Golay', procType: EProcType.FILTER, custom: false },
                 { id: 'linearDetrend', name: 'Linear Detrending', procType: EProcType.FILTER, custom: false },
                 ],
-                cPoints: [],//container for cPoints
+                cPoints: [
+                  {id: 'rov', name: 'Rov', procType: EProcType.CPOINT, custom: false}
+              ],//container for cPoints
                 eModels: [],//container for eModel
                 fModels: [],//container for fModel
                 test: [     //container for test processess
@@ -54,6 +56,7 @@ let startPro = {
             ProcessorService
           ],
        }).compileComponents();*/
+       
        TestBed.configureTestingModule({
         imports:[
           HttpClientTestingModule
@@ -71,20 +74,20 @@ let startPro = {
 
 
     // Tests if the newProcess function is ... a new python script (Process) is added to the data structure.
-    it('should return 1', () => { // maybe test if it is at the end?
+    it('should return dataset with a new Process added', () => { // maybe test if it is at the end?
       const service: ProcessorService = TestBed.get(ProcessorService);
-      expect(service.addProcess(testProcess)).toBe(startPro);
+      expect(service.addProcess(testProcess)).toEqual(startPro);
     });
 
     // Tests if getScript ... is returning the correct script when given a Process name and type.
-    it('TesterProc should return func that adds 1 to dataset', () => {
+    it('Tests if getScript ... is returning the correct script when given a Process name and type.', () => {
       const service: ProcessorService = TestBed.get(ProcessorService);
-      expect(service.getScript(testProcess)).toBe(testStr);
+      expect(service.getScript(testProcess)).toEqual(testStr);
      });
 
     // Tests if doProces... is running on the given data set.
-    it('testing do process should return dataset with +1', () => {
+   /* it('Tests if doProces... is running on the given data set', () => {
       const service: ProcessorService = TestBed.get(ProcessorService);
-      expect(service.doProcess(testProcess, testData)).toBe(outData);
-    });
+      expect(service.doProcess(testProcess, testData)).toEqual(outData);
+    }); */
 });

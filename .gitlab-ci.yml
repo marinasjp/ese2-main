@@ -26,7 +26,6 @@ test:
         - build
     script:
       - cd nanoindentation-dashboard
-      - npm i string.prototype.replaceall
-      - npm run test
+      - ng test
       # - npm run test:ci
     #   - yarn test:ci

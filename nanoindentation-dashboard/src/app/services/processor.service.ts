@@ -59,7 +59,7 @@ export class ProcessorService {
     test: []     //container for test processess
   }
 
-  // //Container for processes thats been run
+  //Container for processes thats been run
   // private _processChain: { filters: Process[], cPoints: Process[], eModels: Process[], fModels: Process[], test: Process[] } = {
   //   filters: [],
   //   cPoints: [],
@@ -67,7 +67,7 @@ export class ProcessorService {
   //   fModels: [],
   //   test: []
   // };
-  //
+
   // //Getter for process chain
   // private get processChain(): { filters: Process[], cPoints: Process[], eModels: Process[], fModels: Process[], test: Process[] } {
   //   return this._processChain;
@@ -77,6 +77,40 @@ export class ProcessorService {
   // private set processChain(processChain: { filters: Process[], cPoints: Process[], eModels: Process[], fModels: Process[], test: Process[] }) {
   //   this._processChain = processChain;
   //   this.runProcessChain();
+  // }
+
+  // //sets a specific type of process container in the chain
+  // public SetAProcessChain( processes: Process[], procType: EProcType) {
+  //   try {
+  //     switch (procType) { //add to the correct container acording to process type
+  //       case EProcType.CPOINT: {
+  //         this.processChain.cPoints = processes;//set the according container
+  //         break;
+  //       }
+  //       case EProcType.FILTER: {
+  //         this.processChain.filters = processes;
+  //         break;
+  //       }
+  //       case EProcType.EMODELS: {
+  //         this.processChain.eModels = processes;
+  //         break;
+  //       }
+  //       case EProcType.FMODELS: {
+  //         this.processChain.fModels = processes;
+  //         break;
+  //       }
+  //       case EProcType.TEST: {
+  //         this.processChain.test = processes;
+  //         break;
+  //       }default: {
+  //         throw Error('ERROR: ProcType error'); //throw error if type isnt found
+  //       }
+  //     }
+  //       return this.runFrom(procType);//runs all filters from the type specified
+  //
+  //     } catch (e: any) {
+  //       return this.errorHandlerService.Fatal(e); //catch any errors
+  //     }
   // }
 
   // //sets a specific type of process container in the chain
