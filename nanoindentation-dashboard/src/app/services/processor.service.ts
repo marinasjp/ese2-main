@@ -83,7 +83,7 @@ export class ProcessorService {
     try {
       switch (procType) { //add to the correct container acording to process type
         case EProcType.CPOINT: {
-          this.processChain.cPoints = processes;
+          this.processChain.cPoints = processes; //set the according container
           break;
         }
         case EProcType.FILTER: {
@@ -105,7 +105,7 @@ export class ProcessorService {
           throw Error('ERROR: ProcType error'); //throw error if type isnt found
         }
       }
-        return this.runFrom(procType);
+        return this.runFrom(procType); //runs all filters from the type specified
 
       } catch (e: any) {
         return this.errorHandlerService.Fatal(e); //catch any errors
@@ -306,6 +306,7 @@ export class ProcessorService {
       if (currProc.inUse) { //doprocess if in use
         promise = this.doProcess(currProc, dataSet);
         if (promise.type == 'customerror') {
+          //Pop-up that the filter didnt work?
           continue; //if error, skip filter
         }
       } else { // else move to the next filter
@@ -320,22 +321,22 @@ export class ProcessorService {
     try {
       switch (procType) { //run correct sequence acording to process type
         case EProcType.CPOINT: {
-          return this.runProcessChain();
+          return this.runProcessChain(); //run all processes
         }
         case EProcType.FILTER: {
                 this.runAll(this.processChain.filters);
                 this.runAll(this.processChain.eModels);
-          return this.runAll(this.processChain.fModels);
+          return this.runAll(this.processChain.fModels); //run all processes from a certain type
         }
         case EProcType.EMODELS: {
                   this.runAll(this.processChain.eModels);
-          return this.runAll(this.processChain.fModels);
+          return this.runAll(this.processChain.fModels); //run all processes from a certain type
         }
         case EProcType.FMODELS: {
-          return this.runAll(this.processChain.fModels);
+          return this.runAll(this.processChain.fModels); //run all processes from a certain type
         }
         case EProcType.TEST: {
-          return this.runAll(this.processChain.test);
+          return this.runAll(this.processChain.test); //run all processes from a certain type
         }
         default: {
           throw Error('ERROR: ProcType error'); //throw error if type isnt found
