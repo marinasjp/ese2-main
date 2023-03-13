@@ -26,4 +26,4 @@ test:
         - build
     script:
       - cd nanoindentation-dashboard
-      - testspec
+      - npm run testspec
