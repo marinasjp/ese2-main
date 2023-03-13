@@ -26,6 +26,4 @@ test:
         - build
     script:
       - cd nanoindentation-dashboard
-      - ng test
-      # - npm run test:ci
-    #   - yarn test:ci
+      - testspec
