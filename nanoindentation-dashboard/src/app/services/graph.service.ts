@@ -33,7 +33,6 @@ export class GraphService {
 
   public set datasets(datasets: Dataset[]) {
     this._datasets.next(datasets);
-    console.log(this.datasets);
   }
 
 
