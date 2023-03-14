@@ -16,8 +16,6 @@ const PYODIDE_BASE_URL = 'https://cdn.jsdelivr.net/pyodide/v0.22.0/full/';
 })
 export class ProcessorService {
 
-  public pyodideInitialized: boolean = false;
-
   private _loading: BehaviorSubject<string[]>;
 
   public get loading$(): Observable<string[]> {
@@ -181,7 +179,6 @@ export class ProcessorService {
         this.loading = ['pyodide initialized ✔', 'numpy initialized ✔', 'Initializing scipy...'];
         globalThis.pyodide.loadPackage(['scipy']).then(() => {
           this.loading = ['pyodide initialized ✔', 'numpy initialized ✔', 'scipy initialized ✔'];
-          this.pyodideInitialized = true;
           this.loading = [];
         })
       })
