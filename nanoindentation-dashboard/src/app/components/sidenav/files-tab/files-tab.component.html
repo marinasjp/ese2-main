@@ -13,6 +13,12 @@
 
   <ng-template #notLoading>
 
+    <div class="mb-4" *ngIf="graphService.datafiles.length">
+      <h4 class="mb-2">Select file to use</h4>
+      <p-dropdown [options]="graphService.datafiles" [(ngModel)]="selectedDatafile" (onChange)="onSelectDatafile()"
+                  optionLabel="name"></p-dropdown>
+    </div>
+
     <!--  UPLOAD TEXT FILE -->
     <h4 class="mt-2">Upload a File</h4>
 
@@ -41,5 +47,6 @@
     </p-fileUpload>
 
   </ng-template>
+
 
 </p-accordionTab>

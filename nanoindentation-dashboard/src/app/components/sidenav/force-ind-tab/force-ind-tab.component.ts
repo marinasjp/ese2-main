@@ -23,8 +23,8 @@ export class ForceIndTabComponent {
   ]
 
   constructor(private graphService: GraphService) {
-    this.graphService.datasets$.subscribe(() => {
-      if (this.graphService.datasets[0]?.contactPoint) {
+    this.graphService.selectedDatafile$.subscribe(() => {
+      if (this.graphService.selectedDatafile.datasets[0]?.contactPoint) {
         this.disabled = false;
       } else {
         this.disabled = true;

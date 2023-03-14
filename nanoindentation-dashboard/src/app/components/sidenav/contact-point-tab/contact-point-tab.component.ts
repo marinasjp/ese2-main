@@ -15,8 +15,8 @@ export class ContactPointTabComponent {
 
   constructor(public processorService: ProcessorService,
               private graphService: GraphService) {
-    this.graphService.datasets$.subscribe((datasets) => {
-      if (datasets.length) {
+    this.graphService.selectedDatafile$.subscribe((datafile) => {
+      if (datafile.datasets.length) {
         this.disabled = false;
       } else {
         this.disabled = true;

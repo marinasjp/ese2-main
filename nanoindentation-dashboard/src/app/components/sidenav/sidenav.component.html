@@ -1,11 +1,11 @@
-<div class="sidenav" style="overflow-y: scroll">
+<div class="sidenav" style="overflow-y: scroll; overflow-x: hidden">
 
   <p-accordion [multiple]="true">
 
     <!-- Files Tab -->
     <app-files-tab></app-files-tab>
 
-    <div class="mt-5 mb-2 px-2" *ngIf="!(graphService.datasets$|async).length">
+    <div class="mt-5 mb-2 px-2" *ngIf="!(graphService.selectedDatafile$|async).datasets.length">
       Other tabs can be used, once a file is uploaded.
     </div>
     <!-- Filtering Tab -->

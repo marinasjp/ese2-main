@@ -44,10 +44,10 @@ export class ProcessorService {
 
     this.loading = ['Resetting filters'];
     // RESET FILTERED DATA
-    this.graphService.datasets.forEach((dataset: Dataset, index: number) => {
-      this.graphService.datasets[index].displacementForceFilteredData = this.graphService.datasets[index].displacementForceData;
+    this.graphService.selectedDatafile.datasets.forEach((dataset: Dataset, index: number) => {
+      this.graphService.selectedDatafile.datasets[index].displacementForceFilteredData = this.graphService.selectedDatafile.datasets[index].displacementForceData;
     })
-    this.graphService.datasets = this.graphService.datasets;
+    this.graphService.selectedDatafile = this.graphService.selectedDatafile;
     this.loading = ['Filters reset ✔']
 
     // whenever selected filters change: run runFilters() from the start (index 0)
@@ -421,7 +421,7 @@ export class ProcessorService {
 
     getScriptPromise.then((processScript) => {
 
-      this.graphService.datasets.forEach((dataset: Dataset, index: number) => {
+      this.graphService.selectedDatafile.datasets.forEach((dataset: Dataset, index: number) => {
         let inputDatapoints: Datapoint[] = [];
         let inputArgs: any[] = [];
 
@@ -457,13 +457,13 @@ export class ProcessorService {
         //set dataset being displayed according to the type of process that was run
         switch (currentProcess.procType) {
           case EProcType.FILTER:
-            this.graphService.datasets[index].displacementForceFilteredData = outputDatapoints as Datapoint[];
+            this.graphService.selectedDatafile.datasets[index].displacementForceFilteredData = outputDatapoints as Datapoint[];
             break;
           case EProcType.CPOINT:
-            this.graphService.datasets[index].contactPoint = outputDatapoints as Datapoint;
+            this.graphService.selectedDatafile.datasets[index].contactPoint = outputDatapoints as Datapoint;
             break;
           case EProcType.INTERNAL:
-            this.graphService.datasets[index].indentationForceData = outputDatapoints as Datapoint[];
+            this.graphService.selectedDatafile.datasets[index].indentationForceData = outputDatapoints as Datapoint[];
             break;
           case EProcType.EMODELS:
             // TODO: IMPLEMENT
@@ -475,7 +475,7 @@ export class ProcessorService {
       })
 
       //change loading msg
-      this.graphService.datasets = this.graphService.datasets;
+      this.graphService.selectedDatafile = this.graphService.selectedDatafile;
       loadingMsgs[loadingMsgs.length - 1] = currentProcess.name + ' done ✔'
       this.runAll(processes); // recursive call
     })

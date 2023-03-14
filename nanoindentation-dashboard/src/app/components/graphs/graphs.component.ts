@@ -39,7 +39,7 @@ export class GraphsComponent {
   ngOnInit() {
     this.setGraphOptions();
 
-    this.datasetsSubscription = this.graphService.datasets$.subscribe(() => {
+    this.datasetsSubscription = this.graphService.selectedDatafile$.subscribe(() => {
       this.reloadMultipleLineGraphs();
     })
 
@@ -92,8 +92,6 @@ export class GraphsComponent {
             color: "rgba(255,255,255,0.2)"
           },
           type: 'linear',
-          min: this.graphService.start,
-          max: this.graphService.end
         },
         y: {
           stacked: true,
@@ -123,7 +121,7 @@ export class GraphsComponent {
       datasets: []
     };
 
-    for (let dataset of this.graphService.datasets) {
+    for (let dataset of this.graphService.selectedDatafile.datasets) {
       this.displacementForceFilteredDataMultiple.datasets.push(this.getNewData());
       this.displacementForceFilteredDataMultiple.datasets[this.displacementForceFilteredDataMultiple.datasets.length - 1].data = dataset.displacementForceFilteredData;
     }
@@ -152,7 +150,7 @@ export class GraphsComponent {
       labels: [],
       datasets: []
     };
-    for (let dataset of this.graphService.datasets) {
+    for (let dataset of this.graphService.selectedDatafile.datasets) {
       this.indentationForceDataMultiple.datasets.push(this.getNewData());
       this.indentationForceDataMultiple.datasets[this.indentationForceDataMultiple.datasets.length - 1].data = dataset.indentationForceData;
     }
