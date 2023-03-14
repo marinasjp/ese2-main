@@ -200,38 +200,38 @@ export class ProcessorService {
   //   }
   // };
 
-  // public addProcess(process: Process) { //adds a process definition to the data struct
-  //   try {
-  //     switch (process.procType) { //add to the correct container acording to process type
-  //       case EProcType.CPOINT: {
-  //         this.availableProcesses.cPoints.push(process);
-  //         break;
-  //       }
-  //       case EProcType.FILTER: {
-  //         this.availableProcesses.filters.push(process);
-  //         break;
-  //       }
-  //       case EProcType.EMODELS: {
-  //         this.availableProcesses.eModels.push(process);
-  //         break;
-  //       }
-  //       case EProcType.FMODELS: {
-  //         this.availableProcesses.fModels.push(process);
-  //         break;
-  //       }
-  //       case EProcType.TEST: {
-  //         this.availableProcesses.test.push(process);
-  //         break;
-  //       }
-  //       default: {
-  //         throw Error('ERROR: ProcType error'); //throw error if type isnt found
-  //       }
-  //     }
-  //     return this.availableProcesses;
-  //   } catch (e: any) {
-  //     return this.errorHandlerService.Fatal(e); //catch any errors
-  //   }
-  // };
+  public addProcess(process: Process) { //adds a process definition to the data struct
+    try {
+      switch (process.procType) { //add to the correct container acording to process type
+        case EProcType.CPOINT: {
+          this.availableProcesses.cPoints.push(process);
+          break;
+        }
+        case EProcType.FILTER: {
+          this.availableProcesses.filters.push(process);
+          break;
+        }
+        case EProcType.EMODELS: {
+          this.availableProcesses.eModels.push(process);
+          break;
+        }
+        case EProcType.FMODELS: {
+          this.availableProcesses.fModels.push(process);
+          break;
+        }
+        case EProcType.TEST: {
+          this.availableProcesses.test.push(process);
+          break;
+        }
+        default: {
+          throw Error('ERROR: ProcType error'); //throw error if type isnt found
+        }
+      }
+      return this.availableProcesses;
+    } catch (e: any) {
+      return this.errorHandlerService.Fatal(e); //catch any errors
+    }
+  };
 
   // public changeProcessUse(process: Process, use: boolean) { //finds and disables a process in the proc chain
   //   try {
@@ -453,6 +453,9 @@ export class ProcessorService {
         case EProcType.TEST: {
           procPath += 'Tests/';
           break;
+        }
+        default: {
+          throw Error('ERROR: ProcType error'); //throw error if type isnt found
         }
       }
       procPath += process.id + '.py'; //add file name to path to get path to file
