@@ -93,9 +93,10 @@ The first part of the interface is the graphs. 3 graph sets are displayed, each 
 ## Sidebar
 The second part of the interface is the sidebar. This is how the website is controlled, and is made up of 7 parts.
 
+![SidebarIMG.PNG](./SidebarIMG.PNG)
+
 ### Filter Select
 The first is Filter-Select, a slider used to display each curve seperately on the secondary graphs. Moving the slider around will change which curve is viewed, with the number of the curve being displayed on top.
-
 ### Filters
 The next is Filters. Click on the box to open it up. This will first allow you to determine whether to use Prominency. In order to enable or disable, click the switch. It also allows the user to set parameters for Prominency, Minimum Frequency and Band.
 Below this, there is a drop down menu that allows the user to activate filters. Multiple filters can be selected, and they will apply to all graphs.
@@ -104,14 +105,11 @@ Below this, there is a drop down menu that allows the user to activate filters. 
 
 ### Contact Point
 The Contact Point tab will allow the user to set which contact point they wish to use. Contact point is...
-
 ### Force-Ind
 The Force-Ind tab is used to control the second set of graphs, The Force-Indentation graphs. The first feature is a drop down box allowing the user to determine which force indentation shape to use.
 The second and third inputs are for setting the value of Force Minimum and Force Maximum respectively.
-
 ### Elasticity-Spectra
 The Elasticity-Spectra tab is used to control the third set of graphs. The first feature is a drop down box allowing the user to determine (TBA).
 The second and third inputs are for setting the value of Elasticity-Spectra Minimum and Elasticity-Spectra Maximum respectively.
-
 ### Upload Custom Code Tab
 (TBA)
