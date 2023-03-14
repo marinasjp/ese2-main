@@ -148,25 +148,32 @@ export class GraphsComponent {
   }
 
   setIndentationForceMultiple(): void {
-    // this.indentationForceDataMultiple = {...this.dataTemplate};
-    // for (let dataset of this.graphService.datasets) {
-    //   this.indentationForceDataMultiple.datasets.push(this.getNewData());
-    //   this.indentationForceDataMultiple.datasets[this.indentationForceDataMultiple.datasets.length - 1].data = dataset.indentationForceData;
-    // }
-    // if (this.indentationForceChartMultiple) {
-    //   this.indentationForceChartMultiple.reinit();
-    // }
+    this.indentationForceDataMultiple = {
+      labels: [],
+      datasets: []
+    };
+    for (let dataset of this.graphService.datasets) {
+      this.indentationForceDataMultiple.datasets.push(this.getNewData());
+      this.indentationForceDataMultiple.datasets[this.indentationForceDataMultiple.datasets.length - 1].data = dataset.indentationForceData;
+    }
+    if (this.indentationForceChartMultiple) {
+      this.indentationForceChartMultiple.reinit();
+    }
   }
 
   setIndentationForceSingle(): void {
-    // if (!this.indentationForceDataMultiple?.datasets || !this.indentationForceDataMultiple.datasets[this.graphService.sliderValue]) {
-    //   return;
-    // }
-    // this.displacementForceFilteredDataSingle = {...this.dataTemplate};
-    // this.indentationForceDataSingle.datasets = [this.indentationForceDataMultiple.datasets[this.graphService.sliderValue]];
-    // if (this.indentationForceChartSingle) {
-    //   this.indentationForceChartSingle.reinit();
-    // }
+    if (!this.indentationForceDataMultiple?.datasets || !this.indentationForceDataMultiple.datasets[this.graphService.sliderValue]) {
+      return;
+    }
+    this.indentationForceDataSingle = {
+      labels: [],
+      datasets: []
+    };
+
+    this.indentationForceDataSingle.datasets = [this.indentationForceDataMultiple.datasets[this.graphService.sliderValue]];
+    if (this.indentationForceChartSingle) {
+      this.indentationForceChartSingle.reinit();
+    }
   }
 
   reloadMultipleLineGraphs(): void {

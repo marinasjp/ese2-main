@@ -19,7 +19,7 @@
 
     <app-sidenav></app-sidenav>
 
-    <div *ngIf="processorService.pyodideInitialized && processorService.loading$|async else graphs"
+    <div *ngIf="processorService.pyodideInitialized && processorService.loading$|async"
          class="flex justify-content-center align-items-center"
          style="width: 100vw; height: 100vh">
 
@@ -33,9 +33,8 @@
 
     </div>
 
-    <ng-template #graphs>
-      <app-graphs class="w-full h-full"></app-graphs>
-    </ng-template>
+    <app-graphs [class.hidden]="processorService.pyodideInitialized && processorService.loading$|async"
+                class="w-full h-full"></app-graphs>
 
   </div>
 

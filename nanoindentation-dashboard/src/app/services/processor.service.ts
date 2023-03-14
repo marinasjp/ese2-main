@@ -55,7 +55,7 @@ export class ProcessorService {
     return this._selectedCPointProcess;
   }
 
-  public availableProcesses: { filters: Process[], cPoints: Process[], eModels: Process[], fModels: Process[], test: Process[] } = {
+  public availableProcesses: { filters: Process[], cPoints: Process[], eModels: Process[], fModels: Process[], internal: Process[], test: Process[] } = {
     filters: [ //container for processes
       {id: 'median', name: 'Median', procType: EProcType.FILTER, custom: false},
       {id: 'savgol', name: 'Sawitzky Golay', procType: EProcType.FILTER, custom: false},
@@ -66,7 +66,10 @@ export class ProcessorService {
       {id: 'stepAndDrift', name: 'Step and Drift', procType: EProcType.CPOINT, custom: false}
     ],
     eModels: [],//container for eModel
-    fModels: [],//container for fModel
+    fModels: [],//container for fModel,
+    internal: [
+      {id: 'calc_indentation', name: 'calc_indentation', procType: EProcType.INTERNAL, custom: false}
+    ], // container for processes only run by the app but not selectable by the user
     test: []     //container for test processess
   }
 
@@ -296,6 +299,7 @@ export class ProcessorService {
           this.loadingStatus = ['pyodide initialized ✔', 'numpy initialized ✔', 'scipy initialized ✔'];
           this.pyodideInitialized = true;
           this._loading.next(false);
+          this.loadingStatus = [];
         })
       })
     })
@@ -346,6 +350,7 @@ export class ProcessorService {
 
     } else {
       this._loading.next(false);
+      this.loadingStatus = [];
       this.graphService.datasets = this.graphService.datasets;
       this.calculateContactPoint();
     }
@@ -356,6 +361,7 @@ export class ProcessorService {
 
     if (!this.selectedCPointProcess) {
       this._loading.next(false);
+      this.loadingStatus = [];
       return;
     }
 
@@ -374,6 +380,34 @@ export class ProcessorService {
         dataset.contactPoint = datapoint;
       })
       this._loading.next(false);
+      this.loadingStatus = [];
+      this.calculateIndentation();
+    })
+  }
+
+  calculateIndentation() {
+    this._loading.next(true);
+    this.loadingStatus[this.loadingStatus.length - 1] = 'Calculating Indentation ...';
+
+    let calcIndentationProcess: Process = this.availableProcesses.internal.find((process: Process) => {
+      return process.id == 'calc_indentation';
+    })
+    let getScriptPromise: Promise<string> | CustomError = this.getScript(calcIndentationProcess);
+    //
+    if (!(getScriptPromise instanceof Promise<string>)) {
+      // TODO: ERROR HAPPENED
+      return;
+    }
+
+    getScriptPromise.then((processScript) => {
+      this.graphService.datasets.forEach((dataset: Dataset, index: number) => {
+        let contactPoint = [dataset.contactPoint.x, dataset.contactPoint.y];
+        let datapoints: Datapoint[] = this.runProcessScriptOnDatapoints(dataset.displacementForceFilteredData, processScript, contactPoint) as Datapoint[];
+        this.graphService.datasets[index].indentationForceData = datapoints;
+      })
+      this._loading.next(false);
+      this.loadingStatus = [];
+      this.graphService.datasets = this.graphService.datasets;
     })
   }
 
@@ -412,6 +446,10 @@ export class ProcessorService {
           procPath += 'FModels/';
           break;
         }
+        case EProcType.INTERNAL: {
+          procPath += 'Internal/';
+          break;
+        }
         case EProcType.TEST: {
           procPath += 'Tests/';
           break;
@@ -425,18 +463,24 @@ export class ProcessorService {
     }
   }
 
-  runProcessScriptOnDatapoints(datapoints: Datapoint[], processScript: string): Datapoint[] | Datapoint {
+  runProcessScriptOnDatapoints(datapoints: Datapoint[], processScript: string, arg?: any): Datapoint[] | Datapoint {
     let convertedDataset: { x: number[], y: number[] } = this.convertDatapointsArrayToXAndYArray(datapoints);
     let xAxis = convertedDataset.x;
     let yAxis = convertedDataset.y;
 
     globalThis.pyodide.runPython(processScript); //Running the code
     let calculate = globalThis.pyodide.globals.get('calculate'); //map the function from the global variables onto 'calculate'
-    let resultPy = calculate(xAxis, yAxis); //run function on the dataset
+
+    let resultPy: any;
+
+    if (arg) {
+      resultPy = calculate(xAxis, yAxis, arg); //run function on the dataset
+    } else {
+      resultPy = calculate(xAxis, yAxis); //run function on the dataset
+    }
     let result = resultPy.toJs(); //translate result to JS
     result = {x: result[0], y: result[1]}; //map result onto container
-
-    if (result.x.isArray && result.y.isArray) {
+    if (result.x.length > 1 && result.y.length > 1) {
       result = this.convertXAndYArrayToDatapointsArray(result);
     } else {
       result = result as Datapoint
