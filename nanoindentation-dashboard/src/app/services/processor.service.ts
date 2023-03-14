@@ -35,13 +35,15 @@ export class ProcessorService {
     return this._loading.value;
   }
 
+  //Container for selected Filters
+  private _selectedFilters: Process[] = []; 
 
-  private _selectedFilters: Process[] = [];
-
+  //getter for selected filters
   public get selectedFilters(): Process[] {
     return this._selectedFilters;
   }
 
+  //setter for selected filters (also runs all filters)
   public set selectedFilters(filters: Process[]) {
     this._selectedFilters = filters;
 
@@ -49,19 +51,23 @@ export class ProcessorService {
     this.runFilters(0);
   }
 
+  //container for selected Cpoint processes
   private _selectedCPointProcess: Process = null;
 
+  //Setter for selected Cpoint process (also runs Cpoint process)
   public set selectedCPointProcess(process: Process) {
     this._selectedCPointProcess = process;
-    this.calculateContactPoint();
+    this.calculateContactPoint();//when CPoint process is changed, calculate Cpoint
   }
 
+  //Getter for selected Cpoint process
   public get selectedCPointProcess(): Process {
     return this._selectedCPointProcess;
   }
 
+  //container for all available processes
   public availableProcesses: { filters: Process[], cPoints: Process[], eModels: Process[], fModels: Process[], internal: Process[], test: Process[] } = {
-    filters: [ //container for processes
+    filters: [ //Container for available filters
       {id: 'median', name: 'Median', procType: EProcType.FILTER, custom: false},
       {id: 'savgol', name: 'Sawitzky Golay', procType: EProcType.FILTER, custom: false},
       {id: 'linearDetrend', name: 'Linear Detrending', procType: EProcType.FILTER, custom: false},
@@ -132,41 +138,6 @@ export class ProcessorService {
   //     }
   // }
 
-  // //sets a specific type of process container in the chain
-  // public SetAProcessChain(processes: Process[], procType: EProcType) {
-  //   try {
-  //     switch (procType) { //add to the correct container acording to process type
-  //       case EProcType.CPOINT: {
-  //         this.processChain.cPoints = processes;
-  //         break;
-  //       }
-  //       case EProcType.FILTER: {
-  //         this.processChain.filters = processes;
-  //         break;
-  //       }
-  //       case EProcType.EMODELS: {
-  //         this.processChain.eModels = processes;
-  //         break;
-  //       }
-  //       case EProcType.FMODELS: {
-  //         this.processChain.fModels = processes;
-  //         break;
-  //       }
-  //       case EProcType.TEST: {
-  //         this.processChain.test = processes;
-  //         break;
-  //       }
-  //       default: {
-  //         throw Error('ERROR: ProcType error'); //throw error if type isnt found
-  //       }
-  //     }
-  //     return this.runFrom(procType);
-  //
-  //   } catch (e: any) {
-  //     return this.errorHandlerService.Fatal(e); //catch any errors
-  //   }
-  // }
-
   // private addToChain(process: Process) { //adds a process to process chain
   //   try {
   //     switch (process.procType) { //add to the correct container acording to process type
@@ -205,38 +176,38 @@ export class ProcessorService {
   //   }
   // };
 
-  // public addProcess(process: Process) { //adds a process definition to the data struct
-  //   try {
-  //     switch (process.procType) { //add to the correct container acording to process type
-  //       case EProcType.CPOINT: {
-  //         this.availableProcesses.cPoints.push(process);
-  //         break;
-  //       }
-  //       case EProcType.FILTER: {
-  //         this.availableProcesses.filters.push(process);
-  //         break;
-  //       }
-  //       case EProcType.EMODELS: {
-  //         this.availableProcesses.eModels.push(process);
-  //         break;
-  //       }
-  //       case EProcType.FMODELS: {
-  //         this.availableProcesses.fModels.push(process);
-  //         break;
-  //       }
-  //       case EProcType.TEST: {
-  //         this.availableProcesses.test.push(process);
-  //         break;
-  //       }
-  //       default: {
-  //         throw Error('ERROR: ProcType error'); //throw error if type isnt found
-  //       }
-  //     }
-  //     return this.availableProcesses;
-  //   } catch (e: any) {
-  //     return this.errorHandlerService.Fatal(e); //catch any errors
-  //   }
-  // };
+  public addProcess(process: Process) { //adds a process definition to the data struct
+    try {
+      switch (process.procType) { //add to the correct container acording to process type
+        case EProcType.CPOINT: {
+          this.availableProcesses.cPoints.push(process);
+          break;
+        }
+        case EProcType.FILTER: {
+          this.availableProcesses.filters.push(process);
+          break;
+        }
+        case EProcType.EMODELS: {
+          this.availableProcesses.eModels.push(process);
+          break;
+        }
+        case EProcType.FMODELS: {
+          this.availableProcesses.fModels.push(process);
+          break;
+        }
+        case EProcType.TEST: {
+          this.availableProcesses.test.push(process);
+          break;
+        }
+        default: {
+          throw Error('ERROR: ProcType error'); //throw error if type isnt found
+        }
+      }
+      return this.availableProcesses;
+    } catch (e: any) {
+      return this.errorHandlerService.Fatal(e); //catch any errors
+    }
+  };
 
   // public changeProcessUse(process: Process, use: boolean) { //finds and disables a process in the proc chain
   //   try {
@@ -456,6 +427,9 @@ export class ProcessorService {
         case EProcType.TEST: {
           procPath += 'Tests/';
           break;
+        }
+        default: {
+          throw Error('ERROR: ProcType error'); //throw error if type isnt found
         }
       }
       procPath += process.id + '.py'; //add file name to path to get path to file

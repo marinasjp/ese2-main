@@ -61,7 +61,7 @@ export class SidenavComponent {
 
   uploadrawHandler(event: any) {
     const file = event.files && event.files[0];
-    this.graphService.uploadData(file);
+    this.graphService.uploadDataRaw(file);
   }
 
   runCode(code: string) {

@@ -3,7 +3,6 @@ import { HttpClient, HttpHandler } from '@angular/common/http';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import {HttpClientModule} from '@angular/common/http';
 import {FilesTabComponent} from './files-tab.component';
-import { CommonModule } from '@angular/common';
 
 describe('FilesTabComponent', () => {
   //let component: FilesTabComponent;
