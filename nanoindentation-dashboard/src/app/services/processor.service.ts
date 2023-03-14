@@ -84,98 +84,6 @@ export class ProcessorService {
     test: []     //container for test processess
   }
 
-  //Container for processes thats been run
-  // private _processChain: { filters: Process[], cPoints: Process[], eModels: Process[], fModels: Process[], test: Process[] } = {
-  //   filters: [],
-  //   cPoints: [],
-  //   eModels: [],
-  //   fModels: [],
-  //   test: []
-  // };
-
-  // //Getter for process chain
-  // private get processChain(): { filters: Process[], cPoints: Process[], eModels: Process[], fModels: Process[], test: Process[] } {
-  //   return this._processChain;
-  // }
-  //
-  // //setter for process chain
-  // private set processChain(processChain: { filters: Process[], cPoints: Process[], eModels: Process[], fModels: Process[], test: Process[] }) {
-  //   this._processChain = processChain;
-  //   this.runProcessChain();
-  // }
-
-  // //sets a specific type of process container in the chain
-  // public SetAProcessChain( processes: Process[], procType: EProcType) {
-  //   try {
-  //     switch (procType) { //add to the correct container acording to process type
-  //       case EProcType.CPOINT: {
-  //         this.processChain.cPoints = processes;//set the according container
-  //         break;
-  //       }
-  //       case EProcType.FILTER: {
-  //         this.processChain.filters = processes;
-  //         break;
-  //       }
-  //       case EProcType.EMODELS: {
-  //         this.processChain.eModels = processes;
-  //         break;
-  //       }
-  //       case EProcType.FMODELS: {
-  //         this.processChain.fModels = processes;
-  //         break;
-  //       }
-  //       case EProcType.TEST: {
-  //         this.processChain.test = processes;
-  //         break;
-  //       }default: {
-  //         throw Error('ERROR: ProcType error'); //throw error if type isnt found
-  //       }
-  //     }
-  //       return this.runFrom(procType);//runs all filters from the type specified
-  //
-  //     } catch (e: any) {
-  //       return this.errorHandlerService.Fatal(e); //catch any errors
-  //     }
-  // }
-
-  // private addToChain(process: Process) { //adds a process to process chain
-  //   try {
-  //     switch (process.procType) { //add to the correct container acording to process type
-  //       case EProcType.CPOINT: {
-  //         process.chainID = this.processChain.cPoints.length;//set the chainID
-  //         this._processChain.cPoints.push(process);//send in container
-  //         break;
-  //       }
-  //       case EProcType.FILTER: {
-  //         process.chainID = this.processChain.filters.length;
-  //         this._processChain.filters.push(process);
-  //         break;
-  //       }
-  //       case EProcType.EMODELS: {
-  //         process.chainID = this.processChain.eModels.length;
-  //         this._processChain.eModels.push(process);
-  //         break;
-  //       }
-  //       case EProcType.FMODELS: {
-  //         process.chainID = this.processChain.fModels.length;
-  //         this._processChain.fModels.push(process);
-  //         break;
-  //       }
-  //       case EProcType.TEST: {
-  //         process.chainID = this.processChain.test.length;
-  //         this._processChain.test.push(process);
-  //         break;
-  //       }
-  //       default: {
-  //         throw Error('ERROR: ProcType error');
-  //       }
-  //     }
-  //     return this.processChain;
-  //   } catch (e: any) {
-  //     return this.errorHandlerService.Fatal(e);
-  //   }
-  // };
-
   public addProcess(process: Process) { //adds a process definition to the data struct
     try {
       switch (process.procType) { //add to the correct container acording to process type
@@ -208,39 +116,6 @@ export class ProcessorService {
       return this.errorHandlerService.Fatal(e); //catch any errors
     }
   };
-
-  // public changeProcessUse(process: Process, use: boolean) { //finds and disables a process in the proc chain
-  //   try {
-  //     switch (process.procType) { //find correct container acording to process type
-  //       case EProcType.CPOINT: {
-  //         this._processChain.cPoints[process.chainID].inUse = use;//set to use
-  //         break;
-  //       }
-  //       case EProcType.FILTER: {
-  //         this._processChain.filters[process.chainID].inUse = use;
-  //         break;
-  //       }
-  //       case EProcType.EMODELS: {
-  //         this._processChain.eModels[process.chainID].inUse = use;
-  //         break;
-  //       }
-  //       case EProcType.FMODELS: {
-  //         this._processChain.fModels[process.chainID].inUse = use;
-  //         break;
-  //       }
-  //       case EProcType.TEST: {
-  //         this._processChain.test[process.chainID].inUse = use;
-  //         break;
-  //       }
-  //       default: {
-  //         throw Error('ERROR: ProcType error');
-  //       }
-  //     }
-  //     return this.processChain;
-  //   } catch (e: any) {
-  //     return this.errorHandlerService.Fatal(e);
-  //   }
-  // }
 
   private rootPath: string = 'assets/Processes/'; //path of process scripts
 
@@ -554,83 +429,7 @@ export class ProcessorService {
       })
     })
   }
-
-  //Takes a script and uses pyodide to run it on the dataSet
-  //procName: Name of proces, procType: Type of process, dataSet: (optional) dataset to be processed if not given uses this.currData
-  // private doProcess(process: Process, dataSet: any = this._processedData): Promise<any> {
-  // this._pyodideLoading.next(true); //check if pyodide is loaded
-
-  // let getScriptPromise: Promise<string> | string | CustomError = this.getScript(process); //get the process script
-
-
-  // if (!(getScriptPromise instanceof Promise || getScriptPromise instanceof String)) {
-  //   return getScriptPromise; //return the error that was caught
-  // }
-
-  // return new Promise<any>((resolve, reject) => {
-
-  // getScriptPromise = getScriptPromise as Promise<string>;
-
-  // getScriptPromise
-  //   .then(procScript => {
-  //     console.log(procScript);
-  //     // executed if procScript is loaded successfully
-  //     // process.script = procScript; // Append found script into Process Object
-  //     globalThis.pyodide.runPython(procScript); //Running the code
-  //     let calculate = globalThis.pyodide.globals.get('calculate'); //map the function from the global variables onto 'calculate'
-  //     let resultPy = calculate(dataSet.x, dataSet.y); //run function on the dataset
-  //     let result = resultPy.toJs(); //translate result to JS
-  //     result = {x: result[0], y: result[1]}; //map result onto container
-  //     this._processedData = result; //set result as the processedData
-  //     resultPy.destroy();//free the function used
-  //     console.log(result);
-  //     resolve(result); //return result as promise resolve
-  //
-  //
-  //     // process.inUse = true; //set the process to be in use
-  //     // this.addToChain(process); //add process to the chain for record
-  //   })
-  // })
-  // }
-
-  //
-  // //run the process chain recorded
-  // public runProcessChain() {
-  //   this._processedData = this.initialData; //reset processed data to the initial
-  //   if (this.processChain.filters.length) { //if there are filters,
-  //     this.runAll(this._processChain.filters); //run all filters
-  //   }
-  //   if (this.processChain.cPoints.length) {
-  //     this.runAll(this._processChain.cPoints);
-  //   }
-  //   if (this.processChain.fModels.length) {
-  //     this.runAll(this._processChain.fModels);
-  //   }
-  //   if (this.processChain.eModels.length) {
-  //     this.runAll(this._processChain.eModels);
-  //   }
-  //   if (this.processChain.test.length) {
-  //     this.runAll(this._processChain.test);
-  //   }
-  // }
-
-  //runs all the processes in a given set
-  // private runAll(processes: Process[], dataSet: any = this._processedData): any {
-  //   let promise: any;
-  //   for (let i = 0; i < processes.length; i++) {// for each filter in process chain
-  //     let currProc = processes[i];
-  //     if (currProc.inUse) { //doprocess if in use
-  //       promise = this.doProcess(currProc, dataSet);
-  //       if (promise.type == 'customerror') {
-  //         continue; //if error, skip filter
-  //       }
-  //     } else { // else move to the next filter
-  //       continue;
-  //     }
-  //   }
-  //   return this.processedData; //return processed data
-  // }
-  
+    
   //Runs all the processes from (and including) the process type specified
   public runFrom(procType: EProcType): void | CustomError {
     try {
@@ -670,7 +469,8 @@ export class ProcessorService {
           throw Error('ERROR: ProcType error'); //throw error if type isnt found
         }
       }
-      //this.runAll(processChain);
+      this.runAll(processChain);
+
     } catch (e: any) {
       return this.errorHandlerService.Fatal(e); //catch any errors as fatal errors
     }
