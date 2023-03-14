@@ -30,4 +30,4 @@ test:
     - export CHROME_BIN=/usr/bin/google-chrome
   script:
     - cd nanoindentation-dashboard
-    - npm run testspec -- --no-watch --browsers=ChromeHeadlessCI
+    - npm run test:ci
