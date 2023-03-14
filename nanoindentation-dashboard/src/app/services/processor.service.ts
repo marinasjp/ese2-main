@@ -52,6 +52,7 @@ export class ProcessorService {
     this.graphService.datasets = this.graphService.datasets;
     this.loading = ['Filters reset ✔']
 
+    // whenever selected filters change: run runFilters() from the start (index 0)
     this.runFrom(EProcType.FILTER);
   }
 
@@ -61,12 +62,40 @@ export class ProcessorService {
   //Setter for selected Cpoint process (also runs Cpoint process)
   public set selectedCPointProcess(process: Process) {
     this._selectedCPointProcess = process;
-    this.runFrom(EProcType.CPOINT);
+    this.runFrom(EProcType.CPOINT);//when CPoint process is changed, calculate Cpoint
   }
 
   //Getter for selected Cpoint process
   public get selectedCPointProcess(): Process {
     return this._selectedCPointProcess;
+  }
+
+  //container for selected Emodel processes
+  private _selectedEmodels: Process = null;
+
+  //Setter for selected Emodel process (also runs Emodel process)
+  public set selectedEmodels(process: Process) {
+    this._selectedCPointProcess = process;
+    this.runFrom(EProcType.EMODELS);//when Emodel process is changed, calculate Emodel
+  }
+
+  //Getter for selected Emodels process
+  public get selectedEmodels(): Process {
+    return this._selectedEmodels;
+  }
+
+  //container for selected Fmodels processes
+  private _selectedFmodels: Process = null;
+
+  //Setter for selected Fmodels process (also runs Fmodels process)
+  public set selectedFmodels(process: Process) {
+    this._selectedCPointProcess = process;
+    this.runFrom(EProcType.FMODELS);//when Fmodels process is changed, calculate Fmodels
+  }
+
+  //Getter for selected Fmodels process
+  public get selectedFmodels(): Process {
+    return this._selectedFmodels;
   }
 
   //container for all available processes
@@ -87,98 +116,6 @@ export class ProcessorService {
     ], // container for processes only run by the app but not selectable by the user
     test: []     //container for test processess
   }
-
-  //Container for processes thats been run
-  // private _processChain: { filters: Process[], cPoints: Process[], eModels: Process[], fModels: Process[], test: Process[] } = {
-  //   filters: [],
-  //   cPoints: [],
-  //   eModels: [],
-  //   fModels: [],
-  //   test: []
-  // };
-
-  // //Getter for process chain
-  // private get processChain(): { filters: Process[], cPoints: Process[], eModels: Process[], fModels: Process[], test: Process[] } {
-  //   return this._processChain;
-  // }
-  //
-  // //setter for process chain
-  // private set processChain(processChain: { filters: Process[], cPoints: Process[], eModels: Process[], fModels: Process[], test: Process[] }) {
-  //   this._processChain = processChain;
-  //   this.runProcessChain();
-  // }
-
-  // //sets a specific type of process container in the chain
-  // public SetAProcessChain( processes: Process[], procType: EProcType) {
-  //   try {
-  //     switch (procType) { //add to the correct container acording to process type
-  //       case EProcType.CPOINT: {
-  //         this.processChain.cPoints = processes;//set the according container
-  //         break;
-  //       }
-  //       case EProcType.FILTER: {
-  //         this.processChain.filters = processes;
-  //         break;
-  //       }
-  //       case EProcType.EMODELS: {
-  //         this.processChain.eModels = processes;
-  //         break;
-  //       }
-  //       case EProcType.FMODELS: {
-  //         this.processChain.fModels = processes;
-  //         break;
-  //       }
-  //       case EProcType.TEST: {
-  //         this.processChain.test = processes;
-  //         break;
-  //       }default: {
-  //         throw Error('ERROR: ProcType error'); //throw error if type isnt found
-  //       }
-  //     }
-  //       return this.runFrom(procType);//runs all filters from the type specified
-  //
-  //     } catch (e: any) {
-  //       return this.errorHandlerService.Fatal(e); //catch any errors
-  //     }
-  // }
-
-  // private addToChain(process: Process) { //adds a process to process chain
-  //   try {
-  //     switch (process.procType) { //add to the correct container acording to process type
-  //       case EProcType.CPOINT: {
-  //         process.chainID = this.processChain.cPoints.length;//set the chainID
-  //         this._processChain.cPoints.push(process);//send in container
-  //         break;
-  //       }
-  //       case EProcType.FILTER: {
-  //         process.chainID = this.processChain.filters.length;
-  //         this._processChain.filters.push(process);
-  //         break;
-  //       }
-  //       case EProcType.EMODELS: {
-  //         process.chainID = this.processChain.eModels.length;
-  //         this._processChain.eModels.push(process);
-  //         break;
-  //       }
-  //       case EProcType.FMODELS: {
-  //         process.chainID = this.processChain.fModels.length;
-  //         this._processChain.fModels.push(process);
-  //         break;
-  //       }
-  //       case EProcType.TEST: {
-  //         process.chainID = this.processChain.test.length;
-  //         this._processChain.test.push(process);
-  //         break;
-  //       }
-  //       default: {
-  //         throw Error('ERROR: ProcType error');
-  //       }
-  //     }
-  //     return this.processChain;
-  //   } catch (e: any) {
-  //     return this.errorHandlerService.Fatal(e);
-  //   }
-  // };
 
   public addProcess(process: Process) { //adds a process definition to the data struct
     try {
@@ -212,39 +149,6 @@ export class ProcessorService {
       return this.errorHandlerService.Fatal(e); //catch any errors
     }
   };
-
-  // public changeProcessUse(process: Process, use: boolean) { //finds and disables a process in the proc chain
-  //   try {
-  //     switch (process.procType) { //find correct container acording to process type
-  //       case EProcType.CPOINT: {
-  //         this._processChain.cPoints[process.chainID].inUse = use;//set to use
-  //         break;
-  //       }
-  //       case EProcType.FILTER: {
-  //         this._processChain.filters[process.chainID].inUse = use;
-  //         break;
-  //       }
-  //       case EProcType.EMODELS: {
-  //         this._processChain.eModels[process.chainID].inUse = use;
-  //         break;
-  //       }
-  //       case EProcType.FMODELS: {
-  //         this._processChain.fModels[process.chainID].inUse = use;
-  //         break;
-  //       }
-  //       case EProcType.TEST: {
-  //         this._processChain.test[process.chainID].inUse = use;
-  //         break;
-  //       }
-  //       default: {
-  //         throw Error('ERROR: ProcType error');
-  //       }
-  //     }
-  //     return this.processChain;
-  //   } catch (e: any) {
-  //     return this.errorHandlerService.Fatal(e);
-  //   }
-  // }
 
   private rootPath: string = 'assets/Processes/'; //path of process scripts
 
@@ -284,7 +188,7 @@ export class ProcessorService {
     })
   }
 
-  runFilters(filterIndex: number): any {
+/*  runFilters(filterIndex: number): any {
 
     if (this.selectedFilters.length == 0) {
       this.graphService.datasets.forEach((dataset: Dataset, index: number) => {
@@ -387,8 +291,7 @@ export class ProcessorService {
       // this.loadingStatus = [];
       this.graphService.datasets = this.graphService.datasets;
     })
-  }
-
+  }*/
 
   //Uses the given process name and processes path to give the script
   // returns script or promise of script if successful, -1 if error occurred
@@ -497,6 +400,7 @@ export class ProcessorService {
     return [];
   }
 
+  //given a list of processes, recursively runs them and stores the output in graphs
   runAll(processes: Process[]): any {
 
     if (processes.length == 0) { // base case
@@ -507,11 +411,11 @@ export class ProcessorService {
 
     let currentProcess = processes.shift(); // removes element from index 0 -> shifts everything to the left -> stores it in currentProcess
 
-    let loadingMsgs: string[] = this.loading;
+    let loadingMsgs: string[] = this.loading;//add loading message
     loadingMsgs.push('Running ' + currentProcess.name + '...');
     this.loading = loadingMsgs;
 
-    let getScriptPromise: Promise<string> | CustomError = this.getScript(currentProcess);
+    let getScriptPromise: Promise<string> | CustomError = this.getScript(currentProcess); //get script of process
 
     if (!(getScriptPromise instanceof Promise<string>)) {//if a promise is not returned
       console.log('ERROR: Script could not be obtained')
@@ -524,6 +428,7 @@ export class ProcessorService {
         let inputDatapoints: Datapoint[] = [];
         let inputArgs: any[] = [];
 
+        //select datapoints to be processed depending on type of process
         switch (currentProcess.procType) {
           case EProcType.FILTER:
             inputDatapoints = dataset.displacementForceFilteredData;
@@ -544,6 +449,7 @@ export class ProcessorService {
             break;
         }
 
+        //run process on input datapoints
         let outputDatapoints: any;
         if (inputArgs.length) {
           outputDatapoints = this.runProcessScriptOnDatapoints(inputDatapoints, processScript, inputArgs);
@@ -551,6 +457,7 @@ export class ProcessorService {
           outputDatapoints = this.runProcessScriptOnDatapoints(inputDatapoints, processScript);
         }
 
+        //set dataset being displayed according to the type of process that was run
         switch (currentProcess.procType) {
           case EProcType.FILTER:
             this.graphService.datasets[index].displacementForceFilteredData = outputDatapoints as Datapoint[];
@@ -570,87 +477,12 @@ export class ProcessorService {
         }
       })
 
+      //change loading msg
       this.graphService.datasets = this.graphService.datasets;
       loadingMsgs[loadingMsgs.length - 1] = currentProcess.name + ' done ✔'
       this.runAll(processes); // recursive call
     })
   }
-
-  //Takes a script and uses pyodide to run it on the dataSet
-  //procName: Name of proces, procType: Type of process, dataSet: (optional) dataset to be processed if not given uses this.currData
-  // private doProcess(process: Process, dataSet: any = this._processedData): Promise<any> {
-  // this._pyodideLoading.next(true); //check if pyodide is loaded
-
-  // let getScriptPromise: Promise<string> | string | CustomError = this.getScript(process); //get the process script
-
-
-  // if (!(getScriptPromise instanceof Promise || getScriptPromise instanceof String)) {
-  //   return getScriptPromise; //return the error that was caught
-  // }
-
-  // return new Promise<any>((resolve, reject) => {
-
-  // getScriptPromise = getScriptPromise as Promise<string>;
-
-  // getScriptPromise
-  //   .then(procScript => {
-  //     console.log(procScript);
-  //     // executed if procScript is loaded successfully
-  //     // process.script = procScript; // Append found script into Process Object
-  //     globalThis.pyodide.runPython(procScript); //Running the code
-  //     let calculate = globalThis.pyodide.globals.get('calculate'); //map the function from the global variables onto 'calculate'
-  //     let resultPy = calculate(dataSet.x, dataSet.y); //run function on the dataset
-  //     let result = resultPy.toJs(); //translate result to JS
-  //     result = {x: result[0], y: result[1]}; //map result onto container
-  //     this._processedData = result; //set result as the processedData
-  //     resultPy.destroy();//free the function used
-  //     console.log(result);
-  //     resolve(result); //return result as promise resolve
-  //
-  //
-  //     // process.inUse = true; //set the process to be in use
-  //     // this.addToChain(process); //add process to the chain for record
-  //   })
-  // })
-  // }
-
-  //
-  // //run the process chain recorded
-  // public runProcessChain() {
-  //   this._processedData = this.initialData; //reset processed data to the initial
-  //   if (this.processChain.filters.length) { //if there are filters,
-  //     this.runAll(this._processChain.filters); //run all filters
-  //   }
-  //   if (this.processChain.cPoints.length) {
-  //     this.runAll(this._processChain.cPoints);
-  //   }
-  //   if (this.processChain.fModels.length) {
-  //     this.runAll(this._processChain.fModels);
-  //   }
-  //   if (this.processChain.eModels.length) {
-  //     this.runAll(this._processChain.eModels);
-  //   }
-  //   if (this.processChain.test.length) {
-  //     this.runAll(this._processChain.test);
-  //   }
-  // }
-
-  //runs all the processes in a given set
-  // private runAll(processes: Process[], dataSet: any = this._processedData): any {
-  //   let promise: any;
-  //   for (let i = 0; i < processes.length; i++) {// for each filter in process chain
-  //     let currProc = processes[i];
-  //     if (currProc.inUse) { //doprocess if in use
-  //       promise = this.doProcess(currProc, dataSet);
-  //       if (promise.type == 'customerror') {
-  //         continue; //if error, skip filter
-  //       }
-  //     } else { // else move to the next filter
-  //       continue;
-  //     }
-  //   }
-  //   return this.processedData; //return processed data
-  // }
 
   //Runs all the processes from (and including) the process type specified
   public runFrom(procType: EProcType): void | CustomError {
