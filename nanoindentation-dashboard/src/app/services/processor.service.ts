@@ -26,37 +26,39 @@ export class ProcessorService {
 
   loadingStatus: string[] = ['Initializing pyodide...']
 
+  //Container for selected Filters
+  private _selectedFilters: Process[] = []; 
 
-  private _selectedFilters: Process[] = [];
-
+  //getter for selected filters
   public get selectedFilters(): Process[] {
     return this._selectedFilters;
   }
 
+  //setter for selected filters (also runs all filters)
   public set selectedFilters(filters: Process[]) {
     this._selectedFilters = filters;
 
     // whenever selected filters change: run runFilters() from the start (index 0)
     this.runFilters(0);
-
-    // let processChain = this.processChain;
-    // processChain.filters = filters;
-    // this.processChain = processChain;
   }
 
+  //container for selected Cpoint processes
   private _selectedCPointProcess: Process = null;
 
+  //Setter for selected Cpoint process (also runs Cpoint process)
   public set selectedCPointProcess(process: Process) {
     this._selectedCPointProcess = process;
-    this.calculateContactPoint();
+    this.calculateContactPoint();//when CPoint process is changed, calculate Cpoint
   }
 
+  //Getter for selected Cpoint process
   public get selectedCPointProcess(): Process {
     return this._selectedCPointProcess;
   }
 
+  //container for all available processes
   public availableProcesses: { filters: Process[], cPoints: Process[], eModels: Process[], fModels: Process[], internal: Process[], test: Process[] } = {
-    filters: [ //container for processes
+    filters: [ //Container for available filters
       {id: 'median', name: 'Median', procType: EProcType.FILTER, custom: false},
       {id: 'savgol', name: 'Sawitzky Golay', procType: EProcType.FILTER, custom: false},
       {id: 'linearDetrend', name: 'Linear Detrending', procType: EProcType.FILTER, custom: false},
@@ -125,41 +127,6 @@ export class ProcessorService {
   //     } catch (e: any) {
   //       return this.errorHandlerService.Fatal(e); //catch any errors
   //     }
-  // }
-
-  // //sets a specific type of process container in the chain
-  // public SetAProcessChain(processes: Process[], procType: EProcType) {
-  //   try {
-  //     switch (procType) { //add to the correct container acording to process type
-  //       case EProcType.CPOINT: {
-  //         this.processChain.cPoints = processes;
-  //         break;
-  //       }
-  //       case EProcType.FILTER: {
-  //         this.processChain.filters = processes;
-  //         break;
-  //       }
-  //       case EProcType.EMODELS: {
-  //         this.processChain.eModels = processes;
-  //         break;
-  //       }
-  //       case EProcType.FMODELS: {
-  //         this.processChain.fModels = processes;
-  //         break;
-  //       }
-  //       case EProcType.TEST: {
-  //         this.processChain.test = processes;
-  //         break;
-  //       }
-  //       default: {
-  //         throw Error('ERROR: ProcType error'); //throw error if type isnt found
-  //       }
-  //     }
-  //     return this.runFrom(procType);
-  //
-  //   } catch (e: any) {
-  //     return this.errorHandlerService.Fatal(e); //catch any errors
-  //   }
   // }
 
   // private addToChain(process: Process) { //adds a process to process chain
