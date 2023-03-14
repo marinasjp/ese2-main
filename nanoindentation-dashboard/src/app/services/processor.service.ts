@@ -7,6 +7,8 @@ import {GraphService} from "./graph.service";
 import {ErrorHandlerService} from "./error-handler.service";
 import {Datapoint} from "../models/datapoint.model";
 import {Dataset} from "../models/dataset.model";
+import { resolve } from 'dns';
+import { CustomError } from '../models/error.model';
 
 const PYODIDE_BASE_URL = 'https://cdn.jsdelivr.net/pyodide/v0.22.0/full/';
 
@@ -252,7 +254,7 @@ export class ProcessorService {
   //   }
   // }
 
-  private rootPath: string = 'assets/Processes/';
+  private rootPath: string = 'assets/Processes/'; //path of process scripts
 
   private _processedData: { x: number[], y: number[] };//container for most recent processed dataset
 
@@ -266,7 +268,8 @@ export class ProcessorService {
     this._processedData = data;
   }
 
-  constructor(//constructor for object
+  //constructor for object
+  constructor(
     private http: HttpClient,
     private errorHandlerService: ErrorHandlerService,
     private graphService: GraphService) {
@@ -308,7 +311,12 @@ export class ProcessorService {
         this.loadingStatus.push('Running Filter: ' + currentFilter.name + '...');
       }
 
-      let getScriptPromise: Promise<string> = this.getScript(currentFilter);
+      let getScriptPromise: Promise<string> | CustomError = this.getScript(currentFilter);
+      
+      if (!(getScriptPromise instanceof Promise<string>)){//if a promise is not returned
+        return getScriptPromise; //do smth to show that its an error
+        this.runFilters(filterIndex + 1); //skip filter maybe??
+      }
 
       getScriptPromise.then((processScript) => {
         this.graphService.datasets.forEach((dataset: Dataset, index: number) => {
@@ -341,59 +349,49 @@ export class ProcessorService {
 
   //Uses the given process name and processes path to give the script
   // returns script or promise of script if successful, -1 if error occurred
-  public getScript(process: Process): Promise<string> {
-    // try {
-    //   if (process.script) { //if process has a script recorded
-    //get process from data sytem
-    // return process.script; //return script stored in process
-    // }
-    // } catch (e: any) {
-    //   return this.errorHandlerService.Fatal(e); //fatal error if data system could be reached
-    // }
-
-    // let attempt = 1;//1st attempt at filesystem
-    // let max_attempt = 5;//max attempts
+  public getScript(process: Process): Promise<string> | CustomError{
+    try {
+      if (process.script) { //if process has a script recorded
+                              //get process from data sytem
+        return new Promise((resolve) => {
+          resolve (process.script); //return script as promise stored in process
+        }); 
+      }
+    } catch (e: any) {
+       return this.errorHandlerService.Fatal(e); //fatal error if data system could be reached
+    }
 
     let procPath = this.rootPath; //path to filesystem
-    // let foundError: CustomError; //variable for if error is found
-
-    // do {//repeat until max attempts
-
-    // try {
-    // If the process is not recorder, look for it:
-    switch (process.procType) {
-      case EProcType.CPOINT: {
-        procPath += 'CPoints/';
-        break;
-      }
-      case EProcType.FILTER: {
-        procPath += 'Filters/';
-        break;
-      }
-      case EProcType.EMODELS: {
-        procPath += 'EModels/';
-        break;
-      }
-      case EProcType.FMODELS: {
-        procPath += 'FModels/';
-        break;
-      }
-      case EProcType.TEST: {
-        procPath += 'Tests/';
-        break;
-      }
+    try {
+    // If the process is not recorded, look for it:
+      switch (process.procType) {
+        case EProcType.CPOINT: {
+          procPath += 'CPoints/'; //add relevant folder to path
+          break;
+        }
+        case EProcType.FILTER: {
+          procPath += 'Filters/';
+          break;
+        }
+        case EProcType.EMODELS: {
+          procPath += 'EModels/';
+          break;
+        }
+        case EProcType.FMODELS: {
+          procPath += 'FModels/';
+          break;
+        }
+        case EProcType.TEST: {
+          procPath += 'Tests/';
+          break;
+        }
     }
     procPath += process.id + '.py'; //add file name to path to get path to file
     return this.http.get(procPath, {responseType: 'text'}).toPromise(); //return as promise
 
-    // } catch (e: any) {
-    //Retry as there may be another issue that could go away with a retry
-    // foundError = this.errorHandlerService.Retry(e, attempt, max_attempt);
-    // attempt++; //add to attempt counter
-
-    // }
-    // } while (attempt < max_attempt);
-    // return this.errorHandlerService.RetryFailed(foundError.id);//return the error if unsuccessful
+     } catch (e: any) {
+      return this.errorHandlerService.Fatal(e); //return error if caught
+    }
   }
 
   runProcessScriptOnDatapoints(datapoints: Datapoint[], processScript: string) {
