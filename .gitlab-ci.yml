@@ -1,4 +1,4 @@
-image: node:16
+image: node:18.15.0-alpine3.17
 
 stages:
   - build
@@ -8,7 +8,6 @@ build:
   stage: build
   script:
       - cd nanoindentation-dashboard
-    #   - yarn
       - npm ci
   cache:
     paths:
@@ -20,12 +19,15 @@ build:
       -  nanoindentation-dashboard/node_modules/
 
 test:
-    image: node:16
-    stage: test
-    dependencies:
-        - build
-    script:
-      - cd nanoindentation-dashboard
-      - ng test
-      # - npm run test:ci
-    #   - yarn test:ci
+  image: node:16
+  stage: test
+  dependencies:
+    - build
+  before_script:
+    - apt-get update
+    - wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+    - apt install -y ./google-chrome*.deb;
+    - export CHROME_BIN=/usr/bin/google-chrome
+  script:
+    - cd nanoindentation-dashboard
+    - npm run testspec -- --no-watch --browsers=ChromeHeadlessCI
