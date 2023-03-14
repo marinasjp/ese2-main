@@ -48,7 +48,7 @@ export class ProcessorService {
     this._selectedFilters = filters;
 
     // whenever selected filters change: run runFilters() from the start (index 0)
-    this.runFilters(0);
+    this.runFrom(EProcType.FILTER);
   }
 
   //container for selected Cpoint processes
@@ -57,12 +57,40 @@ export class ProcessorService {
   //Setter for selected Cpoint process (also runs Cpoint process)
   public set selectedCPointProcess(process: Process) {
     this._selectedCPointProcess = process;
-    this.calculateContactPoint();//when CPoint process is changed, calculate Cpoint
+    this.runFrom(EProcType.CPOINT);//when CPoint process is changed, calculate Cpoint
   }
 
   //Getter for selected Cpoint process
   public get selectedCPointProcess(): Process {
     return this._selectedCPointProcess;
+  }
+
+  //container for selected Emodel processes
+  private _selectedEmodels: Process = null;
+
+  //Setter for selected Emodel process (also runs Emodel process)
+  public set selectedEmodels(process: Process) {
+    this._selectedCPointProcess = process;
+    this.runFrom(EProcType.EMODELS);//when Emodel process is changed, calculate Emodel
+  }
+
+  //Getter for selected Emodels process
+  public get selectedEmodels(): Process {
+    return this._selectedEmodels;
+  }
+
+  //container for selected Fmodels processes
+  private _selectedFmodels: Process = null;
+
+  //Setter for selected Fmodels process (also runs Fmodels process)
+  public set selectedFmodels(process: Process) {
+    this._selectedCPointProcess = process;
+    this.runFrom(EProcType.FMODELS);//when Fmodels process is changed, calculate Fmodels
+  }
+
+  //Getter for selected Fmodels process
+  public get selectedFmodels(): Process {
+    return this._selectedFmodels;
   }
 
   //container for all available processes
@@ -155,7 +183,7 @@ export class ProcessorService {
     })
   }
 
-  runFilters(filterIndex: number): any {
+/*  runFilters(filterIndex: number): any {
 
     if (this.selectedFilters.length == 0) {
       this.graphService.datasets.forEach((dataset: Dataset, index: number) => {
@@ -258,8 +286,7 @@ export class ProcessorService {
       // this.loadingStatus = [];
       this.graphService.datasets = this.graphService.datasets;
     })
-  }
-
+  }*/
 
   //Uses the given process name and processes path to give the script
   // returns script or promise of script if successful, -1 if error occurred
@@ -368,6 +395,7 @@ export class ProcessorService {
     return [];
   }
 
+  //given a list of processes, recursively runs them and stores the output in graphs
   runAll(processes: Process[]): any {
 
     if (processes.length == 0) { // base case
@@ -379,11 +407,11 @@ export class ProcessorService {
 
     let currentProcess = processes.shift(); // removes element from index 0 -> shifts everything to the left -> stores it in currentProcess
 
-    let loadingMsgs: string[] = this.loading;
+    let loadingMsgs: string[] = this.loading;//add loading message
     loadingMsgs.push('Running ' + currentProcess.name + '...');
     this.loading = loadingMsgs;
 
-    let getScriptPromise: Promise<string> | CustomError = this.getScript(currentProcess);
+    let getScriptPromise: Promise<string> | CustomError = this.getScript(currentProcess); //get script of process
 
     if (!(getScriptPromise instanceof Promise<string>)) {//if a promise is not returned
       console.log('ERROR: Script could not be obtained')
@@ -394,8 +422,8 @@ export class ProcessorService {
 
       this.graphService.datasets.forEach((dataset: Dataset, index: number) => {
         let inputDatapoints: Datapoint[];
-
-        switch (currentProcess.procType) {
+        //select datapoints to be processed depending on type of process
+        switch (currentProcess.procType) { 
           case EProcType.FILTER || EProcType.CPOINT || EProcType.INTERNAL:
             inputDatapoints = dataset.displacementForceFilteredData;
             break;
@@ -404,8 +432,10 @@ export class ProcessorService {
             break;
         }
 
+        //run process on input datapoints
         let outputDatapoints = this.runProcessScriptOnDatapoints(inputDatapoints, processScript);
 
+        //set dataset being displayed according to the type of process that was run
         switch (currentProcess.procType) {
           case EProcType.FILTER:
             this.graphService.datasets[index].displacementForceFilteredData = outputDatapoints as Datapoint[];
@@ -424,12 +454,13 @@ export class ProcessorService {
             break;
         }
 
+        //change loading msg
         loadingMsgs[loadingMsgs.length] = currentProcess.name + ' done ✔'
         this.runAll(processes); // recursive call
       })
     })
   }
-    
+
   //Runs all the processes from (and including) the process type specified
   public runFrom(procType: EProcType): void | CustomError {
     try {
