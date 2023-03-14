@@ -7,8 +7,7 @@ import {GraphService} from "./graph.service";
 import {ErrorHandlerService} from "./error-handler.service";
 import {Datapoint} from "../models/datapoint.model";
 import {Dataset} from "../models/dataset.model";
-import { resolve } from 'dns';
-import { CustomError } from '../models/error.model';
+import {CustomError} from '../models/error.model';
 
 const PYODIDE_BASE_URL = 'https://cdn.jsdelivr.net/pyodide/v0.22.0/full/';
 
@@ -301,7 +300,7 @@ export class ProcessorService {
     })
   }
 
-  runFilters(filterIndex: number) {
+  runFilters(filterIndex: number): any {
     this._loading.next(true);
 
     if (this.selectedFilters.length == 0) {
@@ -319,10 +318,10 @@ export class ProcessorService {
       }
 
       let getScriptPromise: Promise<string> | CustomError = this.getScript(currentFilter);
-      
-      if (!(getScriptPromise instanceof Promise<string>)){//if a promise is not returned
-        return getScriptPromise; //do smth to show that its an error
+
+      if (!(getScriptPromise instanceof Promise<string>)) {//if a promise is not returned
         this.runFilters(filterIndex + 1); //skip filter maybe??
+        return getScriptPromise; //do smth to show that its an error
       }
 
       getScriptPromise.then((processScript) => {
@@ -364,7 +363,12 @@ export class ProcessorService {
 
     this.loadingStatus[this.loadingStatus.length - 1] = 'Calculating Contactpoints using ' + this.selectedCPointProcess.name;
 
-    let getScriptPromise: Promise<string> = this.getScript(this.selectedCPointProcess);
+    let getScriptPromise: Promise<string> | CustomError = this.getScript(this.selectedCPointProcess);
+
+    if (!(getScriptPromise instanceof Promise<string>)) {
+      // TODO: ERROR HAPPENED
+      return;
+    }
 
     getScriptPromise.then((processScript) => {
       this.graphService.datasets.forEach((dataset: Dataset, index: number) => {
@@ -382,21 +386,21 @@ export class ProcessorService {
 
   //Uses the given process name and processes path to give the script
   // returns script or promise of script if successful, -1 if error occurred
-  public getScript(process: Process): Promise<string> | CustomError{
+  public getScript(process: Process): Promise<string> | CustomError {
     try {
       if (process.script) { //if process has a script recorded
-                              //get process from data sytem
+        //get process from data sytem
         return new Promise((resolve) => {
-          resolve (process.script); //return script as promise stored in process
-        }); 
+          resolve(process.script); //return script as promise stored in process
+        });
       }
     } catch (e: any) {
-       return this.errorHandlerService.Fatal(e); //fatal error if data system could be reached
+      return this.errorHandlerService.Fatal(e); //fatal error if data system could be reached
     }
 
     let procPath = this.rootPath; //path to filesystem
     try {
-    // If the process is not recorded, look for it:
+      // If the process is not recorded, look for it:
       switch (process.procType) {
         case EProcType.CPOINT: {
           procPath += 'CPoints/'; //add relevant folder to path
@@ -418,11 +422,11 @@ export class ProcessorService {
           procPath += 'Tests/';
           break;
         }
-    }
-    procPath += process.id + '.py'; //add file name to path to get path to file
-    return this.http.get(procPath, {responseType: 'text'}).toPromise(); //return as promise
+      }
+      procPath += process.id + '.py'; //add file name to path to get path to file
+      return this.http.get(procPath, {responseType: 'text'}).toPromise(); //return as promise
 
-     } catch (e: any) {
+    } catch (e: any) {
       return this.errorHandlerService.Fatal(e); //return error if caught
     }
   }
