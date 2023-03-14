@@ -26,9 +26,6 @@ export class ProcessorService {
 
   public set loading(strings: string[]) {
     this._loading.next(strings);
-    this.loading.forEach((string) => {
-      console.log(string);
-    })
   }
 
   public get loading(): string[] {
@@ -36,7 +33,7 @@ export class ProcessorService {
   }
 
   //Container for selected Filters
-  private _selectedFilters: Process[] = []; 
+  private _selectedFilters: Process[] = [];
 
   //getter for selected filters
   public get selectedFilters(): Process[] {
@@ -47,8 +44,15 @@ export class ProcessorService {
   public set selectedFilters(filters: Process[]) {
     this._selectedFilters = filters;
 
-    // whenever selected filters change: run runFilters() from the start (index 0)
-    this.runFilters(0);
+    this.loading = ['Resetting filters'];
+    // RESET FILTERED DATA
+    this.graphService.datasets.forEach((dataset: Dataset, index: number) => {
+      this.graphService.datasets[index].displacementForceFilteredData = this.graphService.datasets[index].displacementForceData;
+    })
+    this.graphService.datasets = this.graphService.datasets;
+    this.loading = ['Filters reset ✔']
+
+    this.runFrom(EProcType.FILTER);
   }
 
   //container for selected Cpoint processes
@@ -57,7 +61,7 @@ export class ProcessorService {
   //Setter for selected Cpoint process (also runs Cpoint process)
   public set selectedCPointProcess(process: Process) {
     this._selectedCPointProcess = process;
-    this.calculateContactPoint();//when CPoint process is changed, calculate Cpoint
+    this.runFrom(EProcType.CPOINT);
   }
 
   //Getter for selected Cpoint process
@@ -497,7 +501,6 @@ export class ProcessorService {
 
     if (processes.length == 0) { // base case
       // FINISHED
-      console.log('FINISHED')
       this.loading = [];
       return;
     }
@@ -518,18 +521,35 @@ export class ProcessorService {
     getScriptPromise.then((processScript) => {
 
       this.graphService.datasets.forEach((dataset: Dataset, index: number) => {
-        let inputDatapoints: Datapoint[];
+        let inputDatapoints: Datapoint[] = [];
+        let inputArgs: any[] = [];
 
         switch (currentProcess.procType) {
-          case EProcType.FILTER || EProcType.CPOINT || EProcType.INTERNAL:
+          case EProcType.FILTER:
             inputDatapoints = dataset.displacementForceFilteredData;
             break;
-          case EProcType.EMODELS || EProcType.FMODELS:
+          case EProcType.CPOINT:
+            inputDatapoints = dataset.displacementForceFilteredData;
+            break;
+          case EProcType.INTERNAL:
+            inputDatapoints = dataset.displacementForceFilteredData;
+            inputArgs.push(dataset.contactPoint.x);
+            inputArgs.push(dataset.contactPoint.y);
+            break;
+          case EProcType.EMODELS:
+            inputDatapoints = dataset.indentationForceData;
+            break;
+          case EProcType.FMODELS:
             inputDatapoints = dataset.indentationForceData;
             break;
         }
 
-        let outputDatapoints = this.runProcessScriptOnDatapoints(inputDatapoints, processScript);
+        let outputDatapoints: any;
+        if (inputArgs.length) {
+          outputDatapoints = this.runProcessScriptOnDatapoints(inputDatapoints, processScript, inputArgs);
+        } else {
+          outputDatapoints = this.runProcessScriptOnDatapoints(inputDatapoints, processScript);
+        }
 
         switch (currentProcess.procType) {
           case EProcType.FILTER:
@@ -548,10 +568,11 @@ export class ProcessorService {
             // TODO: IMPLEMENT
             break;
         }
-
-        loadingMsgs[loadingMsgs.length] = currentProcess.name + ' done ✔'
-        this.runAll(processes); // recursive call
       })
+
+      this.graphService.datasets = this.graphService.datasets;
+      loadingMsgs[loadingMsgs.length - 1] = currentProcess.name + ' done ✔'
+      this.runAll(processes); // recursive call
     })
   }
 
@@ -630,25 +651,30 @@ export class ProcessorService {
   //   }
   //   return this.processedData; //return processed data
   // }
-  
+
   //Runs all the processes from (and including) the process type specified
   public runFrom(procType: EProcType): void | CustomError {
+    this.loading = ['Creating Process Chain'];
+
     try {
       let processChain: Process[] = [];
       switch (procType) { //append relevant containers to processChain according to which type is selected
         //@ts-expect-error
         case EProcType.FILTER: {
-          if(!this.selectedFilters.length){break;}//break out of switch if empty
           processChain = processChain.concat(this.selectedFilters); //append to chain
         } //fallthrough to the next procType
         //@ts-expect-error
         case EProcType.CPOINT: {
-          if(!this.selectedCPointProcess){break;}
-          processChain = processChain.concat(this.selectedCPointProcess);
+          if (!this.selectedCPointProcess) {
+            break;
+          }
+          processChain.push(this.selectedCPointProcess);
         }
         //@ts-expect-error
         case EProcType.INTERNAL: {
-          if(!this.availableProcesses.internal.length){break;}
+          if (!this.availableProcesses.internal.length) {
+            break;
+          }
           processChain = processChain.concat(this.availableProcesses.internal);
         }
         //@ts-expect-error
@@ -661,16 +687,18 @@ export class ProcessorService {
           //if(!this.selectedFmodels.length){break;}
           //processChain = processChain.concat(this.selectedFmodels);
         }
-        //@ts-expect-error
         case EProcType.TEST: {
           //if(!this.selectedTests.length){break;}
           //processChain = processChain.concat(this.selectedTests);
+          break;
         }
         default: {
           throw Error('ERROR: ProcType error'); //throw error if type isnt found
         }
       }
-      //this.runAll(processChain);
+      console.log(processChain);
+      this.loading = ['Process Chain created ✔'];
+      this.runAll(processChain);
     } catch (e: any) {
       return this.errorHandlerService.Fatal(e); //catch any errors as fatal errors
     }
