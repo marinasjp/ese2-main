@@ -1,13 +1,17 @@
-<div *ngIf="processorService.pyodideInitalized$|async else dashboard"
+<div *ngIf="!processorService.pyodideInitialized && processorService.loading$|async else dashboard"
      class="flex justify-content-center align-items-center"
      style="width: 100vw; height: 100vh">
 
   <div class="flex flex-column justify-content-center align-items-center">
     <p-progressSpinner></p-progressSpinner>
-    <div class="text-center" [innerHTML]="processorService.pyodideInitializationStatus"></div>
+    <ng-container *ngFor="let text of processorService.loadingStatus">
+      <div class="text-center" [innerHTML]="text">
+      </div>
+    </ng-container>
   </div>
 
 </div>
+
 
 <ng-template #dashboard>
 
@@ -15,20 +19,22 @@
 
     <app-sidenav></app-sidenav>
 
-    <div *ngIf="processorService.pyodideLoading$|async else graphs"
+    <div *ngIf="processorService.pyodideInitialized && processorService.loading$|async"
          class="flex justify-content-center align-items-center"
          style="width: 100vw; height: 100vh">
 
       <div class="flex flex-column justify-content-center align-items-center">
         <p-progressSpinner></p-progressSpinner>
-        <div class="text-center">Calculations running...</div>
+        <ng-container *ngFor="let text of processorService.loadingStatus">
+          <div class="text-center" [innerHTML]="text">
+          </div>
+        </ng-container>
       </div>
 
     </div>
 
-    <ng-template #graphs>
-      <app-graphs class="w-full h-full"></app-graphs>
-    </ng-template>
+    <app-graphs [class.hidden]="processorService.pyodideInitialized && processorService.loading$|async"
+                class="w-full h-full"></app-graphs>
 
   </div>
 

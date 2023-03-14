@@ -1,6 +1,7 @@
 import {Component, ViewChild} from '@angular/core';
 import {GraphService} from '../../services/graph.service';
 import {UIChart} from "primeng/chart";
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'app-graphs',
@@ -15,11 +16,6 @@ export class GraphsComponent {
 
   graphOptions;
 
-  dataTemplate = {
-    labels: [],
-    datasets: []
-  };
-
   displacementForceFilteredDataMultiple: any;
   displacementForceFilteredDataSingle: any;
   indentationForceDataMultiple: any;
@@ -28,6 +24,9 @@ export class GraphsComponent {
 
   // datasets: { id: number, name: string, data: any, labels: any }[] = []
   // selectedDatasets: { id: number, name: string, data: any, labels: any }[] = []
+
+  datasetsSubscription: Subscription;
+  sliderValueSubscription: Subscription;
 
   constructor(public graphService: GraphService) {
   }
@@ -40,13 +39,19 @@ export class GraphsComponent {
   ngOnInit() {
     this.setGraphOptions();
 
-    this.graphService.datasets$.subscribe(() => {
+    this.datasetsSubscription = this.graphService.datasets$.subscribe(() => {
       this.reloadMultipleLineGraphs();
     })
 
-    this.graphService.sliderValue$.subscribe(() => {
+    this.sliderValueSubscription = this.graphService.sliderValue$.subscribe(() => {
       this.reloadSingleLineGraphs();
     })
+  }
+
+
+  ngOnDestroy() {
+    this.datasetsSubscription.unsubscribe();
+    this.sliderValueSubscription.unsubscribe();
   }
 
   setGraphOptions(): void {
@@ -113,7 +118,11 @@ export class GraphsComponent {
   }
 
   setDisplacementForceFilteredMultiple(): void {
-    this.displacementForceFilteredDataMultiple = {...this.dataTemplate};
+    this.displacementForceFilteredDataMultiple = {
+      labels: [],
+      datasets: []
+    };
+
     for (let dataset of this.graphService.datasets) {
       this.displacementForceFilteredDataMultiple.datasets.push(this.getNewData());
       this.displacementForceFilteredDataMultiple.datasets[this.displacementForceFilteredDataMultiple.datasets.length - 1].data = dataset.displacementForceFilteredData;
@@ -127,7 +136,11 @@ export class GraphsComponent {
     if (!this.displacementForceFilteredDataMultiple?.datasets || !this.displacementForceFilteredDataMultiple.datasets[this.graphService.sliderValue]) {
       return;
     }
-    this.displacementForceFilteredDataSingle = {...this.dataTemplate};
+    this.displacementForceFilteredDataSingle = {
+      labels: [],
+      datasets: []
+    };
+
     this.displacementForceFilteredDataSingle.datasets = [this.displacementForceFilteredDataMultiple.datasets[this.graphService.sliderValue]];
     if (this.displacementForceFilteredChartSingle) {
       this.displacementForceFilteredChartSingle.reinit();
@@ -135,25 +148,32 @@ export class GraphsComponent {
   }
 
   setIndentationForceMultiple(): void {
-    // this.indentationForceDataMultiple = {...this.dataTemplate};
-    // for (let dataset of this.graphService.datasets) {
-    //   this.indentationForceDataMultiple.datasets.push(this.getNewData());
-    //   this.indentationForceDataMultiple.datasets[this.indentationForceDataMultiple.datasets.length - 1].data = dataset.indentationForceData;
-    // }
-    // if (this.indentationForceChartMultiple) {
-    //   this.indentationForceChartMultiple.reinit();
-    // }
+    this.indentationForceDataMultiple = {
+      labels: [],
+      datasets: []
+    };
+    for (let dataset of this.graphService.datasets) {
+      this.indentationForceDataMultiple.datasets.push(this.getNewData());
+      this.indentationForceDataMultiple.datasets[this.indentationForceDataMultiple.datasets.length - 1].data = dataset.indentationForceData;
+    }
+    if (this.indentationForceChartMultiple) {
+      this.indentationForceChartMultiple.reinit();
+    }
   }
 
   setIndentationForceSingle(): void {
-    // if (!this.indentationForceDataMultiple?.datasets || !this.indentationForceDataMultiple.datasets[this.graphService.sliderValue]) {
-    //   return;
-    // }
-    // this.displacementForceFilteredDataSingle = {...this.dataTemplate};
-    // this.indentationForceDataSingle.datasets = [this.indentationForceDataMultiple.datasets[this.graphService.sliderValue]];
-    // if (this.indentationForceChartSingle) {
-    //   this.indentationForceChartSingle.reinit();
-    // }
+    if (!this.indentationForceDataMultiple?.datasets || !this.indentationForceDataMultiple.datasets[this.graphService.sliderValue]) {
+      return;
+    }
+    this.indentationForceDataSingle = {
+      labels: [],
+      datasets: []
+    };
+
+    this.indentationForceDataSingle.datasets = [this.indentationForceDataMultiple.datasets[this.graphService.sliderValue]];
+    if (this.indentationForceChartSingle) {
+      this.indentationForceChartSingle.reinit();
+    }
   }
 
   reloadMultipleLineGraphs(): void {

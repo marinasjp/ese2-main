@@ -1,5 +1,6 @@
 import {Component} from '@angular/core';
 import {GraphService} from "../../../services/graph.service";
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-files-tab',

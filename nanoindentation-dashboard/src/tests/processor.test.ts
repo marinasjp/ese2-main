@@ -1,4 +1,4 @@
-import {jest} from '@jest/globals';
+//will not be used!
 
 import { EProcType } from '../app/models/process.model';
 import { GraphService } from '../app/services/graph.service';

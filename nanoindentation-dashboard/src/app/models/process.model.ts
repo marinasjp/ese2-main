@@ -14,5 +14,6 @@ export enum EProcType { //Types of processes
   CPOINT = 'cPoint',
   EMODELS = 'eModels',
   FMODELS = 'fModels',
+  INTERNAL = 'internal',
   TEST = 'test'
 }
