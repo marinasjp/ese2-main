@@ -62,7 +62,8 @@ export class ProcessorService {
       {id: 'linearDetrend', name: 'Linear Detrending', procType: EProcType.FILTER, custom: false},
     ],
     cPoints: [//container for cPoints
-      {id: 'rov', name: 'Rov', procType: EProcType.CPOINT, custom: false}
+      {id: 'rov', name: 'Rov', procType: EProcType.CPOINT, custom: false},
+      {id: 'stepAndDrift', name: 'Step and Drift', procType: EProcType.CPOINT, custom: false}
     ],
     eModels: [],//container for eModel
     fModels: [],//container for fModel
@@ -335,7 +336,7 @@ export class ProcessorService {
             datapoints = dataset.displacementForceFilteredData;
           }
 
-          datapoints = this.runProcessScriptOnDatapoints(datapoints, processScript);
+          datapoints = this.runProcessScriptOnDatapoints(datapoints, processScript) as Datapoint[];
           this.graphService.datasets[index].displacementForceFilteredData = datapoints;
         })
 
@@ -344,10 +345,7 @@ export class ProcessorService {
       })
 
     } else {
-      // console.log('FINISHED FILTERS');
       this._loading.next(false);
-      // console.log(this.graphService.datasets[0].displacementForceData[0]);
-      // console.log(this.graphService.datasets[0].displacementForceFilteredData[0]);
       this.graphService.datasets = this.graphService.datasets;
       this.calculateContactPoint();
     }
@@ -372,14 +370,10 @@ export class ProcessorService {
 
     getScriptPromise.then((processScript) => {
       this.graphService.datasets.forEach((dataset: Dataset, index: number) => {
-        let datapoints = dataset.displacementForceFilteredData;
-        datapoints = this.runProcessScriptOnDatapoints(datapoints, processScript);
-        console.log(datapoints);
-        // this.graphService.datasets[index].displacementForceFilteredData = datapoints;
+        let datapoint: Datapoint = this.runProcessScriptOnDatapoints(dataset.displacementForceFilteredData, processScript) as Datapoint;
+        dataset.contactPoint = datapoint;
       })
-
-      // this.loadingStatus[this.loadingStatus.length - 1] = 'Finished Filter: ' + currentFilter.name + ' ✔';
-      // this.runFilters(filterIndex + 1);
+      this._loading.next(false);
     })
   }
 
@@ -431,21 +425,23 @@ export class ProcessorService {
     }
   }
 
-  runProcessScriptOnDatapoints(datapoints: Datapoint[], processScript: string) {
+  runProcessScriptOnDatapoints(datapoints: Datapoint[], processScript: string): Datapoint[] | Datapoint {
     let convertedDataset: { x: number[], y: number[] } = this.convertDatapointsArrayToXAndYArray(datapoints);
     let xAxis = convertedDataset.x;
     let yAxis = convertedDataset.y;
 
     globalThis.pyodide.runPython(processScript); //Running the code
     let calculate = globalThis.pyodide.globals.get('calculate'); //map the function from the global variables onto 'calculate'
-    console.log(xAxis);
-    console.log(yAxis);
     let resultPy = calculate(xAxis, yAxis); //run function on the dataset
     let result = resultPy.toJs(); //translate result to JS
     result = {x: result[0], y: result[1]}; //map result onto container
-    result = this.convertXAndYArrayToDatapointsArray(result);
+
+    if (result.x.isArray && result.y.isArray) {
+      result = this.convertXAndYArrayToDatapointsArray(result);
+    } else {
+      result = result as Datapoint
+    }
     resultPy.destroy();//free the function used
-    // console.log(result);
     return result;
   }
 
@@ -461,10 +457,11 @@ export class ProcessorService {
     return {x: x, y: y};
   }
 
-  convertXAndYArrayToDatapointsArray(input: { x: number[], y: number[] }): Datapoint[] {
+  convertXAndYArrayToDatapointsArray(input: { x: number[], y: number[] }): Datapoint[] | Datapoint {
     let datapoints: Datapoint[] = [];
 
     if (input.x.length == input.y.length) {
+
       input.x.forEach((x: number, index: number) => {
         datapoints.push({x: input.x[index], y: input.y[index]})
       })
