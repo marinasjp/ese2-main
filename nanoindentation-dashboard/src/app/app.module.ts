@@ -28,6 +28,7 @@ import { FiltersTabComponent } from './components/sidenav/filters-tab/filters-ta
 import { ForceIndTabComponent } from './components/sidenav/force-ind-tab/force-ind-tab.component';
 import { ElisticitySpectraTabComponent } from './components/sidenav/elisticity-spectra-tab/elisticity-spectra-tab.component';
 import { CustomCodeTabComponent } from './components/sidenav/custom-code-tab/custom-code-tab.component';
+import { BottomnavComponent } from './components/bottomnav/bottomnav.component';
 
 @NgModule({
   declarations: [
@@ -40,6 +41,7 @@ import { CustomCodeTabComponent } from './components/sidenav/custom-code-tab/cus
     ForceIndTabComponent,
     ElisticitySpectraTabComponent,
     CustomCodeTabComponent,
+    BottomnavComponent,
   ],
   imports: [
     BrowserModule,

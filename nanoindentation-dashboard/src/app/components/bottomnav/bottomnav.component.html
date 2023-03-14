@@ -1,0 +1,21 @@
+<div class="bottomnav py-4">
+
+  <div class="flex mx-5">
+    <h3 class="mr-4 white-space-nowrap">
+      Curve Selection
+    </h3>
+    <div>
+      <p-inputNumber [(ngModel)]="graphService.sliderValue" [showButtons]="true" buttonLayout="horizontal"
+                     inputId="horizontal" spinnerMode="horizontal" [step]="1"
+                     [min]="0" [max]="graphService.datasets.length - 1"
+                     incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus">
+      </p-inputNumber>
+    </div>
+  </div>
+
+  <div class="mx-5">
+    <p-slider [(ngModel)]="graphService.sliderValue" [min]="0" [max]="graphService.datasets.length - 1"></p-slider>
+  </div>
+
+
+</div>
