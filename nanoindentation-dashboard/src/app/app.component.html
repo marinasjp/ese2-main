@@ -19,7 +19,7 @@
 
     <app-sidenav></app-sidenav>
 
-    <div *ngIf="processorService.pyodideInitialized && (processorService.loading$|async).length"
+    <div *ngIf="(processorService.loading$|async).length"
          class="flex justify-content-center align-items-center"
          style="width: 100vw; height: 100vh">
 
@@ -33,8 +33,9 @@
 
     </div>
 
-    <app-graphs [class.hidden]="processorService.pyodideInitialized && processorService.loading$|async"
-                class="w-full h-full"></app-graphs>
+    <app-graphs [class.hidden]="!processorService.pyodideInitialized || (processorService.loading$|async).length"
+                class="w-full h-full">
+    </app-graphs>
 
   </div>
 
