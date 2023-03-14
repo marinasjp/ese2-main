@@ -73,6 +73,7 @@ The page can be visited on http://localhost:4200/.
 ### 5.- Run Backend
 
 The backend is built on Flask and is used for the AFMFormats library. 
+To install these, a tutorial can be found here: https://docs.python.org/3/installing/index.html.
 
 Run the Server.py file in the root directory of the project. This will enable the backend which is required for the processing of AFMFormats.
 
