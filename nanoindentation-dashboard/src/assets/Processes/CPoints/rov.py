@@ -5,7 +5,7 @@ windowr = 200
 Xrange = 1000
 
 
-def calculate( x, y):
+def calculate(x, y):
   zz_x, rov = getWeight(x, y)
   rov_best_ind = np.argmax(rov)
   j_rov = np.argmin((x - zz_x[rov_best_ind]) ** 2)
@@ -14,8 +14,10 @@ def calculate( x, y):
 
 def getRange(x, y):
   try:
-    jmax = np.argmin((y - Fthreshold * 1e-9) ** 2)
-    jmin = np.argmin((x - (x[jmax] - Xrange * 1e-9)) ** 2)
+    for value in y:
+      print value
+    jmax = np.argmin((y - 10 * 1e-9) ** 2)
+    jmin = np.argmin((x - (x[jmax] - 1000 * 1e-9)) ** 2)
   except ValueError:
     return False
   return jmin, jmax
@@ -23,7 +25,7 @@ def getRange(x, y):
 
 def getWeight(x, y):
   jmin, jmax = getRange(x, y)
-  winr = windowr * 1e-9
+  winr = 200 * 1e-9
   xstep = (max(x) - min(x)) / (len(x) - 1)
   win = int(winr / xstep)
   if (len(y) - jmax) < int(win):

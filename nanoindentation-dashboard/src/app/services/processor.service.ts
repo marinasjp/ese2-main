@@ -43,7 +43,16 @@ export class ProcessorService {
     // this.processChain = processChain;
   }
 
-  selectedCPointProcess: Process = null;
+  private _selectedCPointProcess: Process = null;
+
+  public set selectedCPointProcess(process: Process) {
+    this._selectedCPointProcess = process;
+    this.calculateContactPoint();
+  }
+
+  public get selectedCPointProcess(): Process {
+    return this._selectedCPointProcess;
+  }
 
   public availableProcesses: { filters: Process[], cPoints: Process[], eModels: Process[], fModels: Process[], test: Process[] } = {
     filters: [ //container for processes
@@ -291,13 +300,11 @@ export class ProcessorService {
 
   runFilters(filterIndex: number) {
     this._loading.next(true);
-    console.log(filterIndex);
 
     if (this.selectedFilters.length == 0) {
       this.graphService.datasets.forEach((dataset: Dataset, index: number) => {
         this.graphService.datasets[index].displacementForceFilteredData = this.graphService.datasets[index].displacementForceData;
       })
-      console.log('RESET');
     }
 
     if (this.selectedFilters.length - 1 >= filterIndex) {
@@ -335,7 +342,33 @@ export class ProcessorService {
       // console.log(this.graphService.datasets[0].displacementForceData[0]);
       // console.log(this.graphService.datasets[0].displacementForceFilteredData[0]);
       this.graphService.datasets = this.graphService.datasets;
+      this.calculateContactPoint();
     }
+  }
+
+  calculateContactPoint() {
+    this._loading.next(true);
+
+    if (!this.selectedCPointProcess) {
+      this._loading.next(false);
+      return;
+    }
+
+    this.loadingStatus[this.loadingStatus.length - 1] = 'Calculating Contactpoints using ' + this.selectedCPointProcess.name;
+
+    let getScriptPromise: Promise<string> = this.getScript(this.selectedCPointProcess);
+
+    getScriptPromise.then((processScript) => {
+      this.graphService.datasets.forEach((dataset: Dataset, index: number) => {
+        let datapoints = dataset.displacementForceFilteredData;
+        datapoints = this.runProcessScriptOnDatapoints(datapoints, processScript);
+        console.log(datapoints);
+        // this.graphService.datasets[index].displacementForceFilteredData = datapoints;
+      })
+
+      // this.loadingStatus[this.loadingStatus.length - 1] = 'Finished Filter: ' + currentFilter.name + ' ✔';
+      // this.runFilters(filterIndex + 1);
+    })
   }
 
 
@@ -403,6 +436,8 @@ export class ProcessorService {
 
     globalThis.pyodide.runPython(processScript); //Running the code
     let calculate = globalThis.pyodide.globals.get('calculate'); //map the function from the global variables onto 'calculate'
+    console.log(xAxis);
+    console.log(yAxis);
     let resultPy = calculate(xAxis, yAxis); //run function on the dataset
     let result = resultPy.toJs(); //translate result to JS
     result = {x: result[0], y: result[1]}; //map result onto container

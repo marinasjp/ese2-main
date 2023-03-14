@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
 import {ProcessorService} from "../../../services/processor.service";
 import {Process} from "../../../models/process.model";
 
@@ -16,10 +16,5 @@ export class ContactPointTabComponent {
 
   ngOnInit() {
     this.availableCPointProcesses = this.processorService.availableProcesses.cPoints;
-  }
-
-  test(): void {
-    this.processorService.selectedCPointProcess = this.availableCPointProcesses[0];
-    console.log(this.processorService.selectedCPointProcess);
   }
 }
