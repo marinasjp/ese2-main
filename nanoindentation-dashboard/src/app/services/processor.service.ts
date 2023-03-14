@@ -561,35 +561,49 @@ export class ProcessorService {
   //   }
   //   return this.processedData; //return processed data
   // }
-  //
-  // //Runs all the processes from (and including) the process type specified
-  // public runFrom(procType: EProcType) {
-  //   try {
-  //     switch (procType) { //run correct sequence acording to process type
-  //       case EProcType.CPOINT: {
-  //         return this.runProcessChain();
-  //       }
-  //       case EProcType.FILTER: {
-  //         this.runAll(this.processChain.filters);
-  //         this.runAll(this.processChain.eModels);
-  //         return this.runAll(this.processChain.fModels);
-  //       }
-  //       case EProcType.EMODELS: {
-  //         this.runAll(this.processChain.eModels);
-  //         return this.runAll(this.processChain.fModels);
-  //       }
-  //       case EProcType.FMODELS: {
-  //         return this.runAll(this.processChain.fModels);
-  //       }
-  //       case EProcType.TEST: {
-  //         return this.runAll(this.processChain.test);
-  //       }
-  //       default: {
-  //         throw Error('ERROR: ProcType error'); //throw error if type isnt found
-  //       }
-  //     }
-  //   } catch (e: any) {
-  //     return this.errorHandlerService.Fatal(e); //catch any errors as fatal errors
-  //   }
-  // }
+  
+  //Runs all the processes from (and including) the process type specified
+  public runFrom(procType: EProcType): void | CustomError {
+    try {
+      let processChain: Process[] = [];
+      switch (procType) { //append relevant containers to processChain according to which type is selected
+        //@ts-expect-error
+        case EProcType.FILTER: {
+          if(!this.selectedFilters.length){break;}//break out of switch if empty
+          processChain = processChain.concat(this.selectedFilters); //append to chain
+        } //fallthrough to the next procType
+        //@ts-expect-error
+        case EProcType.CPOINT: {
+          if(!this.selectedCPointProcess){break;}
+          processChain = processChain.concat(this.selectedCPointProcess);
+        }
+        //@ts-expect-error
+        case EProcType.INTERNAL: {
+          if(!this.availableProcesses.internal.length){break;}
+          processChain = processChain.concat(this.availableProcesses.internal);
+        }
+        //@ts-expect-error
+        case EProcType.EMODELS: {
+          //if(!this.selectedEmodels.length){break;}
+          //processChain = processChain.concat(this.selectedEmodels);
+        }
+        //@ts-expect-error
+        case EProcType.FMODELS: {
+          //if(!this.selectedFmodels.length){break;}
+          //processChain = processChain.concat(this.selectedFmodels);
+        }
+        //@ts-expect-error
+        case EProcType.TEST: {
+          //if(!this.selectedTests.length){break;}
+          //processChain = processChain.concat(this.selectedTests);
+        }
+        default: {
+          throw Error('ERROR: ProcType error'); //throw error if type isnt found
+        }
+      }
+      //this.runAll(processChain);
+    } catch (e: any) {
+      return this.errorHandlerService.Fatal(e); //catch any errors as fatal errors
+    }
+  }
 }
