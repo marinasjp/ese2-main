@@ -19,7 +19,6 @@ build:
       -  nanoindentation-dashboard/node_modules/
 
 test:
-  image: node:16
   stage: test
   dependencies:
     - build
