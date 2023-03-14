@@ -61,10 +61,8 @@ export class GraphService {
   prepareUserInputData(input): any {
     const inputIndentation = input.Indentation;
     const inputLoad = input.Load;
-
     let start: number;
     let end: number;
-
     let datasets: Dataset[] = [];
 
     inputIndentation.forEach((inputDataset, index: number) => {
@@ -95,15 +93,75 @@ export class GraphService {
       })
       datasets.push(dataset);
     })
-
     this._datasets.next(datasets);
-
     this.start = start;
     this.end = end;
   }
 
 
-  uploadData(file: any): void {
+  prepareUserInputDataTxt(input): any {
+    const inputIndentation = input.Indentation;
+    const inputLoad = input.Load;
+    let start: number;
+    let end: number;
+    let datasets: Dataset[] = [];
+  
+    console.log(inputLoad)
+    let dataset: Dataset = {
+      contactPoint: null,
+      displacementForceData: [],
+      displacementForceFilteredData: [],
+      indentationForceData: []
+    };
+  
+    // Loop through the indentation and load arrays and add data to the dataset
+    for (let i = 0; i < inputIndentation.length; i++) {
+      if (!start || inputIndentation[i] < start) {
+        start = inputIndentation[i];
+      }
+      if (!end || inputIndentation[i] > end) {
+        end = inputIndentation[i];
+      }
+  
+      let valuePair: { x: number, y: number } = {
+        x: inputIndentation[i],
+        y: inputLoad[i]
+      }
+      dataset.displacementForceData.push(valuePair);
+      // TODO: REMOVE?
+      dataset.displacementForceFilteredData.push(valuePair);
+    }
+    console.log(dataset)
+    // Add the dataset to the datasets array
+    datasets.push(dataset);
+  
+    this._datasets.next(datasets);
+    this.start = start;
+    this.end = end;
+  }
+  
+  
+  uploadDataTxt(file: any): void {
+    this._uploadingDataLoading.next(true);
+    console.log("REACHED!!")
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const headers = new HttpHeaders();
+    headers.append('Content-Type', 'multipart/form-data');
+
+    this.http.post(environment.apiURL + 'send_data_txt', formData, {
+      headers: headers,
+      responseType: "json"
+    }).pipe(finalize(() => this._uploadingDataLoading.next(false)))
+      .subscribe(
+        (response) => {
+          this.prepareUserInputDataTxt(response);
+        }, () => {
+        })
+  }
+
+  uploadDataRaw(file: any): void {
     this._uploadingDataLoading.next(true);
     const formData = new FormData();
     formData.append('file', file);
