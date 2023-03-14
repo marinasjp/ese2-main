@@ -4,6 +4,7 @@ import numpy as np
 # CP is calculated and returned from any CPoint proccess
 # I think spring_constant is also a user input
 
+
 def calculate(Z, F, CP, spring_constant=1, setzeroforce=True):
   iContact = np.argmin((Z - CP[0]) ** 2)
   if setzeroforce is True:

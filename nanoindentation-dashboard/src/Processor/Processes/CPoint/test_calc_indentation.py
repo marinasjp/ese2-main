@@ -3219,7 +3219,9 @@ from rov import calculate as calcCPoint
 from calc_indentation import calculate as calc_indentation
 import numpy as np
 
+
 def test_calculate():
-  CP = calcCPoint(np.array(test_array), np.array(test_array2))
-  Zi, Fi = calc_indentation(np.array(test_array), np.array(test_array2), CP)
+  # Must first calculate the Contact Point
+  CPoint = calcCPoint(np.array(test_array), np.array(test_array2))
+  Zi, Fi = calc_indentation(np.array(test_array), np.array(test_array2), CPoint)
   assert (Zi == np.array(TrueZi)).all and (Fi == np.array(TrueFi)).all

@@ -7,6 +7,7 @@ from scipy.signal import savgol_filter
 # Geometry is a user input
 # radius is a user input
 # win is like a slice/window of the data that you want to use, user input
+# win and interp could also be user values
 
 def calculate(Zi, Fi, geometry, radius, win, order, interp=True):
   x = Zi  # From calc indentation
