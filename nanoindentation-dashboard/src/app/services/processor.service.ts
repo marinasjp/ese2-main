@@ -18,13 +18,22 @@ export class ProcessorService {
 
   public pyodideInitialized: boolean = false;
 
-  private _loading: BehaviorSubject<boolean>;
+  private _loading: BehaviorSubject<string[]>;
 
-  public get loading$(): Observable<boolean> {
+  public get loading$(): Observable<string[]> {
     return this._loading.asObservable();
   }
 
-  loadingStatus: string[] = ['Initializing pyodide...']
+  public set loading(strings: string[]) {
+    this._loading.next(strings);
+    this.loading.forEach((string) => {
+      console.log(string);
+    })
+  }
+
+  public get loading(): string[] {
+    return this._loading.value;
+  }
 
 
   private _selectedFilters: Process[] = [];
@@ -38,10 +47,6 @@ export class ProcessorService {
 
     // whenever selected filters change: run runFilters() from the start (index 0)
     this.runFilters(0);
-
-    // let processChain = this.processChain;
-    // processChain.filters = filters;
-    // this.processChain = processChain;
   }
 
   private _selectedCPointProcess: Process = null;
@@ -68,7 +73,7 @@ export class ProcessorService {
     eModels: [],//container for eModel
     fModels: [],//container for fModel,
     internal: [
-      {id: 'calc_indentation', name: 'calc_indentation', procType: EProcType.INTERNAL, custom: false}
+      {id: 'calc_indentation', name: 'Calculating Indentation', procType: EProcType.INTERNAL, custom: false}
     ], // container for processes only run by the app but not selectable by the user
     test: []     //container for test processess
   }
@@ -285,28 +290,26 @@ export class ProcessorService {
     private http: HttpClient,
     private errorHandlerService: ErrorHandlerService,
     private graphService: GraphService) {
-    this._loading = new BehaviorSubject<boolean>(true);
+    this._loading = new BehaviorSubject<string[]>(['Initializing pyodide...']);
     this.initPy();
   }
 
   async initPy() { //initialise Pyodide
     loadPyodide({indexURL: PYODIDE_BASE_URL}).then((pyodide) => {
       globalThis.pyodide = pyodide;
-      this.loadingStatus = ['pyodide initialized ✔', 'Initializing numpy...'];
+      this.loading = ['pyodide initialized ✔', 'Initializing numpy...'];
       globalThis.pyodide.loadPackage(['numpy']).then(() => {
-        this.loadingStatus = ['pyodide initialized ✔', 'numpy initialized ✔', 'Initializing scipy...'];
+        this.loading = ['pyodide initialized ✔', 'numpy initialized ✔', 'Initializing scipy...'];
         globalThis.pyodide.loadPackage(['scipy']).then(() => {
-          this.loadingStatus = ['pyodide initialized ✔', 'numpy initialized ✔', 'scipy initialized ✔'];
+          this.loading = ['pyodide initialized ✔', 'numpy initialized ✔', 'scipy initialized ✔'];
           this.pyodideInitialized = true;
-          this._loading.next(false);
-          this.loadingStatus = [];
+          this.loading = [];
         })
       })
     })
   }
 
   runFilters(filterIndex: number): any {
-    this._loading.next(true);
 
     if (this.selectedFilters.length == 0) {
       this.graphService.datasets.forEach((dataset: Dataset, index: number) => {
@@ -317,9 +320,9 @@ export class ProcessorService {
     if (this.selectedFilters.length - 1 >= filterIndex) {
       let currentFilter = this.selectedFilters[filterIndex];
       if (filterIndex == 0) {
-        this.loadingStatus = ['Running Filter: ' + currentFilter.name + '...'];
+        this.loading = ['Running Filter: ' + currentFilter.name + '...'];
       } else {
-        this.loadingStatus.push('Running Filter: ' + currentFilter.name + '...');
+        this.loading.push('Running Filter: ' + currentFilter.name + '...');
       }
 
       let getScriptPromise: Promise<string> | CustomError = this.getScript(currentFilter);
@@ -344,28 +347,28 @@ export class ProcessorService {
           this.graphService.datasets[index].displacementForceFilteredData = datapoints;
         })
 
-        this.loadingStatus[this.loadingStatus.length - 1] = 'Finished Filter: ' + currentFilter.name + ' ✔';
+        // this.loadingStatus[this.loadingStatus.length - 1] = 'Finished Filter: ' + currentFilter.name + ' ✔';
         this.runFilters(filterIndex + 1);
       })
 
     } else {
-      this._loading.next(false);
-      this.loadingStatus = [];
+      // this._loading.next(false);
+      // this.loadingStatus = [];
       this.graphService.datasets = this.graphService.datasets;
       this.calculateContactPoint();
     }
   }
 
   calculateContactPoint() {
-    this._loading.next(true);
+    // this._loading.next(true);
 
     if (!this.selectedCPointProcess) {
-      this._loading.next(false);
-      this.loadingStatus = [];
+      // this._loading.next(false);
+      // this.loadingStatus = [];
       return;
     }
 
-    this.loadingStatus[this.loadingStatus.length - 1] = 'Calculating Contactpoints using ' + this.selectedCPointProcess.name;
+    // this.loadingStatus[this.loadingStatus.length - 1] = 'Calculating Contactpoints using ' + this.selectedCPointProcess.name;
 
     let getScriptPromise: Promise<string> | CustomError = this.getScript(this.selectedCPointProcess);
 
@@ -379,15 +382,15 @@ export class ProcessorService {
         let datapoint: Datapoint = this.runProcessScriptOnDatapoints(dataset.displacementForceFilteredData, processScript) as Datapoint;
         dataset.contactPoint = datapoint;
       })
-      this._loading.next(false);
-      this.loadingStatus = [];
+      // this._loading.next(false);
+      // this.loadingStatus = [];
       this.calculateIndentation();
     })
   }
 
   calculateIndentation() {
-    this._loading.next(true);
-    this.loadingStatus[this.loadingStatus.length - 1] = 'Calculating Indentation ...';
+    // this._loading.next(true);
+    // this.loadingStatus[this.loadingStatus.length - 1] = 'Calculating Indentation ...';
 
     let calcIndentationProcess: Process = this.availableProcesses.internal.find((process: Process) => {
       return process.id == 'calc_indentation';
@@ -405,8 +408,8 @@ export class ProcessorService {
         let datapoints: Datapoint[] = this.runProcessScriptOnDatapoints(dataset.displacementForceFilteredData, processScript, contactPoint) as Datapoint[];
         this.graphService.datasets[index].indentationForceData = datapoints;
       })
-      this._loading.next(false);
-      this.loadingStatus = [];
+      // this._loading.next(false);
+      // this.loadingStatus = [];
       this.graphService.datasets = this.graphService.datasets;
     })
   }
@@ -514,6 +517,68 @@ export class ProcessorService {
 
     console.log('ERROR: X AND Y AXIS ARE NOT OF EQUAL LENGTH')
     return [];
+  }
+
+  runAll(processes: Process[]): any {
+
+    if (processes.length == 0) { // base case
+      // FINISHED
+      console.log('FINISHED')
+      this.loading = [];
+      return;
+    }
+
+    let currentProcess = processes.shift(); // removes element from index 0 -> shifts everything to the left -> stores it in currentProcess
+
+    let loadingMsgs: string[] = this.loading;
+    loadingMsgs.push('Running ' + currentProcess.name + '...');
+    this.loading = loadingMsgs;
+
+    let getScriptPromise: Promise<string> | CustomError = this.getScript(currentProcess);
+
+    if (!(getScriptPromise instanceof Promise<string>)) {//if a promise is not returned
+      console.log('ERROR: Script could not be obtained')
+      return getScriptPromise; //do smth to show that it's an error
+    }
+
+    getScriptPromise.then((processScript) => {
+
+      this.graphService.datasets.forEach((dataset: Dataset, index: number) => {
+        let inputDatapoints: Datapoint[];
+
+        switch (currentProcess.procType) {
+          case EProcType.FILTER || EProcType.CPOINT || EProcType.INTERNAL:
+            inputDatapoints = dataset.displacementForceFilteredData;
+            break;
+          case EProcType.EMODELS || EProcType.FMODELS:
+            inputDatapoints = dataset.indentationForceData;
+            break;
+        }
+
+        let outputDatapoints = this.runProcessScriptOnDatapoints(inputDatapoints, processScript);
+
+        switch (currentProcess.procType) {
+          case EProcType.FILTER:
+            this.graphService.datasets[index].displacementForceFilteredData = outputDatapoints as Datapoint[];
+            break;
+          case EProcType.CPOINT:
+            this.graphService.datasets[index].contactPoint = outputDatapoints as Datapoint;
+            break;
+          case EProcType.INTERNAL:
+            this.graphService.datasets[index].indentationForceData = outputDatapoints as Datapoint[];
+            break;
+          case EProcType.EMODELS:
+            // TODO: IMPLEMENT
+            break;
+          case EProcType.FMODELS:
+            // TODO: IMPLEMENT
+            break;
+        }
+
+        loadingMsgs[loadingMsgs.length] = currentProcess.name + ' done ✔'
+        this.runAll(processes); // recursive call
+      })
+    })
   }
 
   //Takes a script and uses pyodide to run it on the dataSet
