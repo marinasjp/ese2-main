@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import {GraphService} from "../../../services/graph.service";
 
 @Component({
   selector: 'app-elisticity-spectra-tab',
@@ -6,5 +7,15 @@ import { Component } from '@angular/core';
   styleUrls: ['./elisticity-spectra-tab.component.scss']
 })
 export class ElisticitySpectraTabComponent {
+  disabled: boolean = true;
 
+  constructor(private graphService: GraphService) {
+    this.graphService.datasets$.subscribe(() => {
+      if (this.graphService.datasets[0]?.contactPoint) {
+        this.disabled = false;
+      } else {
+        this.disabled = true;
+      }
+    })
+  }
 }

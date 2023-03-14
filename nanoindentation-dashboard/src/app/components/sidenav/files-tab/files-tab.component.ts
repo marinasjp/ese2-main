@@ -1,6 +1,5 @@
 import {Component} from '@angular/core';
 import {GraphService} from "../../../services/graph.service";
-import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-files-tab',
@@ -9,8 +8,12 @@ import { CommonModule } from '@angular/common';
 })
 export class FilesTabComponent {
   uploadedFile: any = [];
+  tabOpen: boolean = false;
 
   constructor(public graphService: GraphService) {
+    if (this.graphService.datasets.length == 0) {
+      this.tabOpen = true;
+    }
   }
 
   uploadHandler(event: any): void {

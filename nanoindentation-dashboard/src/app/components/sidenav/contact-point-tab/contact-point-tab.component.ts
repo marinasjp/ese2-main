@@ -1,6 +1,7 @@
 import {Component} from '@angular/core';
 import {ProcessorService} from "../../../services/processor.service";
 import {Process} from "../../../models/process.model";
+import {GraphService} from "../../../services/graph.service";
 
 @Component({
   selector: 'app-contact-point-tab',
@@ -9,9 +10,18 @@ import {Process} from "../../../models/process.model";
 })
 export class ContactPointTabComponent {
 
+  disabled: boolean = true;
   availableCPointProcesses: Process[];
 
-  constructor(public processorService: ProcessorService) {
+  constructor(public processorService: ProcessorService,
+              private graphService: GraphService) {
+    this.graphService.datasets$.subscribe((datasets) => {
+      if (datasets.length) {
+        this.disabled = false;
+      } else {
+        this.disabled = true;
+      }
+    })
   }
 
   ngOnInit() {

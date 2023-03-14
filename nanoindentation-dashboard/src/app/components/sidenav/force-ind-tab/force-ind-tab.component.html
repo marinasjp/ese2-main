@@ -1,4 +1,4 @@
-<p-accordionTab header="Force-Ind">
+<p-accordionTab header="Force-Ind" [disabled]="disabled">
   <div style="border: 1px solid #383838; border-radius: 5px; padding: 12px">
     <p-dropdown [showClear]="true" placeholder="Select Shape" [options]="indShapes" [(ngModel)]="selectedIndShape"
                 optionLabel="name"></p-dropdown>

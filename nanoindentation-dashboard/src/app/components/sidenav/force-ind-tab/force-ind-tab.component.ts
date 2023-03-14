@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
+import {GraphService} from "../../../services/graph.service";
 
 @Component({
   selector: 'app-force-ind-tab',
@@ -6,6 +7,9 @@ import { Component } from '@angular/core';
   styleUrls: ['./force-ind-tab.component.scss']
 })
 export class ForceIndTabComponent {
+
+  disabled: boolean = true;
+
   forceIndMin: any;
   forceIndMax: any;
 
@@ -17,4 +21,14 @@ export class ForceIndTabComponent {
     {name: "Cone"},
     {name: "Pyramid"}
   ]
+
+  constructor(private graphService: GraphService) {
+    this.graphService.datasets$.subscribe(() => {
+      if (this.graphService.datasets[0]?.contactPoint) {
+        this.disabled = false;
+      } else {
+        this.disabled = true;
+      }
+    })
+  }
 }

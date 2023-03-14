@@ -1,4 +1,4 @@
-<p-accordionTab header="Files">
+<p-accordionTab header="Files" [(selected)]="tabOpen">
 
   <!--  LOADING -->
   <ng-container *ngIf="graphService.uploadingDataLoading$|async else notLoading">

@@ -5,6 +5,9 @@
     <!-- Files Tab -->
     <app-files-tab></app-files-tab>
 
+    <div class="mt-5 mb-2 px-2" *ngIf="!(graphService.datasets$|async).length">
+      Other tabs can be used, once a file is uploaded.
+    </div>
     <!-- Filtering Tab -->
     <app-filters-tab></app-filters-tab>
 
