@@ -1,3 +1,15 @@
+# Development of an online open data workflow for mechanical analysis of soft biomaterials
+
+This is a web-driven application organised as a workflow, that will assist scientists in analysing the results from nano-indentation experiments, to understand the interaction between cells and materials.
+
+Our implementation was based on the GUI created by Prof. Massimo Vassalli et.al, explained in the following paper.
+
+Ciccone, G., Azevedo Gonzalez Oliva, M., Antonovaite, N., Lüchtefeld, I., Salmeron-Sanchez, M. and Vassalli, M., 2021. Experimental and data analysis workflow for soft matter nanoindentation. Journal of Visualized Experiments (10.3791/63401 ).
+
+# Status
+
+When built, the website is able to take in experiment data and apply a set of filters to the data, calculate the contact point and the indentation and apply emodels and fmodels.
+
 # Team Organisation
 ### Team Members
 
@@ -17,7 +29,7 @@
 ### Team Coach
 - **Tim Storer** - Timothy.Storer@glasgow.ac.uk
 
-# Getting Started
+# Installation
 
 ### 1.-Install NodeJS
 
@@ -81,7 +93,7 @@ Run the Server.py file in the root directory of the project. This will enable th
 foo@bar:~$ python server.py
 ```
 
-# User Guide
+# Visuals and Usage
 Once the program is installed, after running ng serve and the flask backend you will be shown this display:
 *show the final program once all the graphs are attached*
 
@@ -113,3 +125,10 @@ The Elasticity-Spectra tab is used to control the third set of graphs. The first
 The second and third inputs are for setting the value of Elasticity-Spectra Minimum and Elasticity-Spectra Maximum respectively.
 ### Upload Custom Code Tab
 (TBA)
+
+
+# Support
+This project will not be maintained by the contributors to this repository. If there are any issues with the installation process, please contact any of us via email.
+
+# License
+This project operates under the MIT license. This is an open-source license.
