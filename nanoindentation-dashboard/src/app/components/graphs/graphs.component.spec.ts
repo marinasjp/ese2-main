@@ -13,9 +13,10 @@ describe('GraphsComponent', () => {
       imports:[
         HttpClientModule
       ],
-      providers:[GraphsComponent],
-    })
-    .compileComponents();
+      providers:[
+        GraphsComponent
+      ],
+    }).compileComponents();
   });
 
   it('should create', () => {
