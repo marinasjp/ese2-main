@@ -26,6 +26,7 @@ test:
     - apk update
     - wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
     - apk add dpkg
+    - dpkg --add-architecture amd64
     - dpkg -i ./google-chrome-stable_current_amd64.deb
     - export CHROME_BIN=/usr/bin/google-chrome
   script:
