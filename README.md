@@ -100,12 +100,12 @@ Once the program is installed, after running ng serve and the flask backend you 
 ## Graphs
 The first part of the interface is the graphs. 3 graph sets are displayed, each with a primary and secondary graph. The primary graph displays all of the uploaded curves, whearas the secondary graph displays one curve from the set, picked out by a slider on the sidebar.
 
-![Graph1IMG.PNG](./Graph1IMG.PNG)
+![Graph1IMG.PNG](./visuals/Graph1IMG.PNG)
 
 ## Sidebar
 The second part of the interface is the sidebar. This is how the website is controlled, and is made up of 7 parts.
 
-![SidebarIMG.PNG](./SidebarIMG.PNG)
+![SidebarIMG.PNG](./visuals/SidebarIMG.PNG)
 
 ### Filter Select
 The first is Filter-Select, a slider used to display each curve seperately on the secondary graphs. Moving the slider around will change which curve is viewed, with the number of the curve being displayed on top.
@@ -113,7 +113,7 @@ The first is Filter-Select, a slider used to display each curve seperately on th
 The next is Filters. Click on the box to open it up. This will first allow you to determine whether to use Prominency. In order to enable or disable, click the switch. It also allows the user to set parameters for Prominency, Minimum Frequency and Band.
 Below this, there is a drop down menu that allows the user to activate filters. Multiple filters can be selected, and they will apply to all graphs.
 
-![FilterIMG.PNG](./FilterIMG.PNG)
+![FilterIMG.PNG](./visuals/FilterIMG.PNG)
 
 ### Contact Point
 The Contact Point tab will allow the user to set which contact point they wish to use. Contact point is...
