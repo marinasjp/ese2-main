@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import {HttpClientModule} from '@angular/common/http';
 import { ForceIndTabComponent } from './force-ind-tab.component';
 
 describe('ForceIndTabComponent', () => {
@@ -7,17 +7,21 @@ describe('ForceIndTabComponent', () => {
   let fixture: ComponentFixture<ForceIndTabComponent>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [ ForceIndTabComponent ]
+    TestBed.configureTestingModule({
+      imports:[
+        HttpClientModule
+      ],
+      providers:[
+        ForceIndTabComponent
+      ]
     })
-    .compileComponents();
-
-    fixture = TestBed.createComponent(ForceIndTabComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+      .compileComponents();
   });
 
   it('should create', () => {
+    const fixture = TestBed.createComponent(ForceIndTabComponent);
+    const component = fixture.componentInstance;
+    fixture.detectChanges();
     expect(component).toBeTruthy();
   });
 });

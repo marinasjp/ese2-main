@@ -1,5 +1,5 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
-
+import {HttpClientModule} from '@angular/common/http';
 import {BottomnavComponent} from './bottomnav.component';
 
 describe('BottomnavComponent', () => {
@@ -7,17 +7,21 @@ describe('BottomnavComponent', () => {
   let fixture: ComponentFixture<BottomnavComponent>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [BottomnavComponent]
+    TestBed.configureTestingModule({
+      imports:[
+        HttpClientModule
+      ],
+      providers:[
+        BottomnavComponent
+      ]
     })
       .compileComponents();
-
-    fixture = TestBed.createComponent(BottomnavComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it('should create', () => {
+    const fixture = TestBed.createComponent(BottomnavComponent);
+    const component = fixture.componentInstance;
+    fixture.detectChanges();
     expect(component).toBeTruthy();
   });
 });
