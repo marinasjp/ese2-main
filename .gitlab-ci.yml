@@ -23,12 +23,16 @@ test:
   dependencies:
     - build
   before_script:
+#    - apk update
+#    - wget https://dl.google.com/linux/direct/google-chrome-stable.deb
+#    - apk add dpkg
+#    - dpkg --add-architecture amd64
+#    - dpkg --force-all -i ./google-chrome-stable.deb
+#    - export CHROME_BIN=/usr/bin/google-chrome
+    - curl https://dl-ssl.google.com/linux/linux_signing_key.pub | gpg --dearmor | sudo tee /usr/share/keyrings/chrome.gpg > /dev/null 2>&1
+    - sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
     - apk update
-    - wget https://dl.google.com/linux/direct/google-chrome-stable.deb
-    - apk add dpkg
-    - dpkg --add-architecture amd64
-    - dpkg --force-all -i ./google-chrome-stable.deb
-    - export CHROME_BIN=/usr/bin/google-chrome
+    - apk install google-chrome-stable
   script:
     - cd nanoindentation-dashboard
     - npm run test:ci
