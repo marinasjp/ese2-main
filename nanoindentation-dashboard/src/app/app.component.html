@@ -1,4 +1,4 @@
-<div *ngIf="!processorService.pyodideInitialized && (processorService.loading$|async).length else dashboard"
+<div *ngIf="(processorService.loading$|async).length"
      class="flex justify-content-center align-items-center"
      style="width: 100vw; height: 100vh">
 
@@ -13,30 +13,15 @@
 </div>
 
 
-<ng-template #dashboard>
-
+<div [class.hidden]="(processorService.loading$|async).length">
   <div class="flex flex-row" style="overflow-x: hidden">
 
     <app-sidenav></app-sidenav>
 
-    <div *ngIf="(processorService.loading$|async).length"
-         class="flex justify-content-center align-items-center"
-         style="width: 100vw; height: 100vh">
+    <app-graphs class="w-full h-full"></app-graphs>
 
-      <div class="flex flex-column justify-content-center align-items-center">
-        <p-progressSpinner></p-progressSpinner>
-        <ng-container *ngFor="let text of processorService.loading$|async">
-          <div class="text-center" [innerHTML]="text">
-          </div>
-        </ng-container>
-      </div>
-
-    </div>
-
-    <app-graphs [class.hidden]="!processorService.pyodideInitialized || (processorService.loading$|async).length"
-                class="w-full h-full">
-    </app-graphs>
+    <app-bottomnav></app-bottomnav>
 
   </div>
+</div>
 
-</ng-template>

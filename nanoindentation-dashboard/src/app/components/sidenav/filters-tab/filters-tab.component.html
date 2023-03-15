@@ -1,0 +1,73 @@
+<p-accordionTab header="Filtering" [disabled]="disabled">
+  <div style="border: 1px solid #383838; border-radius: 5px; padding: 12px">
+    <div class="flex flex-row">
+      <p-inputSwitch [(ngModel)]="useProminency" class="mr-2"></p-inputSwitch>
+      <h4
+        pTooltip="Prominency is the (Insert tooltip for prominency because I'm still not entirely sure what it does)"
+        class="m-0 mt-1">Use Prominency</h4>
+    </div>
+
+    <ng-container *ngIf="useProminency">
+      <!--      PROMINENCY -->
+      <h5>Prominency [a.u.]</h5>
+
+      <p-inputNumber [(ngModel)]="prominency" [showButtons]="true"
+                     buttonLayout="horizontal"
+                     spinnerMode="horizontal"
+                     decrementButtonClass="p-button-primary"
+                     incrementButtonClass="p-button-primary"
+                     incrementButtonIcon="pi pi-plus"
+                     decrementButtonIcon="pi pi-minus">
+      </p-inputNumber>
+
+      <!--      MIN FREQUENCY -->
+      <h5 class="mt-2">Min Freq [channels]</h5>
+
+      <p-inputNumber [(ngModel)]="minFrequency" [showButtons]="true"
+                     buttonLayout="horizontal"
+                     spinnerMode="horizontal"
+                     decrementButtonClass="p-button-primary"
+                     incrementButtonClass="p-button-primary"
+                     incrementButtonIcon="pi pi-plus"
+                     decrementButtonIcon="pi pi-minus">
+      </p-inputNumber>
+
+      <!--      BAND -->
+      <h5 class="mt-2">Band [% preak pos]</h5>
+      <p-inputNumber [(ngModel)]="band" [showButtons]="true"
+                     buttonLayout="horizontal"
+                     spinnerMode="horizontal"
+                     decrementButtonClass="p-button-primary"
+                     incrementButtonClass="p-button-primary"
+                     incrementButtonIcon="pi pi-plus"
+                     decrementButtonIcon="pi pi-minus">
+      </p-inputNumber>
+    </ng-container>
+  </div>
+
+  <div style="border: 1px solid #383838; border-radius: 5px; padding: 12px; margin-top: 12px">
+    <p-multiSelect [options]="processorService.availableProcesses.filters" [(ngModel)]="processorService.selectedFilters" optionLabel="name"
+                   defaultLabel="Other Filters"></p-multiSelect>
+    <ng-container *ngFor="let filter of processorService.selectedFilters">
+      <h4 class="mt-4">{{filter.name}}</h4>
+      <div *ngFor="let input of filter.inputs">
+        <h5 class="mt-2">{{input}}</h5>
+        <p-inputNumber [showButtons]="true"
+                       buttonLayout="horizontal"
+                       spinnerMode="horizontal"
+                       decrementButtonClass="p-button-primary"
+                       incrementButtonClass="p-button-primary"
+                       incrementButtonIcon="pi pi-plus"
+                       decrementButtonIcon="pi pi-minus">
+        </p-inputNumber>
+      </div>
+    </ng-container>
+  </div>
+
+<!--  <div style="border: 1px solid #383838; border-radius: 5px; padding: 12px; margin-top: 12px">-->
+<!--    Filter-Select-->
+<!--    <h5>Selected: {{sliderVal}}</h5>-->
+<!--    <p-slider [max]="(graphService.datasets$|async).length - 1" (onChange)="graphService.sliderValue = sliderVal"-->
+<!--              [(ngModel)]="sliderVal"></p-slider>-->
+<!--  </div>-->
+</p-accordionTab>

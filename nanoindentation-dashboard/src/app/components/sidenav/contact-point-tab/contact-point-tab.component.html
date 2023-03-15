@@ -1,4 +1,4 @@
-<p-accordionTab header="Contact Point">
+<p-accordionTab header="Contact Point" [disabled]="disabled">
   Contact Point
 
   <p-dropdown [options]="availableCPointProcesses" [(ngModel)]="processorService.selectedCPointProcess"

@@ -16,8 +16,6 @@ const PYODIDE_BASE_URL = 'https://cdn.jsdelivr.net/pyodide/v0.22.0/full/';
 })
 export class ProcessorService {
 
-  public pyodideInitialized: boolean = false;
-
   private _loading: BehaviorSubject<string[]>;
 
   public get loading$(): Observable<string[]> {
@@ -26,9 +24,6 @@ export class ProcessorService {
 
   public set loading(strings: string[]) {
     this._loading.next(strings);
-    this.loading.forEach((string) => {
-      console.log(string);
-    })
   }
 
   public get loading(): string[] {
@@ -36,7 +31,7 @@ export class ProcessorService {
   }
 
   //Container for selected Filters
-  private _selectedFilters: Process[] = []; 
+  private _selectedFilters: Process[] = [];
 
   //getter for selected filters
   public get selectedFilters(): Process[] {
@@ -46,6 +41,14 @@ export class ProcessorService {
   //setter for selected filters (also runs all filters)
   public set selectedFilters(filters: Process[]) {
     this._selectedFilters = filters;
+
+    this.loading = ['Resetting filters'];
+    // RESET FILTERED DATA
+    this.graphService.selectedDatafile.datasets.forEach((dataset: Dataset, index: number) => {
+      this.graphService.selectedDatafile.datasets[index].displacementForceFilteredData = this.graphService.selectedDatafile.datasets[index].displacementForceData;
+    })
+    this.graphService.selectedDatafile = this.graphService.selectedDatafile;
+    this.loading = ['Filters reset ✔']
 
     // whenever selected filters change: run runFilters() from the start (index 0)
     this.runFrom(EProcType.FILTER);
@@ -176,117 +179,116 @@ export class ProcessorService {
         this.loading = ['pyodide initialized ✔', 'numpy initialized ✔', 'Initializing scipy...'];
         globalThis.pyodide.loadPackage(['scipy']).then(() => {
           this.loading = ['pyodide initialized ✔', 'numpy initialized ✔', 'scipy initialized ✔'];
-          this.pyodideInitialized = true;
           this.loading = [];
         })
       })
     })
   }
 
-/*  runFilters(filterIndex: number): any {
+  /*  runFilters(filterIndex: number): any {
 
-    if (this.selectedFilters.length == 0) {
-      this.graphService.datasets.forEach((dataset: Dataset, index: number) => {
-        this.graphService.datasets[index].displacementForceFilteredData = this.graphService.datasets[index].displacementForceData;
-      })
-    }
-
-    if (this.selectedFilters.length - 1 >= filterIndex) {
-      let currentFilter = this.selectedFilters[filterIndex];
-      if (filterIndex == 0) {
-        this.loading = ['Running Filter: ' + currentFilter.name + '...'];
-      } else {
-        this.loading.push('Running Filter: ' + currentFilter.name + '...');
-      }
-
-      let getScriptPromise: Promise<string> | CustomError = this.getScript(currentFilter);
-
-      if (!(getScriptPromise instanceof Promise<string>)) {//if a promise is not returned
-        this.runFilters(filterIndex + 1); //skip filter maybe??
-        return getScriptPromise; //do smth to show that its an error
-      }
-
-      getScriptPromise.then((processScript) => {
+      if (this.selectedFilters.length == 0) {
         this.graphService.datasets.forEach((dataset: Dataset, index: number) => {
-          let datapoints: Datapoint[];
+          this.graphService.datasets[index].displacementForceFilteredData = this.graphService.datasets[index].displacementForceData;
+        })
+      }
 
-          // if it's the first filter -> use unfiltered data
-          if (filterIndex == 0) {
-            datapoints = dataset.displacementForceData;
-          } else {
-            datapoints = dataset.displacementForceFilteredData;
+      if (this.selectedFilters.length - 1 >= filterIndex) {
+        let currentFilter = this.selectedFilters[filterIndex];
+        if (filterIndex == 0) {
+          this.loading = ['Running Filter: ' + currentFilter.name + '...'];
+        } else {
+          this.loading.push('Running Filter: ' + currentFilter.name + '...');
+        }
+
+          let getScriptPromise: Promise<string> | CustomError = this.getScript(currentFilter);
+
+          if (!(getScriptPromise instanceof Promise<string>)) {//if a promise is not returned
+            this.runFilters(filterIndex + 1); //skip filter maybe??
+            return getScriptPromise; //do smth to show that its an error
           }
 
-          datapoints = this.runProcessScriptOnDatapoints(datapoints, processScript) as Datapoint[];
-          this.graphService.datasets[index].displacementForceFilteredData = datapoints;
+          getScriptPromise.then((processScript) => {
+            this.graphService.datasets.forEach((dataset: Dataset, index: number) => {
+              let datapoints: Datapoint[];
+
+              // if it's the first filter -> use unfiltered data
+              if (filterIndex == 0) {
+                datapoints = dataset.displacementForceData;
+              } else {
+                datapoints = dataset.displacementForceFilteredData;
+              }
+
+              datapoints = this.runProcessScriptOnDatapoints(datapoints, processScript) as Datapoint[];
+              this.graphService.datasets[index].displacementForceFilteredData = datapoints;
+            })
+
+            // this.loadingStatus[this.loadingStatus.length - 1] = 'Finished Filter: ' + currentFilter.name + ' ✔';
+            this.runFilters(filterIndex + 1);
+          })
+
+        } else {
+          // this._loading.next(false);
+          // this.loadingStatus = [];
+          this.graphService.datasets = this.graphService.datasets;
+          this.calculateContactPoint();
+        }
+      }
+
+      calculateContactPoint() {
+        // this._loading.next(true);
+
+        if (!this.selectedCPointProcess) {
+          // this._loading.next(false);
+          // this.loadingStatus = [];
+          return;
+        }
+
+        // this.loadingStatus[this.loadingStatus.length - 1] = 'Calculating Contactpoints using ' + this.selectedCPointProcess.name;
+
+        let getScriptPromise: Promise<string> | CustomError = this.getScript(this.selectedCPointProcess);
+
+        if (!(getScriptPromise instanceof Promise<string>)) {
+          // TODO: ERROR HAPPENED
+          return;
+        }
+
+        getScriptPromise.then((processScript) => {
+          this.graphService.datasets.forEach((dataset: Dataset, index: number) => {
+            let datapoint: Datapoint = this.runProcessScriptOnDatapoints(dataset.displacementForceFilteredData, processScript) as Datapoint;
+            dataset.contactPoint = datapoint;
+          })
+          // this._loading.next(false);
+          // this.loadingStatus = [];
+          this.calculateIndentation();
         })
+      }
 
-        // this.loadingStatus[this.loadingStatus.length - 1] = 'Finished Filter: ' + currentFilter.name + ' ✔';
-        this.runFilters(filterIndex + 1);
-      })
+      calculateIndentation() {
+        // this._loading.next(true);
+        // this.loadingStatus[this.loadingStatus.length - 1] = 'Calculating Indentation ...';
 
-    } else {
-      // this._loading.next(false);
-      // this.loadingStatus = [];
-      this.graphService.datasets = this.graphService.datasets;
-      this.calculateContactPoint();
-    }
-  }
+        let calcIndentationProcess: Process = this.availableProcesses.internal.find((process: Process) => {
+          return process.id == 'calc_indentation';
+        })
+        let getScriptPromise: Promise<string> | CustomError = this.getScript(calcIndentationProcess);
+        //
+        if (!(getScriptPromise instanceof Promise<string>)) {
+          // TODO: ERROR HAPPENED
+          return;
+        }
 
-  calculateContactPoint() {
-    // this._loading.next(true);
-
-    if (!this.selectedCPointProcess) {
-      // this._loading.next(false);
-      // this.loadingStatus = [];
-      return;
-    }
-
-    // this.loadingStatus[this.loadingStatus.length - 1] = 'Calculating Contactpoints using ' + this.selectedCPointProcess.name;
-
-    let getScriptPromise: Promise<string> | CustomError = this.getScript(this.selectedCPointProcess);
-
-    if (!(getScriptPromise instanceof Promise<string>)) {
-      // TODO: ERROR HAPPENED
-      return;
-    }
-
-    getScriptPromise.then((processScript) => {
-      this.graphService.datasets.forEach((dataset: Dataset, index: number) => {
-        let datapoint: Datapoint = this.runProcessScriptOnDatapoints(dataset.displacementForceFilteredData, processScript) as Datapoint;
-        dataset.contactPoint = datapoint;
-      })
-      // this._loading.next(false);
-      // this.loadingStatus = [];
-      this.calculateIndentation();
-    })
-  }
-
-  calculateIndentation() {
-    // this._loading.next(true);
-    // this.loadingStatus[this.loadingStatus.length - 1] = 'Calculating Indentation ...';
-
-    let calcIndentationProcess: Process = this.availableProcesses.internal.find((process: Process) => {
-      return process.id == 'calc_indentation';
-    })
-    let getScriptPromise: Promise<string> | CustomError = this.getScript(calcIndentationProcess);
-    //
-    if (!(getScriptPromise instanceof Promise<string>)) {
-      // TODO: ERROR HAPPENED
-      return;
-    }
-
-    getScriptPromise.then((processScript) => {
-      this.graphService.datasets.forEach((dataset: Dataset, index: number) => {
-        let contactPoint = [dataset.contactPoint.x, dataset.contactPoint.y];
-        let datapoints: Datapoint[] = this.runProcessScriptOnDatapoints(dataset.displacementForceFilteredData, processScript, contactPoint) as Datapoint[];
-        this.graphService.datasets[index].indentationForceData = datapoints;
-      })
-      // this._loading.next(false);
-      // this.loadingStatus = [];
-      this.graphService.datasets = this.graphService.datasets;
-    })
-  }*/
+        getScriptPromise.then((processScript) => {
+          this.graphService.datasets.forEach((dataset: Dataset, index: number) => {
+            let contactPoint = [dataset.contactPoint.x, dataset.contactPoint.y];
+            let datapoints: Datapoint[] = this.runProcessScriptOnDatapoints(dataset.displacementForceFilteredData, processScript, contactPoint) as Datapoint[];
+            this.graphService.datasets[index].indentationForceData = datapoints;
+          })
+          // this._loading.next(false);
+          // this.loadingStatus = [];
+          this.graphService.datasets = this.graphService.datasets;
+        })
+      }*/
 
   //Uses the given process name and processes path to give the script
   // returns script or promise of script if successful, -1 if error occurred
@@ -400,7 +402,6 @@ export class ProcessorService {
 
     if (processes.length == 0) { // base case
       // FINISHED
-      console.log('FINISHED')
       this.loading = [];
       return;
     }
@@ -420,31 +421,49 @@ export class ProcessorService {
 
     getScriptPromise.then((processScript) => {
 
-      this.graphService.datasets.forEach((dataset: Dataset, index: number) => {
-        let inputDatapoints: Datapoint[];
+      this.graphService.selectedDatafile.datasets.forEach((dataset: Dataset, index: number) => {
+        let inputDatapoints: Datapoint[] = [];
+        let inputArgs: any[] = [];
+
         //select datapoints to be processed depending on type of process
-        switch (currentProcess.procType) { 
-          case EProcType.FILTER || EProcType.CPOINT || EProcType.INTERNAL:
+        switch (currentProcess.procType) {
+          case EProcType.FILTER:
             inputDatapoints = dataset.displacementForceFilteredData;
             break;
-          case EProcType.EMODELS || EProcType.FMODELS:
+          case EProcType.CPOINT:
+            inputDatapoints = dataset.displacementForceFilteredData;
+            break;
+          case EProcType.INTERNAL:
+            inputDatapoints = dataset.displacementForceFilteredData;
+            inputArgs.push(dataset.contactPoint.x);
+            inputArgs.push(dataset.contactPoint.y);
+            break;
+          case EProcType.EMODELS:
+            inputDatapoints = dataset.indentationForceData;
+            break;
+          case EProcType.FMODELS:
             inputDatapoints = dataset.indentationForceData;
             break;
         }
 
         //run process on input datapoints
-        let outputDatapoints = this.runProcessScriptOnDatapoints(inputDatapoints, processScript);
+        let outputDatapoints: any;
+        if (inputArgs.length) {
+          outputDatapoints = this.runProcessScriptOnDatapoints(inputDatapoints, processScript, inputArgs);
+        } else {
+          outputDatapoints = this.runProcessScriptOnDatapoints(inputDatapoints, processScript);
+        }
 
         //set dataset being displayed according to the type of process that was run
         switch (currentProcess.procType) {
           case EProcType.FILTER:
-            this.graphService.datasets[index].displacementForceFilteredData = outputDatapoints as Datapoint[];
+            this.graphService.selectedDatafile.datasets[index].displacementForceFilteredData = outputDatapoints as Datapoint[];
             break;
           case EProcType.CPOINT:
-            this.graphService.datasets[index].contactPoint = outputDatapoints as Datapoint;
+            this.graphService.selectedDatafile.datasets[index].contactPoint = outputDatapoints as Datapoint;
             break;
           case EProcType.INTERNAL:
-            this.graphService.datasets[index].indentationForceData = outputDatapoints as Datapoint[];
+            this.graphService.selectedDatafile.datasets[index].indentationForceData = outputDatapoints as Datapoint[];
             break;
           case EProcType.EMODELS:
             // TODO: IMPLEMENT
@@ -453,32 +472,38 @@ export class ProcessorService {
             // TODO: IMPLEMENT
             break;
         }
-
-        //change loading msg
-        loadingMsgs[loadingMsgs.length] = currentProcess.name + ' done ✔'
-        this.runAll(processes); // recursive call
       })
+
+      //change loading msg
+      this.graphService.selectedDatafile = this.graphService.selectedDatafile;
+      loadingMsgs[loadingMsgs.length - 1] = currentProcess.name + ' done ✔'
+      this.runAll(processes); // recursive call
     })
   }
 
   //Runs all the processes from (and including) the process type specified
   public runFrom(procType: EProcType): void | CustomError {
+    this.loading = ['Creating Process Chain'];
+
     try {
       let processChain: Process[] = [];
       switch (procType) { //append relevant containers to processChain according to which type is selected
         //@ts-expect-error
         case EProcType.FILTER: {
-          if(!this.selectedFilters.length){break;}//break out of switch if empty
           processChain = processChain.concat(this.selectedFilters); //append to chain
         } //fallthrough to the next procType
         //@ts-expect-error
         case EProcType.CPOINT: {
-          if(!this.selectedCPointProcess){break;}
-          processChain = processChain.concat(this.selectedCPointProcess);
+          if (!this.selectedCPointProcess) {
+            break;
+          }
+          processChain.push(this.selectedCPointProcess);
         }
         //@ts-expect-error
         case EProcType.INTERNAL: {
-          if(!this.availableProcesses.internal.length){break;}
+          if (!this.availableProcesses.internal.length) {
+            break;
+          }
           processChain = processChain.concat(this.availableProcesses.internal);
         }
         //@ts-expect-error
@@ -491,17 +516,18 @@ export class ProcessorService {
           //if(!this.selectedFmodels.length){break;}
           //processChain = processChain.concat(this.selectedFmodels);
         }
-        //@ts-expect-error
         case EProcType.TEST: {
           //if(!this.selectedTests.length){break;}
           //processChain = processChain.concat(this.selectedTests);
+          break;
         }
         default: {
           throw Error('ERROR: ProcType error'); //throw error if type isnt found
         }
       }
+      console.log(processChain);
+      this.loading = ['Process Chain created ✔'];
       this.runAll(processChain);
-
     } catch (e: any) {
       return this.errorHandlerService.Fatal(e); //catch any errors as fatal errors
     }

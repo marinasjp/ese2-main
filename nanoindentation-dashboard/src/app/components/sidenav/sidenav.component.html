@@ -1,169 +1,27 @@
-<div class="sidenav">
+<div class="sidenav" style="overflow-y: scroll; overflow-x: hidden">
 
   <p-accordion [multiple]="true">
+
     <!-- Files Tab -->
     <app-files-tab></app-files-tab>
 
+    <div class="mt-5 mb-2 px-2" *ngIf="!(graphService.selectedDatafile$|async).datasets.length">
+      Other tabs can be used, once a file is uploaded.
+    </div>
     <!-- Filtering Tab -->
-    <p-accordionTab header="Filtering">
-      <div style="border: 1px solid #383838; border-radius: 5px; padding: 12px">
-        <div class="flex flex-row">
-          <p-inputSwitch [(ngModel)]="useProminency" class="mr-2"></p-inputSwitch>
-          <h4
-            pTooltip="Prominency is the (Insert tooltip for prominency because I'm still not entirely sure what it does)"
-            class="m-0 mt-1">Use Prominency</h4>
-        </div>
+    <app-filters-tab></app-filters-tab>
 
-        <ng-container *ngIf="useProminency">
-          <!--      PROMINENCY -->
-          <h5>Prominency [a.u.]</h5>
-
-          <p-inputNumber [(ngModel)]="prominency" [showButtons]="true"
-                         buttonLayout="horizontal"
-                         spinnerMode="horizontal"
-                         decrementButtonClass="p-button-primary"
-                         incrementButtonClass="p-button-primary"
-                         incrementButtonIcon="pi pi-plus"
-                         decrementButtonIcon="pi pi-minus">
-          </p-inputNumber>
-
-          <!--      MIN FREQUENCY -->
-          <h5 class="mt-2">Min Freq [channels]</h5>
-
-          <p-inputNumber [(ngModel)]="minFrequency" [showButtons]="true"
-                         buttonLayout="horizontal"
-                         spinnerMode="horizontal"
-                         decrementButtonClass="p-button-primary"
-                         incrementButtonClass="p-button-primary"
-                         incrementButtonIcon="pi pi-plus"
-                         decrementButtonIcon="pi pi-minus">
-          </p-inputNumber>
-
-          <!--      BAND -->
-          <h5 class="mt-2">Band [% preak pos]</h5>
-          <p-inputNumber [(ngModel)]="band" [showButtons]="true"
-                         buttonLayout="horizontal"
-                         spinnerMode="horizontal"
-                         decrementButtonClass="p-button-primary"
-                         incrementButtonClass="p-button-primary"
-                         incrementButtonIcon="pi pi-plus"
-                         decrementButtonIcon="pi pi-minus">
-          </p-inputNumber>
-        </ng-container>
-      </div>
-
-      <div style="border: 1px solid #383838; border-radius: 5px; padding: 12px; margin-top: 12px">
-        <p-multiSelect [options]="filters" [(ngModel)]="processService.selectedFilters" optionLabel="name"
-                       defaultLabel="Other Filters"></p-multiSelect>
-        <ng-container *ngFor="let filter of processService.selectedFilters">
-          <h4 class="mt-4">{{filter.name}}</h4>
-          <div *ngFor="let input of filter.inputs">
-            <h5 class="mt-2">{{input}}</h5>
-            <p-inputNumber [showButtons]="true"
-                           buttonLayout="horizontal"
-                           spinnerMode="horizontal"
-                           decrementButtonClass="p-button-primary"
-                           incrementButtonClass="p-button-primary"
-                           incrementButtonIcon="pi pi-plus"
-                           decrementButtonIcon="pi pi-minus">
-            </p-inputNumber>
-          </div>
-        </ng-container>
-      </div>
-
-      <div style="border: 1px solid #383838; border-radius: 5px; padding: 12px; margin-top: 12px">
-        Filter-Select
-        <h5>Selected: {{sliderVal}}</h5>
-        <p-slider [max]="(graphService.datasets$|async).length - 1" (onChange)="graphService.sliderValue = sliderVal"
-                  [(ngModel)]="sliderVal"></p-slider>
-      </div>
-    </p-accordionTab>
     <!-- Contact Point Tab -->
     <app-contact-point-tab></app-contact-point-tab>
 
     <!-- Force-Ind Tab -->
-    <p-accordionTab header="Force-Ind">
-      <div style="border: 1px solid #383838; border-radius: 5px; padding: 12px">
-        <p-dropdown [showClear]="true" placeholder="Select Shape" [options]="indShapes" [(ngModel)]="selectedIndShape"
-                    optionLabel="name"></p-dropdown>
-        <br><br><h5>Force-Ind Minimum</h5>
-        <p-inputNumber [(ngModel)]="forceIndMin" [showButtons]="true"
-                       buttonLayout="horizontal"
-                       spinnerMode="horizontal"
-                       decrementButtonClass="p-button-primary"
-                       incrementButtonClass="p-button-primary"
-                       incrementButtonIcon="pi pi-plus"
-                       decrementButtonIcon="pi pi-minus">
-        </p-inputNumber>
-        <br>
-        <h5>Force-Ind Maximum</h5>
-        <p-inputNumber [(ngModel)]="forceIndMax" [showButtons]="true"
-                       buttonLayout="horizontal"
-                       spinnerMode="horizontal"
-                       decrementButtonClass="p-button-primary"
-                       incrementButtonClass="p-button-primary"
-                       incrementButtonIcon="pi pi-plus"
-                       decrementButtonIcon="pi pi-minus">
-        </p-inputNumber>
-      </div>
-    </p-accordionTab>
+    <app-force-ind-tab></app-force-ind-tab>
 
     <!-- Elasticity-Spectra Tab -->
-    <p-accordionTab header="Elasticity-Spectra">
-      <div style="border: 1px solid #383838; border-radius: 5px; padding: 12px">
-        <p-dropdown [showClear]="true" placeholder="(placeholder)" [(ngModel)]="selectedIndShape"
-                    optionLabel="name"></p-dropdown>
-        <br><br><h5>Elasticity Spectra Minimum</h5>
-        <p-inputNumber [(ngModel)]="spectraMin" [showButtons]="true"
-                       buttonLayout="horizontal"
-                       spinnerMode="horizontal"
-                       decrementButtonClass="p-button-primary"
-                       incrementButtonClass="p-button-primary"
-                       incrementButtonIcon="pi pi-plus"
-                       decrementButtonIcon="pi pi-minus">
-        </p-inputNumber>
-        <br>
-        <h5>Elasticity Spectra Maximum</h5>
-        <p-inputNumber [(ngModel)]="spectraMax" [showButtons]="true"
-                       buttonLayout="horizontal"
-                       spinnerMode="horizontal"
-                       decrementButtonClass="p-button-primary"
-                       incrementButtonClass="p-button-primary"
-                       incrementButtonIcon="pi pi-plus"
-                       decrementButtonIcon="pi pi-minus">
-        </p-inputNumber>
-      </div>
-    </p-accordionTab>
+    <app-elisticity-spectra-tab></app-elisticity-spectra-tab>
 
     <!-- Upload Code Tab -->
-    <p-accordionTab header="Upload Custom Code">
-      <div style="border: 1px solid #383838; border-radius: 5px; padding: 12px">
-        <h4>Upload Custom Python Scripts</h4>
-        <!--        TODO: REIMPLEMENT-->
-        <!--        <p-fileUpload (uploadHandler)="uploadHandler($event)"-->
-        <!--          mode="basic"-->
-        <!--          [auto]="true"-->
-        <!--          [customUpload]="true"-->
-        <!--          chooseLabel="Upload Script"-->
-        <!--          name="uploadedCode[]"-->
-        <!--          pTooltip="Upload your python scripts"-->
-        <!--          tooltipPosition="right"></p-fileUpload>-->
-      </div>
-      <br>
-      <div style="border: 1px solid #383838; border-radius: 5px; padding: 12px">
-        <h5>Python Interpreter</h5>
-        <form>
-          <textarea pInputTextarea [rows]="5" [cols]="29" [autoResize]="true" #pythonCode></textarea>
-          <button pButton type="button" label="Run Interpreter" (click)="runCode(pythonCode.value)"></button>
-        </form>
+    <app-custom-code-tab></app-custom-code-tab>
 
-        <h5><br>Output</h5>
-        <div style="max-height: 80px; overflow-y: auto; display: flex; flex-direction: column;">
-          <div *ngFor="let item of consoleItems">
-            {{item}}
-          </div>
-        </div>
-      </div>
-    </p-accordionTab>
   </p-accordion>
 </div>

@@ -1,0 +1,29 @@
+<p-accordionTab header="Upload Custom Code">
+  <div style="border: 1px solid #383838; border-radius: 5px; padding: 12px">
+    <h4>Upload Custom Python Scripts</h4>
+    <!--        TODO: REIMPLEMENT-->
+    <!--        <p-fileUpload (uploadHandler)="uploadHandler($event)"-->
+    <!--          mode="basic"-->
+    <!--          [auto]="true"-->
+    <!--          [customUpload]="true"-->
+    <!--          chooseLabel="Upload Script"-->
+    <!--          name="uploadedCode[]"-->
+    <!--          pTooltip="Upload your python scripts"-->
+    <!--          tooltipPosition="right"></p-fileUpload>-->
+  </div>
+  <br>
+  <div style="border: 1px solid #383838; border-radius: 5px; padding: 12px">
+    <h5>Python Interpreter</h5>
+    <form>
+      <textarea pInputTextarea [rows]="5" [cols]="29" [autoResize]="true" #pythonCode></textarea>
+      <button pButton type="button" label="Run Interpreter"></button>
+    </form>
+
+    <!--    <h5><br>Output</h5>-->
+    <!--    <div style="max-height: 80px; overflow-y: auto; display: flex; flex-direction: column;">-->
+    <!--      <div *ngFor="let item of consoleItems">-->
+    <!--        {{item}}-->
+    <!--      </div>-->
+    <!--    </div>-->
+  </div>
+</p-accordionTab>

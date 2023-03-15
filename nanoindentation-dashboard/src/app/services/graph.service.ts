@@ -5,6 +5,7 @@ import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {environment} from "../../environments/environment";
 import {finalize} from "rxjs/operators";
 import {Dataset} from "../models/dataset.model";
+import {Datafile} from "../models/datafile.model";
 
 @Injectable({
   providedIn: 'root',
@@ -17,22 +18,32 @@ export class GraphService {
     return this._uploadingDataLoading.asObservable();
   }
 
-  start: number;
-  end: number;
+  private _datafiles: BehaviorSubject<Datafile[]>;
 
-
-  private _datasets: BehaviorSubject<Dataset[]>;
-
-  public get datasets$(): Observable<Dataset[]> {
-    return this._datasets.asObservable();
+  public get datafiles$(): Observable<Datafile[]> {
+    return this._datafiles.asObservable();
   }
 
-  public get datasets(): Dataset[] {
-    return this._datasets.value;
+  public get datafiles(): Datafile[] {
+    return this._datafiles.value;
   }
 
-  public set datasets(datasets: Dataset[]) {
-    this._datasets.next(datasets);
+  public set datafiles(datafiles: Datafile[]) {
+    this._datafiles.next(datafiles);
+  }
+
+  private _selectedDatafile: BehaviorSubject<Datafile>;
+
+  public get selectedDatafile$(): Observable<Datafile> {
+    return this._selectedDatafile.asObservable();
+  }
+
+  public get selectedDatafile(): Datafile {
+    return this._selectedDatafile.value;
+  }
+
+  public set selectedDatafile(datafile: Datafile) {
+    this._selectedDatafile.next(datafile);
   }
 
 
@@ -52,16 +63,15 @@ export class GraphService {
 
   constructor(private sampleDataService: SampleDataService,
               private http: HttpClient) {
-    this._datasets = new BehaviorSubject<Dataset[]>([]);
+    this._datafiles = new BehaviorSubject<Datafile[]>([]);
+    this._selectedDatafile = new BehaviorSubject<Datafile>({name: null, datasets: []});
     this._uploadingDataLoading = new BehaviorSubject<boolean>(false);
     this._sliderValue = new BehaviorSubject<number>(0);
   }
 
-  prepareUserInputData(input): any {
+  prepareUserInputData(input, filename: string): any {
     const inputIndentation = input.Indentation;
     const inputLoad = input.Load;
-    let start: number;
-    let end: number;
     let datasets: Dataset[] = [];
 
     inputIndentation.forEach((inputDataset, index: number) => {
@@ -75,13 +85,6 @@ export class GraphService {
       let datasetLoad = inputLoad[index];
 
       inputDataset.forEach((datapoint, index) => {
-        if (!start || datasetIndentation[index] < start) {
-          start = datasetIndentation[index];
-        }
-        if (!end || datasetIndentation[index] > end) {
-          end = datasetIndentation[index];
-        }
-
         let valuePair: { x: number, y: number } = {
           x: datasetIndentation[index],
           y: datasetLoad[index]
@@ -92,36 +95,31 @@ export class GraphService {
       })
       datasets.push(dataset);
     })
-    this._datasets.next(datasets);
-    this.start = start;
-    this.end = end;
+
+    let datafiles = this.datafiles;
+    datafiles.push({
+      name: filename,
+      datasets: datasets
+    });
+    this.selectedDatafile = this.datafiles[0];
   }
 
 
-  prepareUserInputDataTxt(input): any {
+  prepareUserInputDataTxt(input, filename: string): any {
     const inputIndentation = input.Indentation;
     const inputLoad = input.Load;
-    let start: number;
-    let end: number;
     let datasets: Dataset[] = [];
-  
-    console.log(inputLoad)
+
     let dataset: Dataset = {
       contactPoint: null,
       displacementForceData: [],
       displacementForceFilteredData: [],
       indentationForceData: []
     };
-  
+
     // Loop through the indentation and load arrays and add data to the dataset
     for (let i = 0; i < inputIndentation.length; i++) {
-      if (!start || inputIndentation[i] < start) {
-        start = inputIndentation[i];
-      }
-      if (!end || inputIndentation[i] > end) {
-        end = inputIndentation[i];
-      }
-  
+
       let valuePair: { x: number, y: number } = {
         x: inputIndentation[i],
         y: inputLoad[i]
@@ -133,21 +131,25 @@ export class GraphService {
     console.log(dataset)
     // Add the dataset to the datasets array
     datasets.push(dataset);
-  
-    this._datasets.next(datasets);
-    this.start = start;
-    this.end = end;
+
+    let datafiles = this.datafiles;
+    datafiles.push({
+      name: filename,
+      datasets: datasets
+    });
+    this.selectedDatafile = this.datafiles[0];
   }
-  
-  
+
+
   uploadDataTxt(file: any): void {
     this._uploadingDataLoading.next(true);
-    console.log("REACHED!!")
     const formData = new FormData();
     formData.append('file', file);
 
     const headers = new HttpHeaders();
     headers.append('Content-Type', 'multipart/form-data');
+
+    const filename: string = file.name;
 
     this.http.post(environment.apiURL + 'send_data_txt', formData, {
       headers: headers,
@@ -155,7 +157,7 @@ export class GraphService {
     }).pipe(finalize(() => this._uploadingDataLoading.next(false)))
       .subscribe(
         (response) => {
-          this.prepareUserInputDataTxt(response);
+          this.prepareUserInputDataTxt(response, filename);
         }, () => {
         })
   }
@@ -168,13 +170,15 @@ export class GraphService {
     const headers = new HttpHeaders();
     headers.append('Content-Type', 'multipart/form-data');
 
+    const filename: string = file.name;
+
     this.http.post(environment.apiURL + 'send_data', formData, {
       headers: headers,
       responseType: "json"
     }).pipe(finalize(() => this._uploadingDataLoading.next(false)))
       .subscribe(
         (response) => {
-          this.prepareUserInputData(response);
+          this.prepareUserInputData(response, filename);
         }, () => {
         })
   }
