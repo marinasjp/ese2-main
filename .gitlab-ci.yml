@@ -1,5 +1,4 @@
-image:
-  name: Dockerfile
+image: marinasjp/ese2:latest
 
 stages:
   - build
