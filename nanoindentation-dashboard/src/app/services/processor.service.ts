@@ -8,6 +8,7 @@ import {ErrorHandlerService} from "./error-handler.service";
 import {Datapoint} from "../models/datapoint.model";
 import {Dataset} from "../models/dataset.model";
 import {CustomError} from '../models/error.model';
+import { EInputFieldType, Input } from '../models/input.model';
 
 const PYODIDE_BASE_URL = 'https://cdn.jsdelivr.net/pyodide/v0.22.0/full/';
 
@@ -110,7 +111,8 @@ export class ProcessorService {
     eModels: [],//container for eModel
     fModels: [],//container for fModel,
     internal: [
-      {id: 'calc_indentation', name: 'Calculating Indentation', procType: EProcType.INTERNAL, custom: false}
+      {id: 'calc_indentation', name: 'Calculating Indentation', procType: EProcType.INTERNAL, custom: false},
+      {id: 'calc_elspectra', name: 'Calculating ElSpectra', procType: EProcType.INTERNAL, custom: false}
     ], // container for processes only run by the app but not selectable by the user
     test: []     //container for test processess
   }
@@ -119,18 +121,22 @@ export class ProcessorService {
     try {
       switch (process.procType) { //add to the correct container acording to process type
         case EProcType.CPOINT: {
+          console.log("CPoint");
           this.availableProcesses.cPoints.push(process);
           break;
         }
         case EProcType.FILTER: {
+          console.log("Filter");
           this.availableProcesses.filters.push(process);
           break;
         }
         case EProcType.EMODELS: {
+          console.log("EModel");
           this.availableProcesses.eModels.push(process);
           break;
         }
         case EProcType.FMODELS: {
+          console.log("FModel");
           this.availableProcesses.fModels.push(process);
           break;
         }
@@ -139,6 +145,7 @@ export class ProcessorService {
           break;
         }
         default: {
+          console.log("Could not find type");
           throw Error('ERROR: ProcType error'); //throw error if type isnt found
         }
       }
@@ -423,7 +430,8 @@ export class ProcessorService {
 
       this.graphService.selectedDatafile.datasets.forEach((dataset: Dataset, index: number) => {
         let inputDatapoints: Datapoint[] = [];
-        let inputArgs: any[] = [];
+        let inputArgs: any = [];
+        //TODO: INPUT CHECKING
 
         //select datapoints to be processed depending on type of process
         switch (currentProcess.procType) {
@@ -434,9 +442,13 @@ export class ProcessorService {
             inputDatapoints = dataset.displacementForceFilteredData;
             break;
           case EProcType.INTERNAL:
-            inputDatapoints = dataset.displacementForceFilteredData;
-            inputArgs.push(dataset.contactPoint.x);
-            inputArgs.push(dataset.contactPoint.y);
+            if (currentProcess.id == 'calc_indentation') {
+              inputDatapoints = dataset.displacementForceFilteredData;
+              inputArgs.push(dataset.contactPoint.x);
+              inputArgs.push(dataset.contactPoint.y);
+            } else if (currentProcess.id == 'calc_elspectra') {
+              inputDatapoints = dataset.displacementForceFilteredData;
+            }
             break;
           case EProcType.EMODELS:
             inputDatapoints = dataset.indentationForceData;
@@ -463,7 +475,11 @@ export class ProcessorService {
             this.graphService.selectedDatafile.datasets[index].contactPoint = outputDatapoints as Datapoint;
             break;
           case EProcType.INTERNAL:
-            this.graphService.selectedDatafile.datasets[index].indentationForceData = outputDatapoints as Datapoint[];
+            if (currentProcess.id == 'calc_indentation') {
+              this.graphService.selectedDatafile.datasets[index].indentationForceData = outputDatapoints as Datapoint[];
+            } else if (currentProcess.id == 'calc_elspectra') {
+              this.graphService.selectedDatafile.datasets[index].elspectraData = outputDatapoints as Datapoint[];
+            }
             break;
           case EProcType.EMODELS:
             // TODO: IMPLEMENT
@@ -525,7 +541,6 @@ export class ProcessorService {
           throw Error('ERROR: ProcType error'); //throw error if type isnt found
         }
       }
-      console.log(processChain);
       this.loading = ['Process Chain created ✔'];
       this.runAll(processChain);
     } catch (e: any) {

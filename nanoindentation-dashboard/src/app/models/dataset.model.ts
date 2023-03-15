@@ -5,4 +5,5 @@ export interface Dataset {
   displacementForceData: Datapoint[];
   displacementForceFilteredData: Datapoint[];
   indentationForceData: Datapoint[];
+  elspectraData: Datapoint[];
 }
