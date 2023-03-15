@@ -24,6 +24,8 @@ import {DropdownModule} from 'primeng/dropdown';
 import {ProgressSpinnerModule} from "primeng/progressspinner";
 import {FilesTabComponent} from './components/sidenav/files-tab/files-tab.component';
 import {ContactPointTabComponent} from './components/sidenav/contact-point-tab/contact-point-tab.component';
+import {CommonModule} from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 
 @NgModule({
   declarations: [
@@ -35,6 +37,7 @@ import {ContactPointTabComponent} from './components/sidenav/contact-point-tab/c
   ],
   imports: [
     BrowserModule,
+    CommonModule,
     AppRoutingModule,
     ButtonModule,
     AccordionModule,
@@ -55,7 +58,7 @@ import {ContactPointTabComponent} from './components/sidenav/contact-point-tab/c
     DropdownModule,
     ProgressSpinnerModule
   ],
-  providers: [],
+  providers: [AsyncPipe],
   bootstrap: [AppComponent]
 })
 export class AppModule {

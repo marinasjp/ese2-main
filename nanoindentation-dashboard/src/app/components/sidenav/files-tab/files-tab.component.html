@@ -1,7 +1,7 @@
 <p-accordionTab header="Files">
 
   <!--  LOADING -->
-  <ng-container *ngIf="graphService.uploadingDataLoading$|async else notLoading">
+  <ng-container *ngIf="graphService.uploadingDataLoading$ | async else notLoading">
     <div class="flex flex-column justify-content-center align-items-center">
       <div style="width: 240px">
         <p-progressBar [style]="{'height': '6px'}" mode="indeterminate"></p-progressBar>

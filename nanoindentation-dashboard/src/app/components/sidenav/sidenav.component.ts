@@ -2,6 +2,8 @@ import {Component, OnChanges, SimpleChanges} from '@angular/core';
 import {GraphService} from "../../services/graph.service";
 import {ProcessorService} from "../../services/processor.service";
 import {Process} from "../../models/process.model";
+import { AsyncPipe } from '@angular/common';
+
 
 @Component({
   selector: 'app-sidenav',
