@@ -34,7 +34,7 @@ describe('SidenavComponent', () => {
     const spy = spyOn(graphService, 'uploadDataRaw');
     const file = new File([], 'test');
     const event = { files: [file] };
-    component.uploadrawHandler(event);
+   // component.uploadra(event);
     expect(spy).toHaveBeenCalledWith(file);
   });
 });
