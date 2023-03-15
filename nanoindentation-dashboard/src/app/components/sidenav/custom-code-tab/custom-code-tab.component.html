@@ -1,16 +1,38 @@
 <p-accordionTab header="Upload Custom Code">
   <div style="border: 1px solid #383838; border-radius: 5px; padding: 12px">
     <h4>Upload Custom Python Scripts</h4>
-    <!--        TODO: REIMPLEMENT-->
-    <!--        <p-fileUpload (uploadHandler)="uploadHandler($event)"-->
-    <!--          mode="basic"-->
-    <!--          [auto]="true"-->
-    <!--          [customUpload]="true"-->
-    <!--          chooseLabel="Upload Script"-->
-    <!--          name="uploadedCode[]"-->
-    <!--          pTooltip="Upload your python scripts"-->
-    <!--          tooltipPosition="right"></p-fileUpload>-->
-  </div>
+    <!-- Filters -->
+    <p-fileUpload #fileUpload (uploadHandler)="uploadFilterHandler($event)"
+            mode="basic"
+            [auto]="true"
+            [customUpload]="true"
+            chooseLabel="Upload Filter"></p-fileUpload><br>
+    <!-- CPoint -->
+    <p-fileUpload #fileUpload (uploadHandler)="uploadCPointHandler($event)"
+            mode="basic"
+            [auto]="true"
+            [customUpload]="true"
+            chooseLabel="Upload CPoint"></p-fileUpload><br>
+    <!-- FModel -->
+    <p-fileUpload #fileUpload (uploadHandler)="uploadFModelHandler($event)"
+            mode="basic"
+            [auto]="true"
+            [customUpload]="true"
+            chooseLabel="Upload FModel"></p-fileUpload><br>
+    <!-- EModel -->
+    <p-fileUpload #fileUpload (uploadHandler)="uploadEModelHandler($event)"
+            mode="basic"
+            [auto]="true"
+            [customUpload]="true"
+            chooseLabel="Upload EModel"></p-fileUpload>
+    </div>
+    <!-- <p-button (click)="showBasicDialog()" icon="pi pi-external-link" label="Show"></p-button>
+    <p-dialog header="Header" [(visible)]="displayBasic" [style]="{width: '50vw'}">
+        <p>Select file type</p>
+        <ng-template pTemplate="footer">
+            <p-button icon="pi pi-check" (click)="displayBasic=false" label="Ok" styleClass="p-button-text"></p-button>
+        </ng-template>
+    </p-dialog> -->
   <br>
   <div style="border: 1px solid #383838; border-radius: 5px; padding: 12px">
     <h5>Python Interpreter</h5>
