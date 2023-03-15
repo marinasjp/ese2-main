@@ -100,18 +100,19 @@ export class ProcessorService {
   //container for all available processes
   public availableProcesses: { filters: Process[], cPoints: Process[], eModels: Process[], fModels: Process[], internal: Process[], test: Process[] } = {
     filters: [ //Container for available filters
-      {id: 'median', name: 'Median', procType: EProcType.FILTER, custom: false, inputs: []},
-      {id: 'savgol', name: 'Sawitzky Golay', procType: EProcType.FILTER, custom: false, inputs: []},
-      {id: 'linearDetrend', name: 'Linear Detrending', procType: EProcType.FILTER, custom: false, inputs: []},
+      {id: 'median', name: 'Median', procType: EProcType.FILTER, custom: false},
+      {id: 'savgol', name: 'Sawitzky Golay', procType: EProcType.FILTER, custom: false},
+      {id: 'linearDetrend', name: 'Linear Detrending', procType: EProcType.FILTER, custom: false},
     ],
     cPoints: [//container for cPoints
-      {id: 'rov', name: 'Rov', procType: EProcType.CPOINT, custom: false, inputs: []},
-      {id: 'stepAndDrift', name: 'Step and Drift', procType: EProcType.CPOINT, custom: false, inputs: []}
+      {id: 'rov', name: 'Rov', procType: EProcType.CPOINT, custom: false},
+      {id: 'stepAndDrift', name: 'Step and Drift', procType: EProcType.CPOINT, custom: false}
     ],
     eModels: [],//container for eModel
     fModels: [],//container for fModel,
     internal: [
-      {id: 'calc_indentation', name: 'Calculating Indentation', procType: EProcType.INTERNAL, custom: false, inputs: [{name: "Contact Point", selectedValue: null, type: EInputFieldType.DATAPOINT}]}
+      {id: 'calc_indentation', name: 'Calculating Indentation', procType: EProcType.INTERNAL, custom: false},
+      {id: 'calc_elspectra', name: 'Calculating ElSpectra', procType: EProcType.INTERNAL, custom: false}
     ], // container for processes only run by the app but not selectable by the user
     test: []     //container for test processess
   }
@@ -429,9 +430,9 @@ export class ProcessorService {
 
       this.graphService.selectedDatafile.datasets.forEach((dataset: Dataset, index: number) => {
         let inputDatapoints: Datapoint[] = [];
-        let inputArgs: Input[] = currentProcess.inputs;
+        let inputArgs: any = [];
         //TODO: INPUT CHECKING
-        
+
         //select datapoints to be processed depending on type of process
         switch (currentProcess.procType) {
           case EProcType.FILTER:
@@ -441,8 +442,13 @@ export class ProcessorService {
             inputDatapoints = dataset.displacementForceFilteredData;
             break;
           case EProcType.INTERNAL:
-            inputDatapoints = dataset.displacementForceFilteredData;
-            inputArgs[0].selectedValue = dataset.contactPoint; //set the required input field
+            if (currentProcess.id == 'calc_indentation') {
+              inputDatapoints = dataset.displacementForceFilteredData;
+              inputArgs.push(dataset.contactPoint.x);
+              inputArgs.push(dataset.contactPoint.y);
+            } else if (currentProcess.id == 'calc_elspectra') {
+              inputDatapoints = dataset.displacementForceFilteredData;
+            }
             break;
           case EProcType.EMODELS:
             inputDatapoints = dataset.indentationForceData;
@@ -469,7 +475,11 @@ export class ProcessorService {
             this.graphService.selectedDatafile.datasets[index].contactPoint = outputDatapoints as Datapoint;
             break;
           case EProcType.INTERNAL:
-            this.graphService.selectedDatafile.datasets[index].indentationForceData = outputDatapoints as Datapoint[];
+            if (currentProcess.id == 'calc_indentation') {
+              this.graphService.selectedDatafile.datasets[index].indentationForceData = outputDatapoints as Datapoint[];
+            } else if (currentProcess.id == 'calc_elspectra') {
+              this.graphService.selectedDatafile.datasets[index].elspectraData = outputDatapoints as Datapoint[];
+            }
             break;
           case EProcType.EMODELS:
             // TODO: IMPLEMENT
@@ -531,7 +541,6 @@ export class ProcessorService {
           throw Error('ERROR: ProcType error'); //throw error if type isnt found
         }
       }
-      console.log(processChain);
       this.loading = ['Process Chain created ✔'];
       this.runAll(processChain);
     } catch (e: any) {
