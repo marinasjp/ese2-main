@@ -77,15 +77,22 @@ let startPro = {
     /*it('should return dataset with a new Process added', () => { // maybe test if it is at the end?
       const service: ProcessorService = TestBed.get(ProcessorService);
       expect(service.addProcess(testProcess)).toEqual(startPro);
-    });
+    });*/
 
     // Tests if getScript ... is returning the correct script when given a Process name and type.
-
     it('Tests if getScript ... is returning the correct script when given a Process name and type.', () => {
       const service: ProcessorService = TestBed.get(ProcessorService);
       service.addProcess(testProcess);
-      expect(service.getScript(testProcess)).toEqual(testStr);
-     });*/
+      let promise = service.getScript(testProcess);
+      let receivedStr: string;
+      if (promise instanceof Promise<String>){
+        promise.then((receivedStrPromise: string) => {
+          console.log(receivedStrPromise);
+          receivedStr = receivedStrPromise;
+        }); // error checking needed
+      }
+      expect(receivedStr).toEqual(testStr);
+     });
 
      //Test if getScript ... can grab process from the file system
      it('Test if getScript ... can grab process from the file system.', () => {

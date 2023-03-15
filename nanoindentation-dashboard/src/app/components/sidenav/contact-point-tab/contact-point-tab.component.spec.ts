@@ -25,4 +25,5 @@ describe('ContactPointTabComponent', () => {
     fixture.detectChanges();
     expect(component).toBeTruthy();
   });
+  
 });

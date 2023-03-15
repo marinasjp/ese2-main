@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import {HttpClientModule} from '@angular/common/http';
 import { FiltersTabComponent } from './filters-tab.component';
 
 describe('FiltersTabComponent', () => {
@@ -7,17 +7,21 @@ describe('FiltersTabComponent', () => {
   let fixture: ComponentFixture<FiltersTabComponent>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [ FiltersTabComponent ]
+    TestBed.configureTestingModule({
+      imports:[
+        HttpClientModule
+      ],
+      providers:[
+        FiltersTabComponent
+      ]
     })
-    .compileComponents();
-
-    fixture = TestBed.createComponent(FiltersTabComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+      .compileComponents();
   });
 
   it('should create', () => {
+    const fixture = TestBed.createComponent(FiltersTabComponent);
+    const component = fixture.componentInstance;
+    fixture.detectChanges();
     expect(component).toBeTruthy();
   });
 });
