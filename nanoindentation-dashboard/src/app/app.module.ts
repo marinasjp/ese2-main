@@ -32,6 +32,7 @@ import { ElisticitySpectraTabComponent } from './components/sidenav/elisticity-s
 import { CustomCodeTabComponent } from './components/sidenav/custom-code-tab/custom-code-tab.component';
 import { BottomnavComponent } from './components/bottomnav/bottomnav.component';
 import {DialogModule} from 'primeng/dialog';
+import { DownloadTabComponent } from './components/sidenav/download-tab/download-tab/download-tab.component';
 
 @NgModule({
   declarations: [
@@ -45,6 +46,7 @@ import {DialogModule} from 'primeng/dialog';
     ElisticitySpectraTabComponent,
     CustomCodeTabComponent,
     BottomnavComponent,
+    DownloadTabComponent,
   ],
   imports: [
     BrowserModule,

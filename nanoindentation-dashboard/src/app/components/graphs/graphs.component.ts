@@ -3,7 +3,7 @@ import {GraphService} from '../../services/graph.service';
 import {UIChart} from "primeng/chart";
 import {Subscription} from "rxjs";
 import { saveAs } from 'file-saver';
-import Papa from 'papaparse';
+import { Papa } from 'papaparse';
 
 @Component({
   selector: 'app-graphs',
@@ -113,29 +113,6 @@ export class GraphsComponent {
       }
     };
   }
-  
-  click(): any {
-    const data = this.graphService.selectedDatafile.datasets;
-    const stringifiedData = [];
-    
-    for (let i = 0; i < data.length; i++) {
-      const stringifiedObject = JSON.stringify(data[i]);
-      stringifiedData.push([stringifiedObject]);
-    }
-    
-    console.log(stringifiedData); // Check the output in the console
-    
-    // You can then do what you need to do with the stringified data
-    // For example, you can save it to a CSV file using PapaParse:
-    
-    const csv = Papa.unparse(stringifiedData);
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    saveAs(blob, 'data.csv');
-
-  }
-
-  
-  
 
   getNewData(): any {
     return {
