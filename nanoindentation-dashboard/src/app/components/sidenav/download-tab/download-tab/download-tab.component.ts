@@ -11,8 +11,16 @@ import { GraphService } from 'src/app/services/graph.service';
 
 export class DownloadTabComponent {
   constructor(public graphService: GraphService) {
+    this.graphService.selectedDatafile$.subscribe((datafile) => {
+      if (datafile.datasets.length) {
+        this.disabled = false;
+      } else {
+        this.disabled = true;
+      }
+    })
   }
 
+  disabled: boolean = true;
   download(): any {
     const data = this.graphService.selectedDatafile.datasets;
     const stringifiedData = [];
