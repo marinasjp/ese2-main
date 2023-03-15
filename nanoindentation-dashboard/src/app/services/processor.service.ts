@@ -110,7 +110,8 @@ export class ProcessorService {
     eModels: [],//container for eModel
     fModels: [],//container for fModel,
     internal: [
-      {id: 'calc_indentation', name: 'Calculating Indentation', procType: EProcType.INTERNAL, custom: false}
+      {id: 'calc_indentation', name: 'Calculating Indentation', procType: EProcType.INTERNAL, custom: false},
+      {id: 'calc_elspectra', name: 'Calculating ElSpectra', procType: EProcType.INTERNAL, custom: false}
     ], // container for processes only run by the app but not selectable by the user
     test: []     //container for test processess
   }
@@ -366,7 +367,7 @@ export class ProcessorService {
     } else {
       result = result as Datapoint
     }
-    resultPy.destroy();//free the function used
+    // resultPy.destroy();//free the function used
     return result;
   }
 
@@ -434,9 +435,13 @@ export class ProcessorService {
             inputDatapoints = dataset.displacementForceFilteredData;
             break;
           case EProcType.INTERNAL:
-            inputDatapoints = dataset.displacementForceFilteredData;
-            inputArgs.push(dataset.contactPoint.x);
-            inputArgs.push(dataset.contactPoint.y);
+            if (currentProcess.id == 'calc_indentation') {
+              inputDatapoints = dataset.displacementForceFilteredData;
+              inputArgs.push(dataset.contactPoint.x);
+              inputArgs.push(dataset.contactPoint.y);
+            } else if (currentProcess.id == 'calc_elspectra') {
+              inputDatapoints = dataset.displacementForceFilteredData;
+            }
             break;
           case EProcType.EMODELS:
             inputDatapoints = dataset.indentationForceData;
@@ -463,7 +468,11 @@ export class ProcessorService {
             this.graphService.selectedDatafile.datasets[index].contactPoint = outputDatapoints as Datapoint;
             break;
           case EProcType.INTERNAL:
-            this.graphService.selectedDatafile.datasets[index].indentationForceData = outputDatapoints as Datapoint[];
+            if (currentProcess.id == 'calc_indentation') {
+              this.graphService.selectedDatafile.datasets[index].indentationForceData = outputDatapoints as Datapoint[];
+            } else if (currentProcess.id == 'calc_elspectra') {
+              this.graphService.selectedDatafile.datasets[index].elspectraData = outputDatapoints as Datapoint[];
+            }
             break;
           case EProcType.EMODELS:
             // TODO: IMPLEMENT
@@ -525,7 +534,6 @@ export class ProcessorService {
           throw Error('ERROR: ProcType error'); //throw error if type isnt found
         }
       }
-      console.log(processChain);
       this.loading = ['Process Chain created ✔'];
       this.runAll(processChain);
     } catch (e: any) {

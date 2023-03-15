@@ -40,6 +40,25 @@
     </p-chart>
   </div>
 
+  <div>
+    <h3>Elasticity-Spectra</h3>
+    <p-chart type="line"
+             width="40vh"
+             height="40vh"
+             #elSpectraChartMultiple
+             [data]="elSpectraDataMultiple"
+             [options]="graphOptions">
+    </p-chart>
+    <!-- Slide Through Graph -->
+    <p-chart type="line"
+             width="40vh"
+             height="40vh"
+             #elSpectraChartSingle
+             [data]="elSpectraDataSingle"
+             [options]="graphOptions">
+    </p-chart>
+  </div>
+
   <!--  <div>-->
   <!--    <p-chart type="line"-->
   <!--             width="40vh"-->
