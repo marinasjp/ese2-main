@@ -1,8 +1,10 @@
+import {Input} from "./input.model";
+
 export interface Process {
   id: string, // unique name to find place in filesystem
   name: string, // displayed name by the UI
   procType: EProcType, // type of the process, needed for correct display in UI, find place in filesystem etc.
-  inputs?: any,
+  inputs?: Input[],
   custom?: boolean, //whether the process is custom
   script?: string; //script of the process
   chainID?: number; //Index on where the proc is in the proc chain
