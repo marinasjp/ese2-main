@@ -381,6 +381,7 @@ export class ProcessorService {
           if (!input){ //if an input is set to be null and there are user inputs specified
             return this.errorHandlerService.Fatal(Error("InputError: input not given"));
           }
+          return 0;
         })
       }
 
