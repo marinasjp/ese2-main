@@ -26,6 +26,11 @@ import {FilesTabComponent} from './components/sidenav/files-tab/files-tab.compon
 import {ContactPointTabComponent} from './components/sidenav/contact-point-tab/contact-point-tab.component';
 import {CommonModule} from '@angular/common';
 import { AsyncPipe } from '@angular/common';
+import { FiltersTabComponent } from './components/sidenav/filters-tab/filters-tab.component';
+import { ForceIndTabComponent } from './components/sidenav/force-ind-tab/force-ind-tab.component';
+import { ElisticitySpectraTabComponent } from './components/sidenav/elisticity-spectra-tab/elisticity-spectra-tab.component';
+import { CustomCodeTabComponent } from './components/sidenav/custom-code-tab/custom-code-tab.component';
+import { BottomnavComponent } from './components/bottomnav/bottomnav.component';
 
 @NgModule({
   declarations: [
@@ -34,6 +39,11 @@ import { AsyncPipe } from '@angular/common';
     GraphsComponent,
     FilesTabComponent,
     ContactPointTabComponent,
+    FiltersTabComponent,
+    ForceIndTabComponent,
+    ElisticitySpectraTabComponent,
+    CustomCodeTabComponent,
+    BottomnavComponent,
   ],
   imports: [
     BrowserModule,
@@ -58,7 +68,7 @@ import { AsyncPipe } from '@angular/common';
     DropdownModule,
     ProgressSpinnerModule
   ],
-  providers: [AsyncPipe],
+  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule {

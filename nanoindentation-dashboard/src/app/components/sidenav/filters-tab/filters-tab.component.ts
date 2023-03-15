@@ -1,17 +1,19 @@
 import {Component} from '@angular/core';
 import {ProcessorService} from "../../../services/processor.service";
-import {Process} from "../../../models/process.model";
 import {GraphService} from "../../../services/graph.service";
 
 @Component({
-  selector: 'app-contact-point-tab',
-  templateUrl: './contact-point-tab.component.html',
-  styleUrls: ['./contact-point-tab.component.scss']
+  selector: 'app-filters-tab',
+  templateUrl: './filters-tab.component.html',
+  styleUrls: ['./filters-tab.component.scss']
 })
-export class ContactPointTabComponent {
-
+export class FiltersTabComponent {
   disabled: boolean = true;
-  availableCPointProcesses: Process[];
+
+  useProminency: boolean = true;
+  prominency: number = null;
+  minFrequency: number = null;
+  band: number = null;
 
   constructor(public processorService: ProcessorService,
               private graphService: GraphService) {
@@ -22,9 +24,5 @@ export class ContactPointTabComponent {
         this.disabled = true;
       }
     })
-  }
-
-  ngOnInit() {
-    this.availableCPointProcesses = this.processorService.availableProcesses.cPoints;
   }
 }

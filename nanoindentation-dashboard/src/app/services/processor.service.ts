@@ -16,47 +16,89 @@ const PYODIDE_BASE_URL = 'https://cdn.jsdelivr.net/pyodide/v0.22.0/full/';
 })
 export class ProcessorService {
 
-  public pyodideInitialized: boolean = false;
+  private _loading: BehaviorSubject<string[]>;
 
-  private _loading: BehaviorSubject<boolean>;
-
-  public get loading$(): Observable<boolean> {
+  public get loading$(): Observable<string[]> {
     return this._loading.asObservable();
   }
 
-  loadingStatus: string[] = ['Initializing pyodide...']
+  public set loading(strings: string[]) {
+    this._loading.next(strings);
+  }
 
+  public get loading(): string[] {
+    return this._loading.value;
+  }
 
+  //Container for selected Filters
   private _selectedFilters: Process[] = [];
 
+  //getter for selected filters
   public get selectedFilters(): Process[] {
     return this._selectedFilters;
   }
 
+  //setter for selected filters (also runs all filters)
   public set selectedFilters(filters: Process[]) {
     this._selectedFilters = filters;
 
-    // whenever selected filters change: run runFilters() from the start (index 0)
-    this.runFilters(0);
+    this.loading = ['Resetting filters'];
+    // RESET FILTERED DATA
+    this.graphService.selectedDatafile.datasets.forEach((dataset: Dataset, index: number) => {
+      this.graphService.selectedDatafile.datasets[index].displacementForceFilteredData = this.graphService.selectedDatafile.datasets[index].displacementForceData;
+    })
+    this.graphService.selectedDatafile = this.graphService.selectedDatafile;
+    this.loading = ['Filters reset ✔']
 
-    // let processChain = this.processChain;
-    // processChain.filters = filters;
-    // this.processChain = processChain;
+    // whenever selected filters change: run runFilters() from the start (index 0)
+    this.runFrom(EProcType.FILTER);
   }
 
+  //container for selected Cpoint processes
   private _selectedCPointProcess: Process = null;
 
+  //Setter for selected Cpoint process (also runs Cpoint process)
   public set selectedCPointProcess(process: Process) {
     this._selectedCPointProcess = process;
-    this.calculateContactPoint();
+    this.runFrom(EProcType.CPOINT);//when CPoint process is changed, calculate Cpoint
   }
 
+  //Getter for selected Cpoint process
   public get selectedCPointProcess(): Process {
     return this._selectedCPointProcess;
   }
 
+  //container for selected Emodel processes
+  private _selectedEmodels: Process = null;
+
+  //Setter for selected Emodel process (also runs Emodel process)
+  public set selectedEmodels(process: Process) {
+    this._selectedCPointProcess = process;
+    this.runFrom(EProcType.EMODELS);//when Emodel process is changed, calculate Emodel
+  }
+
+  //Getter for selected Emodels process
+  public get selectedEmodels(): Process {
+    return this._selectedEmodels;
+  }
+
+  //container for selected Fmodels processes
+  private _selectedFmodels: Process = null;
+
+  //Setter for selected Fmodels process (also runs Fmodels process)
+  public set selectedFmodels(process: Process) {
+    this._selectedCPointProcess = process;
+    this.runFrom(EProcType.FMODELS);//when Fmodels process is changed, calculate Fmodels
+  }
+
+  //Getter for selected Fmodels process
+  public get selectedFmodels(): Process {
+    return this._selectedFmodels;
+  }
+
+  //container for all available processes
   public availableProcesses: { filters: Process[], cPoints: Process[], eModels: Process[], fModels: Process[], internal: Process[], test: Process[] } = {
-    filters: [ //container for processes
+    filters: [ //Container for available filters
       {id: 'median', name: 'Median', procType: EProcType.FILTER, custom: false},
       {id: 'savgol', name: 'Sawitzky Golay', procType: EProcType.FILTER, custom: false},
       {id: 'linearDetrend', name: 'Linear Detrending', procType: EProcType.FILTER, custom: false},
@@ -68,137 +110,10 @@ export class ProcessorService {
     eModels: [],//container for eModel
     fModels: [],//container for fModel,
     internal: [
-      {id: 'calc_indentation', name: 'calc_indentation', procType: EProcType.INTERNAL, custom: false}
+      {id: 'calc_indentation', name: 'Calculating Indentation', procType: EProcType.INTERNAL, custom: false}
     ], // container for processes only run by the app but not selectable by the user
     test: []     //container for test processess
   }
-
-  //Container for processes thats been run
-  // private _processChain: { filters: Process[], cPoints: Process[], eModels: Process[], fModels: Process[], test: Process[] } = {
-  //   filters: [],
-  //   cPoints: [],
-  //   eModels: [],
-  //   fModels: [],
-  //   test: []
-  // };
-
-  // //Getter for process chain
-  // private get processChain(): { filters: Process[], cPoints: Process[], eModels: Process[], fModels: Process[], test: Process[] } {
-  //   return this._processChain;
-  // }
-  //
-  // //setter for process chain
-  // private set processChain(processChain: { filters: Process[], cPoints: Process[], eModels: Process[], fModels: Process[], test: Process[] }) {
-  //   this._processChain = processChain;
-  //   this.runProcessChain();
-  // }
-
-  // //sets a specific type of process container in the chain
-  // public SetAProcessChain( processes: Process[], procType: EProcType) {
-  //   try {
-  //     switch (procType) { //add to the correct container acording to process type
-  //       case EProcType.CPOINT: {
-  //         this.processChain.cPoints = processes;//set the according container
-  //         break;
-  //       }
-  //       case EProcType.FILTER: {
-  //         this.processChain.filters = processes;
-  //         break;
-  //       }
-  //       case EProcType.EMODELS: {
-  //         this.processChain.eModels = processes;
-  //         break;
-  //       }
-  //       case EProcType.FMODELS: {
-  //         this.processChain.fModels = processes;
-  //         break;
-  //       }
-  //       case EProcType.TEST: {
-  //         this.processChain.test = processes;
-  //         break;
-  //       }default: {
-  //         throw Error('ERROR: ProcType error'); //throw error if type isnt found
-  //       }
-  //     }
-  //       return this.runFrom(procType);//runs all filters from the type specified
-  //
-  //     } catch (e: any) {
-  //       return this.errorHandlerService.Fatal(e); //catch any errors
-  //     }
-  // }
-
-  // //sets a specific type of process container in the chain
-  // public SetAProcessChain(processes: Process[], procType: EProcType) {
-  //   try {
-  //     switch (procType) { //add to the correct container acording to process type
-  //       case EProcType.CPOINT: {
-  //         this.processChain.cPoints = processes;
-  //         break;
-  //       }
-  //       case EProcType.FILTER: {
-  //         this.processChain.filters = processes;
-  //         break;
-  //       }
-  //       case EProcType.EMODELS: {
-  //         this.processChain.eModels = processes;
-  //         break;
-  //       }
-  //       case EProcType.FMODELS: {
-  //         this.processChain.fModels = processes;
-  //         break;
-  //       }
-  //       case EProcType.TEST: {
-  //         this.processChain.test = processes;
-  //         break;
-  //       }
-  //       default: {
-  //         throw Error('ERROR: ProcType error'); //throw error if type isnt found
-  //       }
-  //     }
-  //     return this.runFrom(procType);
-  //
-  //   } catch (e: any) {
-  //     return this.errorHandlerService.Fatal(e); //catch any errors
-  //   }
-  // }
-
-  // private addToChain(process: Process) { //adds a process to process chain
-  //   try {
-  //     switch (process.procType) { //add to the correct container acording to process type
-  //       case EProcType.CPOINT: {
-  //         process.chainID = this.processChain.cPoints.length;//set the chainID
-  //         this._processChain.cPoints.push(process);//send in container
-  //         break;
-  //       }
-  //       case EProcType.FILTER: {
-  //         process.chainID = this.processChain.filters.length;
-  //         this._processChain.filters.push(process);
-  //         break;
-  //       }
-  //       case EProcType.EMODELS: {
-  //         process.chainID = this.processChain.eModels.length;
-  //         this._processChain.eModels.push(process);
-  //         break;
-  //       }
-  //       case EProcType.FMODELS: {
-  //         process.chainID = this.processChain.fModels.length;
-  //         this._processChain.fModels.push(process);
-  //         break;
-  //       }
-  //       case EProcType.TEST: {
-  //         process.chainID = this.processChain.test.length;
-  //         this._processChain.test.push(process);
-  //         break;
-  //       }
-  //       default: {
-  //         throw Error('ERROR: ProcType error');
-  //       }
-  //     }
-  //     return this.processChain;
-  //   } catch (e: any) {
-  //     return this.errorHandlerService.Fatal(e);
-  //   }
-  // };
 
   public addProcess(process: Process) { //adds a process definition to the data struct
     try {
@@ -233,39 +148,6 @@ export class ProcessorService {
     }
   };
 
-  // public changeProcessUse(process: Process, use: boolean) { //finds and disables a process in the proc chain
-  //   try {
-  //     switch (process.procType) { //find correct container acording to process type
-  //       case EProcType.CPOINT: {
-  //         this._processChain.cPoints[process.chainID].inUse = use;//set to use
-  //         break;
-  //       }
-  //       case EProcType.FILTER: {
-  //         this._processChain.filters[process.chainID].inUse = use;
-  //         break;
-  //       }
-  //       case EProcType.EMODELS: {
-  //         this._processChain.eModels[process.chainID].inUse = use;
-  //         break;
-  //       }
-  //       case EProcType.FMODELS: {
-  //         this._processChain.fModels[process.chainID].inUse = use;
-  //         break;
-  //       }
-  //       case EProcType.TEST: {
-  //         this._processChain.test[process.chainID].inUse = use;
-  //         break;
-  //       }
-  //       default: {
-  //         throw Error('ERROR: ProcType error');
-  //       }
-  //     }
-  //     return this.processChain;
-  //   } catch (e: any) {
-  //     return this.errorHandlerService.Fatal(e);
-  //   }
-  // }
-
   private rootPath: string = 'assets/Processes/'; //path of process scripts
 
   private _processedData: { x: number[], y: number[] };//container for most recent processed dataset
@@ -285,132 +167,128 @@ export class ProcessorService {
     private http: HttpClient,
     private errorHandlerService: ErrorHandlerService,
     private graphService: GraphService) {
-    this._loading = new BehaviorSubject<boolean>(true);
+    this._loading = new BehaviorSubject<string[]>(['Initializing pyodide...']);
     this.initPy();
   }
 
   async initPy() { //initialise Pyodide
     loadPyodide({indexURL: PYODIDE_BASE_URL}).then((pyodide) => {
       globalThis.pyodide = pyodide;
-      this.loadingStatus = ['pyodide initialized ✔', 'Initializing numpy...'];
+      this.loading = ['pyodide initialized ✔', 'Initializing numpy...'];
       globalThis.pyodide.loadPackage(['numpy']).then(() => {
-        this.loadingStatus = ['pyodide initialized ✔', 'numpy initialized ✔', 'Initializing scipy...'];
+        this.loading = ['pyodide initialized ✔', 'numpy initialized ✔', 'Initializing scipy...'];
         globalThis.pyodide.loadPackage(['scipy']).then(() => {
-          this.loadingStatus = ['pyodide initialized ✔', 'numpy initialized ✔', 'scipy initialized ✔'];
-          this.pyodideInitialized = true;
-          this._loading.next(false);
-          this.loadingStatus = [];
+          this.loading = ['pyodide initialized ✔', 'numpy initialized ✔', 'scipy initialized ✔'];
+          this.loading = [];
         })
       })
     })
   }
 
-  runFilters(filterIndex: number): any {
-    this._loading.next(true);
+  /*  runFilters(filterIndex: number): any {
 
-    if (this.selectedFilters.length == 0) {
-      this.graphService.datasets.forEach((dataset: Dataset, index: number) => {
-        this.graphService.datasets[index].displacementForceFilteredData = this.graphService.datasets[index].displacementForceData;
-      })
-    }
-
-    if (this.selectedFilters.length - 1 >= filterIndex) {
-      let currentFilter = this.selectedFilters[filterIndex];
-      if (filterIndex == 0) {
-        this.loadingStatus = ['Running Filter: ' + currentFilter.name + '...'];
-      } else {
-        this.loadingStatus.push('Running Filter: ' + currentFilter.name + '...');
-      }
-
-      let getScriptPromise: Promise<string> | CustomError = this.getScript(currentFilter);
-
-      if (!(getScriptPromise instanceof Promise<string>)) {//if a promise is not returned
-        this.runFilters(filterIndex + 1); //skip filter maybe??
-        return getScriptPromise; //do smth to show that its an error
-      }
-
-      getScriptPromise.then((processScript) => {
+      if (this.selectedFilters.length == 0) {
         this.graphService.datasets.forEach((dataset: Dataset, index: number) => {
-          let datapoints: Datapoint[];
+          this.graphService.datasets[index].displacementForceFilteredData = this.graphService.datasets[index].displacementForceData;
+        })
+      }
 
-          // if it's the first filter -> use unfiltered data
-          if (filterIndex == 0) {
-            datapoints = dataset.displacementForceData;
-          } else {
-            datapoints = dataset.displacementForceFilteredData;
+      if (this.selectedFilters.length - 1 >= filterIndex) {
+        let currentFilter = this.selectedFilters[filterIndex];
+        if (filterIndex == 0) {
+          this.loading = ['Running Filter: ' + currentFilter.name + '...'];
+        } else {
+          this.loading.push('Running Filter: ' + currentFilter.name + '...');
+        }
+
+          let getScriptPromise: Promise<string> | CustomError = this.getScript(currentFilter);
+
+          if (!(getScriptPromise instanceof Promise<string>)) {//if a promise is not returned
+            this.runFilters(filterIndex + 1); //skip filter maybe??
+            return getScriptPromise; //do smth to show that its an error
           }
 
-          datapoints = this.runProcessScriptOnDatapoints(datapoints, processScript) as Datapoint[];
-          this.graphService.datasets[index].displacementForceFilteredData = datapoints;
+          getScriptPromise.then((processScript) => {
+            this.graphService.datasets.forEach((dataset: Dataset, index: number) => {
+              let datapoints: Datapoint[];
+
+              // if it's the first filter -> use unfiltered data
+              if (filterIndex == 0) {
+                datapoints = dataset.displacementForceData;
+              } else {
+                datapoints = dataset.displacementForceFilteredData;
+              }
+
+              datapoints = this.runProcessScriptOnDatapoints(datapoints, processScript) as Datapoint[];
+              this.graphService.datasets[index].displacementForceFilteredData = datapoints;
+            })
+
+            // this.loadingStatus[this.loadingStatus.length - 1] = 'Finished Filter: ' + currentFilter.name + ' ✔';
+            this.runFilters(filterIndex + 1);
+          })
+
+        } else {
+          // this._loading.next(false);
+          // this.loadingStatus = [];
+          this.graphService.datasets = this.graphService.datasets;
+          this.calculateContactPoint();
+        }
+      }
+
+      calculateContactPoint() {
+        // this._loading.next(true);
+
+        if (!this.selectedCPointProcess) {
+          // this._loading.next(false);
+          // this.loadingStatus = [];
+          return;
+        }
+
+        // this.loadingStatus[this.loadingStatus.length - 1] = 'Calculating Contactpoints using ' + this.selectedCPointProcess.name;
+
+        let getScriptPromise: Promise<string> | CustomError = this.getScript(this.selectedCPointProcess);
+
+        if (!(getScriptPromise instanceof Promise<string>)) {
+          // TODO: ERROR HAPPENED
+          return;
+        }
+
+        getScriptPromise.then((processScript) => {
+          this.graphService.datasets.forEach((dataset: Dataset, index: number) => {
+            let datapoint: Datapoint = this.runProcessScriptOnDatapoints(dataset.displacementForceFilteredData, processScript) as Datapoint;
+            dataset.contactPoint = datapoint;
+          })
+          // this._loading.next(false);
+          // this.loadingStatus = [];
+          this.calculateIndentation();
         })
+      }
 
-        this.loadingStatus[this.loadingStatus.length - 1] = 'Finished Filter: ' + currentFilter.name + ' ✔';
-        this.runFilters(filterIndex + 1);
-      })
+      calculateIndentation() {
+        // this._loading.next(true);
+        // this.loadingStatus[this.loadingStatus.length - 1] = 'Calculating Indentation ...';
 
-    } else {
-      this._loading.next(false);
-      this.loadingStatus = [];
-      this.graphService.datasets = this.graphService.datasets;
-      this.calculateContactPoint();
-    }
-  }
+        let calcIndentationProcess: Process = this.availableProcesses.internal.find((process: Process) => {
+          return process.id == 'calc_indentation';
+        })
+        let getScriptPromise: Promise<string> | CustomError = this.getScript(calcIndentationProcess);
+        //
+        if (!(getScriptPromise instanceof Promise<string>)) {
+          // TODO: ERROR HAPPENED
+          return;
+        }
 
-  calculateContactPoint() {
-    this._loading.next(true);
-
-    if (!this.selectedCPointProcess) {
-      this._loading.next(false);
-      this.loadingStatus = [];
-      return;
-    }
-
-    this.loadingStatus[this.loadingStatus.length - 1] = 'Calculating Contactpoints using ' + this.selectedCPointProcess.name;
-
-    let getScriptPromise: Promise<string> | CustomError = this.getScript(this.selectedCPointProcess);
-
-    if (!(getScriptPromise instanceof Promise<string>)) {
-      // TODO: ERROR HAPPENED
-      return;
-    }
-
-    getScriptPromise.then((processScript) => {
-      this.graphService.datasets.forEach((dataset: Dataset, index: number) => {
-        let datapoint: Datapoint = this.runProcessScriptOnDatapoints(dataset.displacementForceFilteredData, processScript) as Datapoint;
-        dataset.contactPoint = datapoint;
-      })
-      this._loading.next(false);
-      this.loadingStatus = [];
-      this.calculateIndentation();
-    })
-  }
-
-  calculateIndentation() {
-    this._loading.next(true);
-    this.loadingStatus[this.loadingStatus.length - 1] = 'Calculating Indentation ...';
-
-    let calcIndentationProcess: Process = this.availableProcesses.internal.find((process: Process) => {
-      return process.id == 'calc_indentation';
-    })
-    let getScriptPromise: Promise<string> | CustomError = this.getScript(calcIndentationProcess);
-    //
-    if (!(getScriptPromise instanceof Promise<string>)) {
-      // TODO: ERROR HAPPENED
-      return;
-    }
-
-    getScriptPromise.then((processScript) => {
-      this.graphService.datasets.forEach((dataset: Dataset, index: number) => {
-        let contactPoint = [dataset.contactPoint.x, dataset.contactPoint.y];
-        let datapoints: Datapoint[] = this.runProcessScriptOnDatapoints(dataset.displacementForceFilteredData, processScript, contactPoint) as Datapoint[];
-        this.graphService.datasets[index].indentationForceData = datapoints;
-      })
-      this._loading.next(false);
-      this.loadingStatus = [];
-      this.graphService.datasets = this.graphService.datasets;
-    })
-  }
-
+        getScriptPromise.then((processScript) => {
+          this.graphService.datasets.forEach((dataset: Dataset, index: number) => {
+            let contactPoint = [dataset.contactPoint.x, dataset.contactPoint.y];
+            let datapoints: Datapoint[] = this.runProcessScriptOnDatapoints(dataset.displacementForceFilteredData, processScript, contactPoint) as Datapoint[];
+            this.graphService.datasets[index].indentationForceData = datapoints;
+          })
+          // this._loading.next(false);
+          // this.loadingStatus = [];
+          this.graphService.datasets = this.graphService.datasets;
+        })
+      }*/
 
   //Uses the given process name and processes path to give the script
   // returns script or promise of script if successful, -1 if error occurred
@@ -519,110 +397,139 @@ export class ProcessorService {
     return [];
   }
 
-  //Takes a script and uses pyodide to run it on the dataSet
-  //procName: Name of proces, procType: Type of process, dataSet: (optional) dataset to be processed if not given uses this.currData
-  // private doProcess(process: Process, dataSet: any = this._processedData): Promise<any> {
-  // this._pyodideLoading.next(true); //check if pyodide is loaded
+  //given a list of processes, recursively runs them and stores the output in graphs
+  runAll(processes: Process[]): any {
 
-  // let getScriptPromise: Promise<string> | string | CustomError = this.getScript(process); //get the process script
+    if (processes.length == 0) { // base case
+      // FINISHED
+      this.loading = [];
+      return;
+    }
 
+    let currentProcess = processes.shift(); // removes element from index 0 -> shifts everything to the left -> stores it in currentProcess
 
-  // if (!(getScriptPromise instanceof Promise || getScriptPromise instanceof String)) {
-  //   return getScriptPromise; //return the error that was caught
-  // }
+    let loadingMsgs: string[] = this.loading;//add loading message
+    loadingMsgs.push('Running ' + currentProcess.name + '...');
+    this.loading = loadingMsgs;
 
-  // return new Promise<any>((resolve, reject) => {
+    let getScriptPromise: Promise<string> | CustomError = this.getScript(currentProcess); //get script of process
 
-  // getScriptPromise = getScriptPromise as Promise<string>;
+    if (!(getScriptPromise instanceof Promise<string>)) {//if a promise is not returned
+      console.log('ERROR: Script could not be obtained')
+      return getScriptPromise; //do smth to show that it's an error
+    }
 
-  // getScriptPromise
-  //   .then(procScript => {
-  //     console.log(procScript);
-  //     // executed if procScript is loaded successfully
-  //     // process.script = procScript; // Append found script into Process Object
-  //     globalThis.pyodide.runPython(procScript); //Running the code
-  //     let calculate = globalThis.pyodide.globals.get('calculate'); //map the function from the global variables onto 'calculate'
-  //     let resultPy = calculate(dataSet.x, dataSet.y); //run function on the dataset
-  //     let result = resultPy.toJs(); //translate result to JS
-  //     result = {x: result[0], y: result[1]}; //map result onto container
-  //     this._processedData = result; //set result as the processedData
-  //     resultPy.destroy();//free the function used
-  //     console.log(result);
-  //     resolve(result); //return result as promise resolve
-  //
-  //
-  //     // process.inUse = true; //set the process to be in use
-  //     // this.addToChain(process); //add process to the chain for record
-  //   })
-  // })
-  // }
+    getScriptPromise.then((processScript) => {
 
-  //
-  // //run the process chain recorded
-  // public runProcessChain() {
-  //   this._processedData = this.initialData; //reset processed data to the initial
-  //   if (this.processChain.filters.length) { //if there are filters,
-  //     this.runAll(this._processChain.filters); //run all filters
-  //   }
-  //   if (this.processChain.cPoints.length) {
-  //     this.runAll(this._processChain.cPoints);
-  //   }
-  //   if (this.processChain.fModels.length) {
-  //     this.runAll(this._processChain.fModels);
-  //   }
-  //   if (this.processChain.eModels.length) {
-  //     this.runAll(this._processChain.eModels);
-  //   }
-  //   if (this.processChain.test.length) {
-  //     this.runAll(this._processChain.test);
-  //   }
-  // }
+      this.graphService.selectedDatafile.datasets.forEach((dataset: Dataset, index: number) => {
+        let inputDatapoints: Datapoint[] = [];
+        let inputArgs: any[] = [];
 
-  //runs all the processes in a given set
-  // private runAll(processes: Process[], dataSet: any = this._processedData): any {
-  //   let promise: any;
-  //   for (let i = 0; i < processes.length; i++) {// for each filter in process chain
-  //     let currProc = processes[i];
-  //     if (currProc.inUse) { //doprocess if in use
-  //       promise = this.doProcess(currProc, dataSet);
-  //       if (promise.type == 'customerror') {
-  //         continue; //if error, skip filter
-  //       }
-  //     } else { // else move to the next filter
-  //       continue;
-  //     }
-  //   }
-  //   return this.processedData; //return processed data
-  // }
-  //
-  // //Runs all the processes from (and including) the process type specified
-  // public runFrom(procType: EProcType) {
-  //   try {
-  //     switch (procType) { //run correct sequence acording to process type
-  //       case EProcType.CPOINT: {
-  //         return this.runProcessChain();
-  //       }
-  //       case EProcType.FILTER: {
-  //         this.runAll(this.processChain.filters);
-  //         this.runAll(this.processChain.eModels);
-  //         return this.runAll(this.processChain.fModels);
-  //       }
-  //       case EProcType.EMODELS: {
-  //         this.runAll(this.processChain.eModels);
-  //         return this.runAll(this.processChain.fModels);
-  //       }
-  //       case EProcType.FMODELS: {
-  //         return this.runAll(this.processChain.fModels);
-  //       }
-  //       case EProcType.TEST: {
-  //         return this.runAll(this.processChain.test);
-  //       }
-  //       default: {
-  //         throw Error('ERROR: ProcType error'); //throw error if type isnt found
-  //       }
-  //     }
-  //   } catch (e: any) {
-  //     return this.errorHandlerService.Fatal(e); //catch any errors as fatal errors
-  //   }
-  // }
+        //select datapoints to be processed depending on type of process
+        switch (currentProcess.procType) {
+          case EProcType.FILTER:
+            inputDatapoints = dataset.displacementForceFilteredData;
+            break;
+          case EProcType.CPOINT:
+            inputDatapoints = dataset.displacementForceFilteredData;
+            break;
+          case EProcType.INTERNAL:
+            inputDatapoints = dataset.displacementForceFilteredData;
+            inputArgs.push(dataset.contactPoint.x);
+            inputArgs.push(dataset.contactPoint.y);
+            break;
+          case EProcType.EMODELS:
+            inputDatapoints = dataset.indentationForceData;
+            break;
+          case EProcType.FMODELS:
+            inputDatapoints = dataset.indentationForceData;
+            break;
+        }
+
+        //run process on input datapoints
+        let outputDatapoints: any;
+        if (inputArgs.length) {
+          outputDatapoints = this.runProcessScriptOnDatapoints(inputDatapoints, processScript, inputArgs);
+        } else {
+          outputDatapoints = this.runProcessScriptOnDatapoints(inputDatapoints, processScript);
+        }
+
+        //set dataset being displayed according to the type of process that was run
+        switch (currentProcess.procType) {
+          case EProcType.FILTER:
+            this.graphService.selectedDatafile.datasets[index].displacementForceFilteredData = outputDatapoints as Datapoint[];
+            break;
+          case EProcType.CPOINT:
+            this.graphService.selectedDatafile.datasets[index].contactPoint = outputDatapoints as Datapoint;
+            break;
+          case EProcType.INTERNAL:
+            this.graphService.selectedDatafile.datasets[index].indentationForceData = outputDatapoints as Datapoint[];
+            break;
+          case EProcType.EMODELS:
+            // TODO: IMPLEMENT
+            break;
+          case EProcType.FMODELS:
+            // TODO: IMPLEMENT
+            break;
+        }
+      })
+
+      //change loading msg
+      this.graphService.selectedDatafile = this.graphService.selectedDatafile;
+      loadingMsgs[loadingMsgs.length - 1] = currentProcess.name + ' done ✔'
+      this.runAll(processes); // recursive call
+    })
+  }
+
+  //Runs all the processes from (and including) the process type specified
+  public runFrom(procType: EProcType): void | CustomError {
+    this.loading = ['Creating Process Chain'];
+
+    try {
+      let processChain: Process[] = [];
+      switch (procType) { //append relevant containers to processChain according to which type is selected
+        //@ts-expect-error
+        case EProcType.FILTER: {
+          processChain = processChain.concat(this.selectedFilters); //append to chain
+        } //fallthrough to the next procType
+        //@ts-expect-error
+        case EProcType.CPOINT: {
+          if (!this.selectedCPointProcess) {
+            break;
+          }
+          processChain.push(this.selectedCPointProcess);
+        }
+        //@ts-expect-error
+        case EProcType.INTERNAL: {
+          if (!this.availableProcesses.internal.length) {
+            break;
+          }
+          processChain = processChain.concat(this.availableProcesses.internal);
+        }
+        //@ts-expect-error
+        case EProcType.EMODELS: {
+          //if(!this.selectedEmodels.length){break;}
+          //processChain = processChain.concat(this.selectedEmodels);
+        }
+        //@ts-expect-error
+        case EProcType.FMODELS: {
+          //if(!this.selectedFmodels.length){break;}
+          //processChain = processChain.concat(this.selectedFmodels);
+        }
+        case EProcType.TEST: {
+          //if(!this.selectedTests.length){break;}
+          //processChain = processChain.concat(this.selectedTests);
+          break;
+        }
+        default: {
+          throw Error('ERROR: ProcType error'); //throw error if type isnt found
+        }
+      }
+      console.log(processChain);
+      this.loading = ['Process Chain created ✔'];
+      this.runAll(processChain);
+    } catch (e: any) {
+      return this.errorHandlerService.Fatal(e); //catch any errors as fatal errors
+    }
+  }
 }
