@@ -8,6 +8,7 @@ import {ErrorHandlerService} from "./error-handler.service";
 import {Datapoint} from "../models/datapoint.model";
 import {Dataset} from "../models/dataset.model";
 import {CustomError} from '../models/error.model';
+import { EInputFieldType, Input } from '../models/input.model';
 
 const PYODIDE_BASE_URL = 'https://cdn.jsdelivr.net/pyodide/v0.22.0/full/';
 
@@ -99,13 +100,13 @@ export class ProcessorService {
   //container for all available processes
   public availableProcesses: { filters: Process[], cPoints: Process[], eModels: Process[], fModels: Process[], internal: Process[], test: Process[] } = {
     filters: [ //Container for available filters
-      {id: 'median', name: 'Median', procType: EProcType.FILTER, custom: false},
-      {id: 'savgol', name: 'Sawitzky Golay', procType: EProcType.FILTER, custom: false},
-      {id: 'linearDetrend', name: 'Linear Detrending', procType: EProcType.FILTER, custom: false},
+      {id: 'median', name: 'Median', procType: EProcType.FILTER, custom: false, inputs: []},
+      {id: 'savgol', name: 'Sawitzky Golay', procType: EProcType.FILTER, custom: false, inputs: []},
+      {id: 'linearDetrend', name: 'Linear Detrending', procType: EProcType.FILTER, custom: false, inputs: []},
     ],
     cPoints: [//container for cPoints
-      {id: 'rov', name: 'Rov', procType: EProcType.CPOINT, custom: false},
-      {id: 'stepAndDrift', name: 'Step and Drift', procType: EProcType.CPOINT, custom: false}
+      {id: 'rov', name: 'Rov', procType: EProcType.CPOINT, custom: false, inputs: []},
+      {id: 'stepAndDrift', name: 'Step and Drift', procType: EProcType.CPOINT, custom: false, inputs: []}
     ],
     eModels: [],//container for eModel
     fModels: [],//container for fModel,
@@ -367,7 +368,7 @@ export class ProcessorService {
     } else {
       result = result as Datapoint
     }
-    // resultPy.destroy();//free the function used
+    resultPy.destroy();//free the function used
     return result;
   }
 
@@ -424,7 +425,8 @@ export class ProcessorService {
 
       this.graphService.selectedDatafile.datasets.forEach((dataset: Dataset, index: number) => {
         let inputDatapoints: Datapoint[] = [];
-        let inputArgs: any[] = [];
+        let inputArgs: Input[] = currentProcess.inputs;
+        //TODO: INPUT CHECKING
 
         //select datapoints to be processed depending on type of process
         switch (currentProcess.procType) {
