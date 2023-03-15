@@ -9,7 +9,14 @@ from scipy.signal import savgol_filter
 # win is like a slice/window of the data that you want to use, user input
 # win and interp could also be user values
 
-def calculate(Zi, Fi, geometry='cylinder', radius=1, win=100, order=2, interp=False):
+def calculate(Zi, Fi, inputs):
+  #inputs: geometry='cylinder', radius=1, win=100, order=2, interp=False
+  geometry = 'cylinder' if inputs[0] else 'sphere' #default true
+  radius = inputs[1] #default 1
+  win = inputs[2] #default 100
+  order = inputs[3] #default 2
+  interp = inputs[4] #default False
+
   Zi = [element for element in Zi]
   Fi = [element for element in Fi]
   Zi = np.array(Zi)
