@@ -1,3 +1,4 @@
+import { NgModel } from '@angular/forms';
 import {Injectable} from '@angular/core';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {SampleDataService} from "./sample-data.service";

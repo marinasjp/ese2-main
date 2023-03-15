@@ -100,19 +100,35 @@ export class ProcessorService {
   //container for all available processes
   public availableProcesses: { filters: Process[], cPoints: Process[], eModels: Process[], fModels: Process[], internal: Process[], test: Process[] } = {
     filters: [ //Container for available filters
-      {id: 'median', name: 'Median', procType: EProcType.FILTER, custom: false},
-      {id: 'savgol', name: 'Sawitzky Golay', procType: EProcType.FILTER, custom: false},
-      {id: 'linearDetrend', name: 'Linear Detrending', procType: EProcType.FILTER, custom: false},
+      {id: 'median', name: 'Median', procType: EProcType.FILTER, custom: false, inputs: null},
+      {id: 'savgol', name: 'Sawitzky Golay', procType: EProcType.FILTER, custom: false, inputs: null},
+      {id: 'linearDetrend', name: 'Linear Detrending', procType: EProcType.FILTER, custom: false, inputs: null},
     ],
     cPoints: [//container for cPoints
-      {id: 'rov', name: 'Rov', procType: EProcType.CPOINT, custom: false},
-      {id: 'stepAndDrift', name: 'Step and Drift', procType: EProcType.CPOINT, custom: false}
+      {id: 'rov', name: 'Rov', procType: EProcType.CPOINT, custom: false, inputs: null},
+      {id: 'stepAndDrift', name: 'Step and Drift', procType: EProcType.CPOINT, custom: false, inputs: null}
     ],
     eModels: [],//container for eModel
     fModels: [],//container for fModel,
     internal: [
-      {id: 'calc_indentation', name: 'Calculating Indentation', procType: EProcType.INTERNAL, custom: false},
-      {id: 'calc_elspectra', name: 'Calculating ElSpectra', procType: EProcType.INTERNAL, custom: false}
+      {id: 'calc_indentation', name: 'Calculating Indentation', procType: EProcType.INTERNAL, custom: false, 
+      inputs: 
+        [ //container for required user inputs
+          {name: "CP", selectedValue:null, type:EInputFieldType.DATAPOINT},
+          {name: "spring_constant", selectedValue: 1, type:EInputFieldType.NUMBER},
+          {name: "setzeroforce", selectedValue: true, type:EInputFieldType.BOOLEAN}          
+        ]
+      },
+      {id: 'calc_elspectra', name: 'Calculating ElSpectra', procType: EProcType.INTERNAL, custom: false, 
+      inputs: 
+        [ //container for required user inputs
+          {name: "geometry", selectedValue:true, type:EInputFieldType.BOOLEAN},
+          {name: "radius", selectedValue:1, type:EInputFieldType.NUMBER},
+          {name: "win", selectedValue:100, type:EInputFieldType.NUMBER},
+          {name: "order", selectedValue:2, type:EInputFieldType.NUMBER},
+          {name: "interp", selectedValue:false, type:EInputFieldType.BOOLEAN}
+        ] // defaults: geometry='cylinder', radius=1, win=100, order=2, interp=False
+      } 
     ], // container for processes only run by the app but not selectable by the user
     test: []     //container for test processess
   }
@@ -191,111 +207,6 @@ export class ProcessorService {
       })
     })
   }
-
-  /*  runFilters(filterIndex: number): any {
-
-      if (this.selectedFilters.length == 0) {
-        this.graphService.datasets.forEach((dataset: Dataset, index: number) => {
-          this.graphService.datasets[index].displacementForceFilteredData = this.graphService.datasets[index].displacementForceData;
-        })
-      }
-
-      if (this.selectedFilters.length - 1 >= filterIndex) {
-        let currentFilter = this.selectedFilters[filterIndex];
-        if (filterIndex == 0) {
-          this.loading = ['Running Filter: ' + currentFilter.name + '...'];
-        } else {
-          this.loading.push('Running Filter: ' + currentFilter.name + '...');
-        }
-
-          let getScriptPromise: Promise<string> | CustomError = this.getScript(currentFilter);
-
-          if (!(getScriptPromise instanceof Promise<string>)) {//if a promise is not returned
-            this.runFilters(filterIndex + 1); //skip filter maybe??
-            return getScriptPromise; //do smth to show that its an error
-          }
-
-          getScriptPromise.then((processScript) => {
-            this.graphService.datasets.forEach((dataset: Dataset, index: number) => {
-              let datapoints: Datapoint[];
-
-              // if it's the first filter -> use unfiltered data
-              if (filterIndex == 0) {
-                datapoints = dataset.displacementForceData;
-              } else {
-                datapoints = dataset.displacementForceFilteredData;
-              }
-
-              datapoints = this.runProcessScriptOnDatapoints(datapoints, processScript) as Datapoint[];
-              this.graphService.datasets[index].displacementForceFilteredData = datapoints;
-            })
-
-            // this.loadingStatus[this.loadingStatus.length - 1] = 'Finished Filter: ' + currentFilter.name + ' ✔';
-            this.runFilters(filterIndex + 1);
-          })
-
-        } else {
-          // this._loading.next(false);
-          // this.loadingStatus = [];
-          this.graphService.datasets = this.graphService.datasets;
-          this.calculateContactPoint();
-        }
-      }
-
-      calculateContactPoint() {
-        // this._loading.next(true);
-
-        if (!this.selectedCPointProcess) {
-          // this._loading.next(false);
-          // this.loadingStatus = [];
-          return;
-        }
-
-        // this.loadingStatus[this.loadingStatus.length - 1] = 'Calculating Contactpoints using ' + this.selectedCPointProcess.name;
-
-        let getScriptPromise: Promise<string> | CustomError = this.getScript(this.selectedCPointProcess);
-
-        if (!(getScriptPromise instanceof Promise<string>)) {
-          // TODO: ERROR HAPPENED
-          return;
-        }
-
-        getScriptPromise.then((processScript) => {
-          this.graphService.datasets.forEach((dataset: Dataset, index: number) => {
-            let datapoint: Datapoint = this.runProcessScriptOnDatapoints(dataset.displacementForceFilteredData, processScript) as Datapoint;
-            dataset.contactPoint = datapoint;
-          })
-          // this._loading.next(false);
-          // this.loadingStatus = [];
-          this.calculateIndentation();
-        })
-      }
-
-      calculateIndentation() {
-        // this._loading.next(true);
-        // this.loadingStatus[this.loadingStatus.length - 1] = 'Calculating Indentation ...';
-
-        let calcIndentationProcess: Process = this.availableProcesses.internal.find((process: Process) => {
-          return process.id == 'calc_indentation';
-        })
-        let getScriptPromise: Promise<string> | CustomError = this.getScript(calcIndentationProcess);
-        //
-        if (!(getScriptPromise instanceof Promise<string>)) {
-          // TODO: ERROR HAPPENED
-          return;
-        }
-
-        getScriptPromise.then((processScript) => {
-          this.graphService.datasets.forEach((dataset: Dataset, index: number) => {
-            let contactPoint = [dataset.contactPoint.x, dataset.contactPoint.y];
-            let datapoints: Datapoint[] = this.runProcessScriptOnDatapoints(dataset.displacementForceFilteredData, processScript, contactPoint) as Datapoint[];
-            this.graphService.datasets[index].indentationForceData = datapoints;
-          })
-          // this._loading.next(false);
-          // this.loadingStatus = [];
-          this.graphService.datasets = this.graphService.datasets;
-        })
-      }*/
 
   //Uses the given process name and processes path to give the script
   // returns script or promise of script if successful, -1 if error occurred
@@ -430,8 +341,6 @@ export class ProcessorService {
 
       this.graphService.selectedDatafile.datasets.forEach((dataset: Dataset, index: number) => {
         let inputDatapoints: Datapoint[] = [];
-        let inputArgs: any = [];
-        //TODO: INPUT CHECKING
 
         //select datapoints to be processed depending on type of process
         switch (currentProcess.procType) {
@@ -444,8 +353,10 @@ export class ProcessorService {
           case EProcType.INTERNAL:
             if (currentProcess.id == 'calc_indentation') {
               inputDatapoints = dataset.displacementForceFilteredData;
-              inputArgs.push(dataset.contactPoint.x);
-              inputArgs.push(dataset.contactPoint.y);
+              currentProcess.inputs[0].selectedValue = dataset.contactPoint; //set CP in dataset to be the value
+              
+            /*inputArgs.push(dataset.contactPoint.x);
+              inputArgs.push(dataset.contactPoint.y);*/
             } else if (currentProcess.id == 'calc_elspectra') {
               inputDatapoints = dataset.displacementForceFilteredData;
             }
@@ -457,6 +368,22 @@ export class ProcessorService {
             inputDatapoints = dataset.indentationForceData;
             break;
         }
+
+        let inputArgs: any = currentProcess.inputs.map(input => {
+          if (input.type == EInputFieldType.DATAPOINT) {
+            return [input.selectedValue.x, input.selectedValue.y] //convert Datapoint type to x and y array
+          }
+          return input.selectedValue}); //map selected values onto inputarg
+
+        //INPUT CHECKING
+        if (currentProcess.inputs.length){ //if there are user inputs required check for null
+        inputArgs.forEach((input: any) => {
+          if (!input){ //if an input is set to be null and there are user inputs specified
+            return this.errorHandlerService.Fatal(Error("InputError: input not given"));
+          }
+          return 0;
+        })
+      }
 
         //run process on input datapoints
         let outputDatapoints: any;

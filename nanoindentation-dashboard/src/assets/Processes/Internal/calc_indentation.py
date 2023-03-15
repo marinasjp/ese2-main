@@ -5,7 +5,10 @@ import numpy as np
 # I think spring_constant is also a user input
 
 
-def calculate(Z, F, CP, spring_constant=1, setzeroforce=True):
+def calculate(Z, F, inputs):
+  CP = inputs[0]
+  spring_constant=inputs[1] #default: 1
+  setzeroforce=inputs[2] #default: True
   Z = [element for element in Z]
   F = [element for element in F]
   Z = np.array(Z)

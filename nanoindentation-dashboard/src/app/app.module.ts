@@ -24,12 +24,15 @@ import {DropdownModule} from 'primeng/dropdown';
 import {ProgressSpinnerModule} from "primeng/progressspinner";
 import {FilesTabComponent} from './components/sidenav/files-tab/files-tab.component';
 import {ContactPointTabComponent} from './components/sidenav/contact-point-tab/contact-point-tab.component';
+import {CommonModule} from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { FiltersTabComponent } from './components/sidenav/filters-tab/filters-tab.component';
 import { ForceIndTabComponent } from './components/sidenav/force-ind-tab/force-ind-tab.component';
 import { ElisticitySpectraTabComponent } from './components/sidenav/elisticity-spectra-tab/elisticity-spectra-tab.component';
 import { CustomCodeTabComponent } from './components/sidenav/custom-code-tab/custom-code-tab.component';
 import { BottomnavComponent } from './components/bottomnav/bottomnav.component';
 import {DialogModule} from 'primeng/dialog';
+import { DownloadTabComponent } from './components/sidenav/download-tab/download-tab/download-tab.component';
 
 @NgModule({
   declarations: [
@@ -43,9 +46,11 @@ import {DialogModule} from 'primeng/dialog';
     ElisticitySpectraTabComponent,
     CustomCodeTabComponent,
     BottomnavComponent,
+    DownloadTabComponent,
   ],
   imports: [
     BrowserModule,
+    CommonModule,
     AppRoutingModule,
     ButtonModule,
     AccordionModule,
