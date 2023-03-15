@@ -13,8 +13,12 @@ import Papa from 'papaparse';
 export class GraphsComponent {
   @ViewChild("displacementForceFilteredChartMultiple") displacementForceFilteredChartMultiple: UIChart;
   @ViewChild("displacementForceFilteredChartSingle") displacementForceFilteredChartSingle: UIChart;
+
   @ViewChild("indentationForceChartMultiple") indentationForceChartMultiple: UIChart;
   @ViewChild("indentationForceChartSingle") indentationForceChartSingle: UIChart;
+
+  @ViewChild("elSpectraChartMultiple") elSpectraChartMultiple: UIChart;
+  @ViewChild("elSpectraChartSingle") elSpectraChartSingle: UIChart;
 
   graphOptions;
 
@@ -22,6 +26,8 @@ export class GraphsComponent {
   displacementForceFilteredDataSingle: any;
   indentationForceDataMultiple: any;
   indentationForceDataSingle: any;
+  elSpectraDataMultiple: any;
+  elSpectraDataSingle: any;
 
 
   // datasets: { id: number, name: string, data: any, labels: any }[] = []
@@ -199,15 +205,49 @@ export class GraphsComponent {
     }
   }
 
+  setElSpectraMultiple(): void {
+    this.elSpectraDataMultiple = {
+      labels: [],
+      datasets: []
+    };
+    for (let dataset of this.graphService.selectedDatafile.datasets) {
+      // console.log(dataset.elspectraData);
+      this.elSpectraDataMultiple.datasets.push(this.getNewData());
+      this.elSpectraDataMultiple.datasets[this.elSpectraDataMultiple.datasets.length - 1].data = dataset.elspectraData;
+    }
+    if (this.elSpectraChartMultiple) {
+      this.elSpectraChartMultiple.reinit();
+    }
+    console.log(this.elSpectraDataMultiple);
+  }
+
+  setElSpectraSingle(): void {
+    if (!this.elSpectraDataMultiple?.datasets || !this.elSpectraDataMultiple.datasets[this.graphService.sliderValue]) {
+      return;
+    }
+    this.elSpectraDataSingle = {
+      labels: [],
+      datasets: []
+    };
+
+    this.elSpectraDataSingle.datasets = [this.elSpectraDataMultiple.datasets[this.graphService.sliderValue]];
+
+    if (this.elSpectraChartSingle) {
+      this.elSpectraChartSingle.reinit();
+    }
+  }
+
   reloadMultipleLineGraphs(): void {
     this.setDisplacementForceFilteredMultiple();
     this.setIndentationForceMultiple();
+    this.setElSpectraMultiple();
 
     this.reloadSingleLineGraphs();
   }
 
   reloadSingleLineGraphs(): void {
     this.setDisplacementForceFilteredSingle();
-    this.setIndentationForceSingle()
+    this.setIndentationForceSingle();
+    this.setElSpectraSingle();
   }
 }

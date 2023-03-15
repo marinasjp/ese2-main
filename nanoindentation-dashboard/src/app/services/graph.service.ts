@@ -80,7 +80,8 @@ export class GraphService {
         contactPoint: null,
         displacementForceData: [],
         displacementForceFilteredData: [],
-        indentationForceData: []
+        indentationForceData: [],
+        elspectraData: []
       }
       let datasetIndentation = inputIndentation[index];
       let datasetLoad = inputLoad[index];
@@ -115,7 +116,8 @@ export class GraphService {
       contactPoint: null,
       displacementForceData: [],
       displacementForceFilteredData: [],
-      indentationForceData: []
+      indentationForceData: [],
+      elspectraData: []
     };
 
     // Loop through the indentation and load arrays and add data to the dataset
@@ -183,7 +185,4 @@ export class GraphService {
         }, () => {
         })
   }
-
-
 }
-

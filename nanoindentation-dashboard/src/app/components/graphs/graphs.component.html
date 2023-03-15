@@ -1,12 +1,12 @@
-<div style="padding: 2rem 7rem 2rem 2rem; display:inline-flex; gap: 20px;">
+<div style="padding: 2rem 2rem 0 2rem; display:inline-flex; gap: 20px">
 
   <!--  FILTERED CURVES -->
   <!--  <app-graph [data]="dataTemplate" [options]="graphOptions"></app-graph>-->
   <div>
     <h3>Force-Displacement</h3>
     <p-chart type="line"
-             width="40vh"
-             height="40vh"
+             width="39vh"
+             height="39vh"
              #displacementForceFilteredChartMultiple
              [data]="displacementForceFilteredDataMultiple"
              [options]="graphOptions">
@@ -17,8 +17,8 @@
 
     <!-- Slide Through Graph -->
     <p-chart type="line"
-             width="40vh"
-             height="40vh"
+             width="39vh"
+             height="39vh"
              #displacementForceFilteredChartSingle
              [data]="displacementForceFilteredDataSingle"
              [options]="graphOptions">
@@ -28,26 +28,45 @@
   <div>
     <h3>Force-Indentation</h3>
     <p-chart type="line"
-             width="40vh"
-             height="40vh"
+             width="39vh"
+             height="39vh"
              #indentationForceChartMultiple
              [data]="indentationForceDataMultiple"
              [options]="graphOptions">
     </p-chart>
     <!-- Slide Through Graph -->
     <p-chart type="line"
-             width="40vh"
-             height="40vh"
+             width="39vh"
+             height="39vh"
              #indentationForceChartSingle
              [data]="indentationForceDataSingle"
              [options]="graphOptions">
     </p-chart>
   </div>
 
+  <div>
+    <h3>Elasticity-Spectra</h3>
+    <p-chart type="line"
+             width="39vh"
+             height="39vh"
+             #elSpectraChartMultiple
+             [data]="elSpectraDataMultiple"
+             [options]="graphOptions">
+    </p-chart>
+    <!-- Slide Through Graph -->
+    <p-chart type="line"
+             width="39vh"
+             height="39vh"
+             #elSpectraChartSingle
+             [data]="elSpectraDataSingle"
+             [options]="graphOptions">
+    </p-chart>
+  </div>
+
   <!--  <div>-->
   <!--    <p-chart type="line"-->
-  <!--             width="40vh"-->
-  <!--             height="40vh"-->
+  <!--             width="39vh"-->
+  <!--             height="39vh"-->
   <!--             #chart-->
   <!--             [data]="basicData"-->
   <!--             [options]="basicOptions">-->
@@ -57,8 +76,8 @@
   <!--  </div>-->
   <!--  <div>-->
   <!--    <p-chart type="line"-->
-  <!--             width="40vh"-->
-  <!--             height="40vh"-->
+  <!--             width="39vh"-->
+  <!--             height="39vh"-->
   <!--             #chart-->
   <!--             [data]="basicData"-->
   <!--             [options]="basicOptions">-->
@@ -66,8 +85,8 @@
   <!--  </div>-->
   <!--  <div>-->
   <!--    <p-chart type="line"-->
-  <!--             width="40vh"-->
-  <!--             height="40vh"-->
+  <!--             width="39vh"-->
+  <!--             height="39vh"-->
   <!--             #chart-->
   <!--             [data]="basicData"-->
   <!--             [options]="basicOptions">-->
@@ -78,8 +97,8 @@
   <!--<div style="padding: 2rem 7rem 2rem 2rem; display:inline-flex; gap: 20px;">-->
   <!--  <div>-->
   <!--    <p-chart type="line"-->
-  <!--             width="40vh"-->
-  <!--             height="40vh"-->
+  <!--             width="39vh"-->
+  <!--             height="39vh"-->
   <!--             #chart-->
   <!--             [data]="basicData"-->
   <!--             [options]="basicOptions">-->
@@ -87,8 +106,8 @@
   <!--  </div>-->
   <!--  <div>-->
   <!--    <p-chart type="line"-->
-  <!--             width="40vh"-->
-  <!--             height="40vh"-->
+  <!--             width="39vh"-->
+  <!--             height="39vh"-->
   <!--             #chart-->
   <!--             [data]="basicData"-->
   <!--             [options]="basicOptions">-->
@@ -96,8 +115,8 @@
   <!--  </div>-->
   <!--  <div>-->
   <!--    <p-chart type="line"-->
-  <!--             width="40vh"-->
-  <!--             height="40vh"-->
+  <!--             width="39vh"-->
+  <!--             height="39vh"-->
   <!--             #chart-->
   <!--             [data]="basicData"-->
   <!--             [options]="basicOptions">-->

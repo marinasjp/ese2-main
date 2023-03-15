@@ -31,6 +31,7 @@ import { ForceIndTabComponent } from './components/sidenav/force-ind-tab/force-i
 import { ElisticitySpectraTabComponent } from './components/sidenav/elisticity-spectra-tab/elisticity-spectra-tab.component';
 import { CustomCodeTabComponent } from './components/sidenav/custom-code-tab/custom-code-tab.component';
 import { BottomnavComponent } from './components/bottomnav/bottomnav.component';
+import {DialogModule} from 'primeng/dialog';
 
 @NgModule({
   declarations: [
@@ -66,7 +67,8 @@ import { BottomnavComponent } from './components/bottomnav/bottomnav.component';
     SliderModule,
     ScrollerModule,
     DropdownModule,
-    ProgressSpinnerModule
+    ProgressSpinnerModule,
+    DialogModule
   ],
   providers: [],
   bootstrap: [AppComponent]
