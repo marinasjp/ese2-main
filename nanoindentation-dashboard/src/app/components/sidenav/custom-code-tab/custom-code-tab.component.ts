@@ -39,7 +39,6 @@ export class CustomCodeTabComponent {
     process.id=event.files.name;
     process.name=event.files.name;
     process.custom=true;
-    process.inUse=false;
     process.procType=proc;
 
     this.processorService.addProcess(process);
