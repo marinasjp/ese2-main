@@ -119,18 +119,22 @@ export class ProcessorService {
     try {
       switch (process.procType) { //add to the correct container acording to process type
         case EProcType.CPOINT: {
+          console.log("CPoint");
           this.availableProcesses.cPoints.push(process);
           break;
         }
         case EProcType.FILTER: {
+          console.log("Filter");
           this.availableProcesses.filters.push(process);
           break;
         }
         case EProcType.EMODELS: {
+          console.log("EModel");
           this.availableProcesses.eModels.push(process);
           break;
         }
         case EProcType.FMODELS: {
+          console.log("FModel");
           this.availableProcesses.fModels.push(process);
           break;
         }
@@ -139,6 +143,7 @@ export class ProcessorService {
           break;
         }
         default: {
+          console.log("Could not find type");
           throw Error('ERROR: ProcType error'); //throw error if type isnt found
         }
       }
