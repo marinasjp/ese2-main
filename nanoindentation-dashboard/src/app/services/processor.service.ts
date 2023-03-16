@@ -8,7 +8,7 @@ import {ErrorHandlerService} from "./error-handler.service";
 import {Datapoint} from "../models/datapoint.model";
 import {Dataset} from "../models/dataset.model";
 import {CustomError} from '../models/error.model';
-import {EInputFieldType, Input} from '../models/input.model';
+import {EInputFieldType} from '../models/input.model';
 
 const PYODIDE_BASE_URL = 'https://cdn.jsdelivr.net/pyodide/v0.22.0/full/';
 
@@ -103,6 +103,19 @@ export class ProcessorService {
   public availableProcesses: { filters: Process[], cPoints: Process[], eModels: Process[], fModels: Process[], internal: Process[], test: Process[] } = {
     filters: [ //Container for available filters
       {
+        id: 'linearDetrend',
+        name: 'Linear Detrend',
+        procType: EProcType.FILTER,
+        custom: false
+      },
+      {
+        id: 'median',
+        name: 'Median',
+        procType: EProcType.FILTER,
+        custom: false,
+        inputs: [{name: 'Window', type: EInputFieldType.NUMBER, selectedValue: 25}]
+      },
+      {
         id: 'prominence',
         name: 'Prominence',
         procType: EProcType.FILTER,
@@ -113,8 +126,12 @@ export class ProcessorService {
           {name: 'Threshold', type: EInputFieldType.NUMBER, selectedValue: 25}
         ]
       },
-      {id: 'median', name: 'Median', procType: EProcType.FILTER, custom: false, inputs: null},
-      {id: 'savgol', name: 'Sawitzky Golay', procType: EProcType.FILTER, custom: false, inputs: null}
+      {
+        id: 'savgol', name: 'Sawitzky Golay', procType: EProcType.FILTER, custom: false, inputs: [
+          {name: 'Window', type: EInputFieldType.NUMBER, selectedValue: 25},
+          {name: 'Order', type: EInputFieldType.NUMBER, selectedValue: 3}
+        ]
+      }
     ],
     cPoints: [//container for cPoints
       {id: 'rov', name: 'Rov', procType: EProcType.CPOINT, custom: false, inputs: null},
@@ -298,6 +315,14 @@ export class ProcessorService {
     }
     let result = resultPy.toJs(); //translate result to JS
     result = {x: result[0], y: result[1]}; //map result onto container
+
+    // TODO: DJAN ADDS ERROR HANDLER
+    if (result.x == null || result.y == null) {
+      console.log('ERROR HAPPENED IN PYTHON');
+      return [];
+    }
+
+
     if (result.x.length > 1 && result.y.length > 1) {
       result = this.convertXAndYArrayToDatapointsArray(result);
     } else {
