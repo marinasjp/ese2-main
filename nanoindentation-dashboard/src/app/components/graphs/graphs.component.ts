@@ -4,6 +4,7 @@ import {UIChart} from "primeng/chart";
 import {Subscription} from "rxjs";
 import {saveAs} from 'file-saver';
 import {Papa} from 'papaparse';
+import { ErrorHandlerService } from 'src/app/services/error-handler.service';
 
 // import 'chartjs-plugin-zoom'; // TODO: FIX
 
@@ -44,7 +45,7 @@ export class GraphsComponent {
   datasetsSubscription: Subscription;
   sliderValueSubscription: Subscription;
 
-  constructor(public graphService: GraphService) {
+  constructor(public graphService: GraphService, public errorHandler: ErrorHandlerService) {
   }
 
   decimation = {

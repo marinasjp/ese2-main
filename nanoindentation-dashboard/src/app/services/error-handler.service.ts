@@ -6,6 +6,8 @@ import {CustomError, EErrorType} from "../models/error.model";
 })
 export class ErrorHandlerService {
 
+  dialogShown: boolean
+  errorMessage: string
   private errors: CustomError[] = []; //Container for errors
   private errorID: -1;    //ID that counts up for each error found
 
@@ -28,15 +30,17 @@ export class ErrorHandlerService {
 
   //Records a fatal error and adds to container
   public Fatal(error: any) {
-    //ADD UI PROMPT
-    console.log("Fatal error: " + error + " was caught, skipping process");
+    //UI ERROR
+    this.dialogShown = true;
+    this.errorMessage = ("Fatal error: " + error + " was caught, skipping process");
     return this.newError(error, EErrorType.FATAL); //Adds error to record
   };
 
   //Records a non-fatal error and adds to container
   public Retry(error: any, attempt: number, max_attempt: number, errID?: number) {
     //ADD UI PROMPT
-    console.log("Error: " + error + " occurred. Attempting retry: " + attempt + 1 + "/" + max_attempt)
+    this.dialogShown = true;
+    this.errorMessage = ("Error: " + error + " occurred. Attempting retry: " + attempt + 1 + "/" + max_attempt)
     if (attempt == 1) {
       return this.newError(error, EErrorType.RETRY);
     } else {
@@ -47,7 +51,8 @@ export class ErrorHandlerService {
   //Records a failed retry and changes type of error
   public RetryFailed(errID: number) {
     //ADD UI PROPMT
-    console.log("Max attempts reached. Quitting method.");
+    this.dialogShown = true;
+    this.errorMessage = ("Max attempts reached. Quitting method.")
     let error = this.getError(errID);
     return this.setType(error, EErrorType.FATAL);
   };
