@@ -8,11 +8,7 @@ import {ErrorHandlerService} from "./error-handler.service";
 import {Datapoint} from "../models/datapoint.model";
 import {Dataset} from "../models/dataset.model";
 import {CustomError} from '../models/error.model';
-<<<<<<< HEAD
 import {EInputFieldType, Input} from '../models/input.model';
-=======
-import {EInputFieldType} from '../models/input.model';
->>>>>>> 0c86753cc046d939e993bf379f9331c27bcadbaf
 
 const PYODIDE_BASE_URL = 'https://cdn.jsdelivr.net/pyodide/v0.22.0/full/';
 
