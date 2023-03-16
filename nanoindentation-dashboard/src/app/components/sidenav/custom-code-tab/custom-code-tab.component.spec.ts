@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import {HttpClientModule} from '@angular/common/http';
 import { CustomCodeTabComponent } from './custom-code-tab.component';
 
 describe('CustomCodeTabComponent', () => {
@@ -7,17 +7,21 @@ describe('CustomCodeTabComponent', () => {
   let fixture: ComponentFixture<CustomCodeTabComponent>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [ CustomCodeTabComponent ]
+    TestBed.configureTestingModule({
+      imports:[
+        HttpClientModule
+      ],
+      providers:[
+        CustomCodeTabComponent
+      ]
     })
-    .compileComponents();
-
-    fixture = TestBed.createComponent(CustomCodeTabComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+      .compileComponents();
   });
 
   it('should create', () => {
+    const fixture = TestBed.createComponent(CustomCodeTabComponent);
+    const component = fixture.componentInstance;
+    fixture.detectChanges();
     expect(component).toBeTruthy();
   });
 });
