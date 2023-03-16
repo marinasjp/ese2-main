@@ -13,7 +13,12 @@ import {HttpClientModule} from '@angular/common/http';
 
 let testProcess = {id:"testProcess", name: "Test", procType: EProcType.TEST, script:"def calculate( x, y): \n return x, y+1"}
 //let testFs = fs.readFileSync('../assets/Processes/Tests/testProcess.py', 'utf-8');
-let testStr = "def calculate( x, y): \n return x, y+1"
+let testScript = "def calculate( x, y): \n return x, y+1"
+
+
+let testData: { x: number[], y: number[] } = { x: [100, 200, 300, 400], y: [1, 2, 3, 4] };
+let outData: { x: number[], y: number[] } = { x: [100, 200, 300, 400], y: [2, 3, 4, 5] };
+
 
 
 let modelProcessDataSet = {
@@ -50,11 +55,6 @@ let modelProcessDataSet = {
   ], // container for processes only run by the app but not selectable by the user
   test: [{id:"testProcess", name: "Test", procType: EProcType.TEST, script:"def calculate( x, y): \n return x, y+1"}]     //container for test processess
 }
-
-
-    let testData: { x: number[], y: number[] } = { x: [100, 200, 300, 400], y: [1, 2, 3, 4] };
-    let outData: { x: number[], y: number[] } = { x: [100, 200, 300, 400], y: [2, 3, 4, 5] };
-
 
 
   describe('ProcessorService', () => {
@@ -100,7 +100,7 @@ let modelProcessDataSet = {
       if (promise instanceof Promise<String>){
         
         promise.then((result) =>{
-          expect(result).toEqual(testStr);
+          expect(result).toEqual(testScript);
           done();
         })
       }
@@ -121,6 +121,21 @@ let modelProcessDataSet = {
       expect(spy).toHaveBeenCalledTimes(1);
      }); 
 
-     //
+     // Test if script executes
+     it('Test Script Execution', (done) => {
+      console.log("Pyodide Test...")
+      let service = new ProcessorService(http, errorHandler, graph);
+      let testDataConverted = service.convertXAndYArrayToDatapointsArray(testData)
+      let outDataConverted = service.convertXAndYArrayToDatapointsArray(outData);
+
+      console.log("Adding process..")
+      service.addProcess(testProcess);
+
+      const resultData = service.runProcessScriptOnDatapoints(testDataConverted, testScript);
+      expect(resultData).toEqual(outDataConverted);
+      done()
+      //expect(service.runProcessScriptOnDatapoints(testDataConverted, testScript)).toEqual(outDataconverted);
+
+     });
     
 });
