@@ -16,4 +16,4 @@ ENV CHROME_BIN=/usr/bin/chromium-browser
 COPY ./nanoindentation-dashboard/package.json ./nanoindentation-dashboard/package-lock.json ./nanoindentation-dashboard/karma.conf.js ./nanoindentation-dashboard/angular.json ./nanoindentation-dashboard/tsconfig.spec.json ./nanoindentation-dashboard/tsconfig.app.json ./nanoindentation-dashboard/tsconfig.json ./
 RUN npm ci
 COPY ./nanoindentation-dashboard .
-RUN npm run test:ci
+ENTRYPOINT npm run test:ci
