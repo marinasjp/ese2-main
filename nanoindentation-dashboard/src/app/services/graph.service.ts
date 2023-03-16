@@ -131,7 +131,7 @@ export class GraphService {
       // TODO: REMOVE?
       dataset.displacementForceFilteredData.push(valuePair);
     }
-    console.log(dataset)
+    
     // Add the dataset to the datasets array
     datasets.push(dataset);
 
