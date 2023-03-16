@@ -4,36 +4,9 @@
     <p-multiSelect [options]="processorService.availableProcesses.filters"
                    [(ngModel)]="processorService.selectedFilters" optionLabel="name"
                    defaultLabel="Other Filters"></p-multiSelect>
-    <ng-container *ngFor="let filter of processorService.selectedFilters">
-      <h4 class="mt-4">{{filter.name}}</h4>
 
-      <div *ngIf="!filter.inputs || filter.inputs.length == 0">
-        This Filter has not inputs.
-      </div>
+    <app-process-item *ngFor="let process of processorService.selectedFilters" [process]="process"></app-process-item>
 
-      <div *ngFor="let input of filter.inputs">
-        <h5 class="mt-2">{{input.name}}</h5>
-
-        <p-inputNumber *ngIf="input.type == EInputFieldType.NUMBER"
-                       (onInput)="processorService.showReCalculateButton = true"
-                       [showButtons]="true"
-                       [(ngModel)]="input.selectedValue"
-                       buttonLayout="horizontal"
-                       spinnerMode="horizontal"
-                       decrementButtonClass="p-button-primary"
-                       incrementButtonClass="p-button-primary"
-                       incrementButtonIcon="pi pi-plus"
-                       decrementButtonIcon="pi pi-minus">
-        </p-inputNumber>
-
-        <p-inputSwitch *ngIf="input.type == EInputFieldType.BOOLEAN" [(ngModel)]="input.selectedValue"
-                       (onChange)="processorService.showReCalculateButton = true"
-                       class="mr-2">
-        </p-inputSwitch>
-
-      </div>
-
-    </ng-container>
   </div>
 
 </p-accordionTab>

@@ -1,0 +1,37 @@
+<div class="mt-4 mb-4">
+  <h4 class="mb-2">{{process.name}}</h4>
+
+  <div *ngIf="!process.inputs || process.inputs.length == 0">
+    This Filter has not inputs.
+  </div>
+
+  <div *ngFor="let input of process.inputs">
+    <h5 class="mt-2">{{input.name}}</h5>
+
+    <p-inputNumber *ngIf="input.type == EInputFieldType.NUMBER"
+                   (onInput)="processorService.showReCalculateButton = true"
+                   [showButtons]="true"
+                   [(ngModel)]="input.selectedValue"
+                   buttonLayout="horizontal"
+                   spinnerMode="horizontal"
+                   decrementButtonClass="p-button-primary"
+                   incrementButtonClass="p-button-primary"
+                   incrementButtonIcon="pi pi-plus"
+                   decrementButtonIcon="pi pi-minus">
+    </p-inputNumber>
+
+    <p-inputSwitch *ngIf="input.type == EInputFieldType.BOOLEAN" [(ngModel)]="input.selectedValue"
+                   (onChange)="processorService.showReCalculateButton = true"
+                   class="mr-2">
+    </p-inputSwitch>
+
+    <p-dropdown *ngIf="input.type == EInputFieldType.GEOMETRY"
+                [options]="geometries"
+                (onChange)="processorService.showReCalculateButton = true"
+                [(ngModel)]="input.selectedValue"
+                optionLabel="value">
+    </p-dropdown>
+
+
+  </div>
+</div>
