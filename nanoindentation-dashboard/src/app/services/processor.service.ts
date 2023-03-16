@@ -349,7 +349,7 @@ export class ProcessorService {
     }
   }
 
-  private convertDatapointsArrayToXAndYArray(datapoints: Datapoint[]): { x: number[], y: number[] } {
+  public convertDatapointsArrayToXAndYArray(datapoints: Datapoint[]): { x: number[], y: number[] } {
     let x: number[] = [];
     let y: number[] = [];
 
@@ -361,7 +361,7 @@ export class ProcessorService {
     return {x: x, y: y};
   }
 
-  private convertXAndYArrayToDatapointsArray(input: { x: number[], y: number[] }): Datapoint[] | CustomError {
+  public convertXAndYArrayToDatapointsArray(input: { x: number[], y: number[] }): Datapoint[] | CustomError {
     let datapoints: Datapoint[] = [];
 
     if (input.x.length == input.y.length) {
@@ -489,7 +489,7 @@ export class ProcessorService {
   }
 
   //Runs all the processes from (and including) the process type specified
-  private runFrom(procType: EProcType): void | CustomError {
+  public runFrom(procType: EProcType): void | CustomError {
     this.loading = ['Creating Process Chain'];
 
     try {
