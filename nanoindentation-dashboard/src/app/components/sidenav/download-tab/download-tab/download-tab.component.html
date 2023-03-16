@@ -6,3 +6,7 @@
   <button pButton type="button" label="Download Elasticity-Spectra" (click)="download(4)"></button>
   <button pButton type="button" label="Download Elasticity-Spectra (single)" (click)="download(5)"></button>
 </p-accordionTab>
+
+<p-accordionTab header="Download Settings" [disabled]="disabled">
+  <button pButton type="button" label="Download Force-Displacement" (click)="downloadSet()"></button>
+</p-accordionTab>

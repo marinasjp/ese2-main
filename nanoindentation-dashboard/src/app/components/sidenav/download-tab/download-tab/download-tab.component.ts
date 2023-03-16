@@ -58,8 +58,6 @@ export class DownloadTabComponent {
       
   }
   
-
-
     let xArray: number[] = [];
     let yArray: number[] = [];
 
@@ -76,13 +74,14 @@ export class DownloadTabComponent {
       csvString += `${xArray[i]},${yArray[i]}\n`;
     }
 
-    //console.log(csvString); // Check the output in the console
-
     const csv = csvString;
 
-    
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     saveAs(blob, Filename);
+  }
+
+  downloadSet(){
+    
   }
 
 }
