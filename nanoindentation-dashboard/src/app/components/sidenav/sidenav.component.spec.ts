@@ -33,10 +33,12 @@ describe('SidenavComponent', () => {
   it('should upload raw data', () => {
     const spy = spyOn(graphService, 'uploadDataRaw');
     const file = new File([], 'test');
-    const event = { files: [file] };
-   // component.uploadra(event);
-    expect(spy).toHaveBeenCalledWith(file);
+    const event = { target: { files: [file] } }; // update event object
+    graphService.uploadDataRaw(event.target.files[0]);
+    expect(spy).toHaveBeenCalledWith(file); // update expected argument
   });
+
+  
 });
 
 // import { ComponentFixture, TestBed } from '@angular/core/testing';
