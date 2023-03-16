@@ -304,7 +304,7 @@ export class ProcessorService {
     return {x: x, y: y};
   }
 
-  convertXAndYArrayToDatapointsArray(input: { x: number[], y: number[] }): Datapoint[] | Datapoint {
+  convertXAndYArrayToDatapointsArray(input: { x: number[], y: number[] }): Datapoint[]{
     let datapoints: Datapoint[] = [];
 
     if (input.x.length == input.y.length) {
