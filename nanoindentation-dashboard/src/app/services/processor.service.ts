@@ -295,7 +295,7 @@ export class ProcessorService {
     }
   }
 
-  runProcessScriptOnDatapoints(datapoints: Datapoint[], processScript: string, arg?: any): Datapoint[] | Datapoint {
+  private runProcessScriptOnDatapoints(datapoints: Datapoint[], processScript: string, arg?: any): Datapoint[] | Datapoint {
     let convertedDataset: { x: number[], y: number[] } = this.convertDatapointsArrayToXAndYArray(datapoints);
     let xAxis = convertedDataset.x;
     let yAxis = convertedDataset.y;
@@ -326,7 +326,7 @@ export class ProcessorService {
     }
   }
 
-  convertDatapointsArrayToXAndYArray(datapoints: Datapoint[]): { x: number[], y: number[] } {
+  private convertDatapointsArrayToXAndYArray(datapoints: Datapoint[]): { x: number[], y: number[] } {
     let x: number[] = [];
     let y: number[] = [];
 
@@ -338,7 +338,7 @@ export class ProcessorService {
     return {x: x, y: y};
   }
 
-  convertXAndYArrayToDatapointsArray(input: { x: number[], y: number[] }): Datapoint[] | CustomError {
+  private convertXAndYArrayToDatapointsArray(input: { x: number[], y: number[] }): Datapoint[] | CustomError {
     let datapoints: Datapoint[] = [];
 
     if (input.x.length == input.y.length) {
@@ -353,7 +353,7 @@ export class ProcessorService {
   }
 
   //given a list of processes, recursively runs them and stores the output in graphs
-  private runAll(processes: Process[]): any {
+  private runAll(processes: Process[]): void | CustomError  {
 
     if (processes.length == 0) { // base case
       // FINISHED
@@ -374,9 +374,13 @@ export class ProcessorService {
       return getScriptPromise; //do smth to show that it's an error
     }
 
+    let recurReturn = null;
     getScriptPromise.then((processScript) => {
+      
+      for (var curSet of this.graphService.selectedDatafile.datasets){ // run script on each dataset
+        let dataset: Dataset = curSet[0]; //set the current dataSet
+        let index: number = curSet[1]; //set the current index
 
-      this.graphService.selectedDatafile.datasets.forEach((dataset: Dataset, index: number) => {
         let inputDatapoints: Datapoint[] = [];
 
         //select datapoints to be processed depending on type of process
@@ -412,12 +416,11 @@ export class ProcessorService {
 
         //INPUT CHECKING
         if (currentProcess?.inputs?.length) { //if there are user inputs required check for null
-          inputArgs.forEach((input: any) => {
+          for (var input of inputArgs){
             if (!input) { //if an input is set to be null and there are user inputs specified
               return this.errorHandlerService.Fatal(new Error("InputError: input not given"));
             }
-            return 0;
-          })
+          }
         }
 
         //run process on input datapoints
@@ -450,18 +453,20 @@ export class ProcessorService {
             // TODO: IMPLEMENT
             break;
         }
-      })
+      }
 
       //change loading msg
       this.graphService.selectedDatafile = this.graphService.selectedDatafile;
       loadingMsgs[loadingMsgs.length - 1] = currentProcess.name + ' done ✔'
-      this.runAll(processes); // recursive call
+      recurReturn = this.runAll(processes); // recursive call
+      return recurReturn
     })
     this.showReCalculateButton = false;
+    return recurReturn; //if null it was successful
   }
 
   //Runs all the processes from (and including) the process type specified
-  public runFrom(procType: EProcType): void | CustomError {
+  private runFrom(procType: EProcType): void | CustomError {
     this.loading = ['Creating Process Chain'];
 
     try {
@@ -502,7 +507,7 @@ export class ProcessorService {
           throw new Error('ERROR: ProcType error'); //throw error if type isnt found
         }
       }
-      this.runAll(processChain); //runs the whole chain
+      return this.runAll(processChain); //runs the whole chain, returns null if successful, customError if not
     } catch (e: any) {
       return this.errorHandlerService.Fatal(e); //catch any errors as fatal errors
     }
