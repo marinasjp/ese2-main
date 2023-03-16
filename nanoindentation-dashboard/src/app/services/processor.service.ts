@@ -8,7 +8,7 @@ import {ErrorHandlerService} from "./error-handler.service";
 import {Datapoint} from "../models/datapoint.model";
 import {Dataset} from "../models/dataset.model";
 import {CustomError} from '../models/error.model';
-import { EInputFieldType, Input } from '../models/input.model';
+import {EInputFieldType, Input} from '../models/input.model';
 
 const PYODIDE_BASE_URL = 'https://cdn.jsdelivr.net/pyodide/v0.22.0/full/';
 
@@ -162,6 +162,7 @@ export class ProcessorService {
         }
         default: {
           console.log("Could not find type");
+          // this.graphService.showErrorDialog("Could not find Process Type");
           throw Error('ERROR: ProcType error'); //throw error if type isnt found
         }
       }
