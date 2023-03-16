@@ -2,29 +2,32 @@
   <div style="border: 1px solid #383838; border-radius: 5px; padding: 12px">
     <h4>Upload Custom Python Scripts</h4>
     <!-- Filters -->
-    <p-fileUpload #fileUpload (uploadHandler)="uploadFilterHandler($event)"
+    <p-dropdown [options]="processOptions" [(ngModel)]="selectedProcess" optionLabel="name"></p-dropdown><br><br>
+
+    <p-fileUpload #fileUpload (uploadHandler)="uploadCodeHandler($event)"
             mode="basic"
             [auto]="true"
             [customUpload]="true"
-            chooseLabel="Upload Filter"></p-fileUpload><br>
+            chooseLabel="Upload"></p-fileUpload>
     <!-- CPoint -->
-    <p-fileUpload #fileUpload (uploadHandler)="uploadCPointHandler($event)"
+
+    <!-- <p-fileUpload #fileUpload (uploadHandler)="uploadCPointHandler($event)"
             mode="basic"
             [auto]="true"
             [customUpload]="true"
-            chooseLabel="Upload CPoint"></p-fileUpload><br>
+            chooseLabel="Upload CPoint"></p-fileUpload><br> -->
     <!-- FModel -->
-    <p-fileUpload #fileUpload (uploadHandler)="uploadFModelHandler($event)"
+    <!-- <p-fileUpload #fileUpload (uploadHandler)="uploadFModelHandler($event)"
             mode="basic"
             [auto]="true"
             [customUpload]="true"
-            chooseLabel="Upload FModel"></p-fileUpload><br>
+            chooseLabel="Upload FModel"></p-fileUpload><br> -->
     <!-- EModel -->
-    <p-fileUpload #fileUpload (uploadHandler)="uploadEModelHandler($event)"
+    <!-- <p-fileUpload #fileUpload (uploadHandler)="uploadEModelHandler($event)"
             mode="basic"
             [auto]="true"
             [customUpload]="true"
-            chooseLabel="Upload EModel"></p-fileUpload>
+            chooseLabel="Upload EModel"></p-fileUpload> -->
     </div>
     <!-- <p-button (click)="showBasicDialog()" icon="pi pi-external-link" label="Show"></p-button>
     <p-dialog header="Header" [(visible)]="displayBasic" [style]="{width: '50vw'}">
