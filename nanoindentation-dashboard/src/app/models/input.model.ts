@@ -7,5 +7,7 @@ export interface Input {
 export enum EInputFieldType { //Types of inputs
   BOOLEAN = 'boolean',
   NUMBER = 'number',
+  GEOMETRY = 'geometry',
   DATAPOINT = 'datapoint'
 }
+

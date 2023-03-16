@@ -114,8 +114,7 @@ export class ProcessorService {
         ]
       },
       {id: 'median', name: 'Median', procType: EProcType.FILTER, custom: false, inputs: null},
-      {id: 'savgol', name: 'Sawitzky Golay', procType: EProcType.FILTER, custom: false, inputs: null},
-      {id: 'linearDetrend', name: 'Linear Detrending', procType: EProcType.FILTER, custom: false, inputs: null},
+      {id: 'savgol', name: 'Sawitzky Golay', procType: EProcType.FILTER, custom: false, inputs: null}
     ],
     cPoints: [//container for cPoints
       {id: 'rov', name: 'Rov', procType: EProcType.CPOINT, custom: false, inputs: null},
@@ -137,11 +136,11 @@ export class ProcessorService {
         id: 'calc_elspectra', name: 'Calculating ElSpectra', procType: EProcType.INTERNAL, custom: false,
         inputs:
           [ //container for required user inputs
-            {name: "geometry", selectedValue: true, type: EInputFieldType.BOOLEAN},
-            {name: "radius", selectedValue: 1, type: EInputFieldType.NUMBER},
-            {name: "win", selectedValue: 100, type: EInputFieldType.NUMBER},
-            {name: "order", selectedValue: 2, type: EInputFieldType.NUMBER},
-            {name: "interp", selectedValue: false, type: EInputFieldType.BOOLEAN}
+            {name: "Tip Geometry", selectedValue: true, type: EInputFieldType.GEOMETRY},
+            {name: "Radius", selectedValue: 1, type: EInputFieldType.NUMBER},
+            {name: "Win", selectedValue: 100, type: EInputFieldType.NUMBER},
+            {name: "Order", selectedValue: 2, type: EInputFieldType.NUMBER},
+            {name: "Use Interpolation", selectedValue: false, type: EInputFieldType.BOOLEAN}
           ] // defaults: geometry='cylinder', radius=1, win=100, order=2, interp=False
       }
     ], // container for processes only run by the app but not selectable by the user

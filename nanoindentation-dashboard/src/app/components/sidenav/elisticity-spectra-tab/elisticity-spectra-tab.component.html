@@ -1,25 +1,7 @@
-<!--<p-accordionTab header="Elasticity-Spectra">-->
-<!--  <div style="border: 1px solid #383838; border-radius: 5px; padding: 12px">-->
-<!--    <p-dropdown [showClear]="true" placeholder="(placeholder)" [(ngModel)]="selectedIndShape"-->
-<!--                optionLabel="name"></p-dropdown>-->
-<!--    <br><br><h5>Elasticity Spectra Minimum</h5>-->
-<!--    <p-inputNumber [(ngModel)]="spectraMin" [showButtons]="true"-->
-<!--                   buttonLayout="horizontal"-->
-<!--                   spinnerMode="horizontal"-->
-<!--                   decrementButtonClass="p-button-primary"-->
-<!--                   incrementButtonClass="p-button-primary"-->
-<!--                   incrementButtonIcon="pi pi-plus"-->
-<!--                   decrementButtonIcon="pi pi-minus">-->
-<!--    </p-inputNumber>-->
-<!--    <br>-->
-<!--    <h5>Elasticity Spectra Maximum</h5>-->
-<!--    <p-inputNumber [(ngModel)]="spectraMax" [showButtons]="true"-->
-<!--                   buttonLayout="horizontal"-->
-<!--                   spinnerMode="horizontal"-->
-<!--                   decrementButtonClass="p-button-primary"-->
-<!--                   incrementButtonClass="p-button-primary"-->
-<!--                   incrementButtonIcon="pi pi-plus"-->
-<!--                   decrementButtonIcon="pi pi-minus">-->
-<!--    </p-inputNumber>-->
-<!--  </div>-->
-<!--</p-accordionTab>-->
+<p-accordionTab header="Elasticity-Spectra">
+  <div style="border: 1px solid #383838; border-radius: 5px; padding: 12px">
+
+    <app-process-item [process]="calcElspectraProcess"></app-process-item>
+
+  </div>
+</p-accordionTab>
