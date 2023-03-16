@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import {HttpClientModule} from '@angular/common/http';
 import { DownloadTabComponent } from './download-tab.component';
 
 describe('DownloadTabComponent', () => {
@@ -7,17 +7,21 @@ describe('DownloadTabComponent', () => {
   let fixture: ComponentFixture<DownloadTabComponent>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [ DownloadTabComponent ]
+    TestBed.configureTestingModule({
+      imports:[
+        HttpClientModule
+      ],
+      providers:[
+        DownloadTabComponent
+      ]
     })
-    .compileComponents();
-
-    fixture = TestBed.createComponent(DownloadTabComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+      .compileComponents();
   });
 
   it('should create', () => {
+    const fixture = TestBed.createComponent(DownloadTabComponent);
+    const component = fixture.componentInstance;
+    fixture.detectChanges();
     expect(component).toBeTruthy();
   });
 });

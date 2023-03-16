@@ -1,4 +1,4 @@
-import {NgModule} from '@angular/core';
+import { EInputFieldType, Input } from '../models/input.model';
 import {TestBed, async} from '@angular/core/testing';
 import { EProcType } from 'src/app/models/process.model';
 import { GraphService } from 'src/app/services/graph.service';
@@ -14,24 +14,44 @@ import {HttpClientModule} from '@angular/common/http';
 let testProcess = {id:"testProcess", name: "Test", procType: EProcType.TEST, script:"def calculate( x, y): \n return x, y+1"}
 //let testFs = fs.readFileSync('../assets/Processes/Tests/testProcess.py', 'utf-8');
 let testStr = "def calculate( x, y): \n return x, y+1"
+
+
 let modelProcessDataSet = {
   filters: [ //Container for available filters
-    {id: 'median', name: 'Median', procType: EProcType.FILTER, custom: false},
-    {id: 'savgol', name: 'Sawitzky Golay', procType: EProcType.FILTER, custom: false},
-    {id: 'linearDetrend', name: 'Linear Detrending', procType: EProcType.FILTER, custom: false},
+    {id: 'median', name: 'Median', procType: EProcType.FILTER, custom: false, inputs: null},
+    {id: 'savgol', name: 'Sawitzky Golay', procType: EProcType.FILTER, custom: false, inputs: null},
+    {id: 'linearDetrend', name: 'Linear Detrending', procType: EProcType.FILTER, custom: false, inputs: null},
   ],
   cPoints: [//container for cPoints
-    {id: 'rov', name: 'Rov', procType: EProcType.CPOINT, custom: false},
-    {id: 'stepAndDrift', name: 'Step and Drift', procType: EProcType.CPOINT, custom: false}
+    {id: 'rov', name: 'Rov', procType: EProcType.CPOINT, custom: false, inputs: null},
+    {id: 'stepAndDrift', name: 'Step and Drift', procType: EProcType.CPOINT, custom: false, inputs: null}
   ],
   eModels: [],//container for eModel
   fModels: [],//container for fModel,
   internal: [
-    {id: 'calc_indentation', name: 'Calculating Indentation', procType: EProcType.INTERNAL, custom: false},
-    {id: 'calc_elspectra', name: 'Calculating ElSpectra', procType: EProcType.INTERNAL, custom: false}
+    {id: 'calc_indentation', name: 'Calculating Indentation', procType: EProcType.INTERNAL, custom: false, 
+    inputs: 
+      [ //container for required user inputs
+        {name: "CP", selectedValue:null, type:EInputFieldType.DATAPOINT},
+        {name: "spring_constant", selectedValue: 1, type:EInputFieldType.NUMBER},
+        {name: "setzeroforce", selectedValue: true, type:EInputFieldType.BOOLEAN}          
+      ]
+    },
+    {id: 'calc_elspectra', name: 'Calculating ElSpectra', procType: EProcType.INTERNAL, custom: false, 
+    inputs: 
+      [ //container for required user inputs
+        {name: "geometry", selectedValue:true, type:EInputFieldType.BOOLEAN},
+        {name: "radius", selectedValue:1, type:EInputFieldType.NUMBER},
+        {name: "win", selectedValue:100, type:EInputFieldType.NUMBER},
+        {name: "order", selectedValue:2, type:EInputFieldType.NUMBER},
+        {name: "interp", selectedValue:false, type:EInputFieldType.BOOLEAN}
+      ] // defaults: geometry='cylinder', radius=1, win=100, order=2, interp=False
+    } 
   ], // container for processes only run by the app but not selectable by the user
   test: [{id:"testProcess", name: "Test", procType: EProcType.TEST, script:"def calculate( x, y): \n return x, y+1"}]     //container for test processess
 }
+
+
     let testData: { x: number[], y: number[] } = { x: [100, 200, 300, 400], y: [1, 2, 3, 4] };
     let outData: { x: number[], y: number[] } = { x: [100, 200, 300, 400], y: [2, 3, 4, 5] };
 
