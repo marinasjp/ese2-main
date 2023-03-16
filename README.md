@@ -70,6 +70,8 @@ The page can be visited on http://localhost:4200/.
 ### 5.- Run Backend
 
 The backend is built on Flask and is used for the AFMFormats library. 
+The AFMFormats library is a Python library for reading atomic force microscopy (AFM) data file formats which can come in the form of a jpk-force-map. Jpk-force-map files are large data files usually created by machines in atomic force microscopy. These files can be very large and require an external library to parse. More about afmformats can be read here: https://afmformats.readthedocs.io/en/stable/
+
 To install these, a tutorial can be found here: https://docs.python.org/3/installing/index.html.
 
 ```console
