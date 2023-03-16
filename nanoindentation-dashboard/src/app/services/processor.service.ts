@@ -8,7 +8,8 @@ import {ErrorHandlerService} from "./error-handler.service";
 import {Datapoint} from "../models/datapoint.model";
 import {Dataset} from "../models/dataset.model";
 import {CustomError} from '../models/error.model';
-import { EInputFieldType, Input } from '../models/input.model';
+import {EInputFieldType} from '../models/input.model';
+import {WrittenProcesses} from 'src/environments/environment.prod';
 
 const PYODIDE_BASE_URL = 'https://cdn.jsdelivr.net/pyodide/v0.22.0/full/';
 
@@ -16,6 +17,8 @@ const PYODIDE_BASE_URL = 'https://cdn.jsdelivr.net/pyodide/v0.22.0/full/';
   providedIn: 'root'
 })
 export class ProcessorService {
+
+  showReCalculateButton: boolean = false;
 
   private _loading: BehaviorSubject<string[]>;
 
@@ -70,68 +73,51 @@ export class ProcessorService {
   }
 
   //container for selected Emodel processes
-  private _selectedEmodels: Process = null;
+  private _selectedEmodels: Process[] = [];
 
   //Setter for selected Emodel process (also runs Emodel process)
-  public set selectedEmodels(process: Process) {
-    this._selectedCPointProcess = process;
+  public set selectedEmodels(processes: Process[]) {
+    this._selectedEmodels = processes;
     this.runFrom(EProcType.EMODELS);//when Emodel process is changed, calculate Emodel
   }
 
   //Getter for selected Emodels process
-  public get selectedEmodels(): Process {
+  public get selectedEmodels(): Process[] {
     return this._selectedEmodels;
   }
 
   //container for selected Fmodels processes
-  private _selectedFmodels: Process = null;
+  private _selectedFmodels: Process[] = [];
 
   //Setter for selected Fmodels process (also runs Fmodels process)
-  public set selectedFmodels(process: Process) {
-    this._selectedCPointProcess = process;
+  public set selectedFmodels(processes: Process[]) {
+    this._selectedFmodels = processes;
     this.runFrom(EProcType.FMODELS);//when Fmodels process is changed, calculate Fmodels
   }
 
   //Getter for selected Fmodels process
-  public get selectedFmodels(): Process {
+  public get selectedFmodels(): Process[] {
     return this._selectedFmodels;
   }
 
-  //container for all available processes
-  public availableProcesses: { filters: Process[], cPoints: Process[], eModels: Process[], fModels: Process[], internal: Process[], test: Process[] } = {
-    filters: [ //Container for available filters
-      {id: 'median', name: 'Median', procType: EProcType.FILTER, custom: false, inputs: null},
-      {id: 'savgol', name: 'Sawitzky Golay', procType: EProcType.FILTER, custom: false, inputs: null},
-      {id: 'linearDetrend', name: 'Linear Detrending', procType: EProcType.FILTER, custom: false, inputs: null},
-    ],
-    cPoints: [//container for cPoints
-      {id: 'rov', name: 'Rov', procType: EProcType.CPOINT, custom: false, inputs: null},
-      {id: 'stepAndDrift', name: 'Step and Drift', procType: EProcType.CPOINT, custom: false, inputs: null}
-    ],
-    eModels: [],//container for eModel
-    fModels: [],//container for fModel,
-    internal: [
-      {id: 'calc_indentation', name: 'Calculating Indentation', procType: EProcType.INTERNAL, custom: false, 
-      inputs: 
-        [ //container for required user inputs
-          {name: "CP", selectedValue:null, type:EInputFieldType.DATAPOINT},
-          {name: "spring_constant", selectedValue: 1, type:EInputFieldType.NUMBER},
-          {name: "setzeroforce", selectedValue: true, type:EInputFieldType.BOOLEAN}          
-        ]
-      },
-      {id: 'calc_elspectra', name: 'Calculating ElSpectra', procType: EProcType.INTERNAL, custom: false, 
-      inputs: 
-        [ //container for required user inputs
-          {name: "geometry", selectedValue:true, type:EInputFieldType.BOOLEAN},
-          {name: "radius", selectedValue:1, type:EInputFieldType.NUMBER},
-          {name: "win", selectedValue:100, type:EInputFieldType.NUMBER},
-          {name: "order", selectedValue:2, type:EInputFieldType.NUMBER},
-          {name: "interp", selectedValue:false, type:EInputFieldType.BOOLEAN}
-        ] // defaults: geometry='cylinder', radius=1, win=100, order=2, interp=False
-      } 
-    ], // container for processes only run by the app but not selectable by the user
-    test: []     //container for test processess
+  //container for selected Test processes
+  private _selectedTests: Process[] = null;
+
+  //Setter for selected test process (also runs test processes)
+  public set selectedTests(processes: Process[]) {
+    this._selectedTests = processes;
+    this.runFrom(EProcType.TEST);//when Test processes are changed, calculate all from Tests
   }
+
+  //Getter for selected Fmodels process
+  public get selectedTests(): Process[] {
+    return this._selectedTests;
+  }
+  
+  private rootPath: string = 'assets/Processes/'; //path of process scripts
+  
+  //container for all available processes (Default set as the processes stored in the environment)
+  public availableProcesses: { filters: Process[], cPoints: Process[], eModels: Process[], fModels: Process[], internal: Process[], test: Process[] } = WrittenProcesses;
 
   public addProcess(process: Process) { //adds a process definition to the data struct
     try {
@@ -162,7 +148,8 @@ export class ProcessorService {
         }
         default: {
           console.log("Could not find type");
-          throw Error('ERROR: ProcType error'); //throw error if type isnt found
+          // this.graphService.showErrorDialog("Could not find Process Type");
+          throw new Error('ERROR: ProcType error'); //throw error if type isnt found
         }
       }
       return this.availableProcesses;
@@ -170,8 +157,6 @@ export class ProcessorService {
       return this.errorHandlerService.Fatal(e); //catch any errors
     }
   };
-
-  private rootPath: string = 'assets/Processes/'; //path of process scripts
 
   private _processedData: { x: number[], y: number[] };//container for most recent processed dataset
 
@@ -195,7 +180,7 @@ export class ProcessorService {
   }
 
   async initPy() { //initialise Pyodide
-    try{
+    try {
       loadPyodide({indexURL: PYODIDE_BASE_URL}).then((pyodide) => {
         globalThis.pyodide = pyodide;
         this.loading = ['pyodide initialized ✔', 'Initializing numpy...'];
@@ -207,8 +192,8 @@ export class ProcessorService {
           })
         })
       })
-    }catch(e: any){
-    this.errorHandlerService.Fatal(e); // catch error
+    } catch (e: any) {
+      this.errorHandlerService.Fatal(e); // catch error
     }
   }
 
@@ -255,7 +240,7 @@ export class ProcessorService {
           break;
         }
         default: {
-          throw Error('ERROR: ProcType error'); //throw error if type isnt found
+          throw new Error('ERROR: ProcType error'); //throw error if type isnt found
         }
       }
       procPath += process.id + '.py'; //add file name to path to get path to file
@@ -266,7 +251,7 @@ export class ProcessorService {
     }
   }
 
-  runProcessScriptOnDatapoints(datapoints: Datapoint[], processScript: string, arg?: any): Datapoint[] | Datapoint {
+  private runProcessScriptOnDatapoints(datapoints: Datapoint[], processScript: string, arg?: any): Datapoint[] | Datapoint {
     let convertedDataset: { x: number[], y: number[] } = this.convertDatapointsArrayToXAndYArray(datapoints);
     let xAxis = convertedDataset.x;
     let yAxis = convertedDataset.y;
@@ -275,24 +260,36 @@ export class ProcessorService {
     let calculate = globalThis.pyodide.globals.get('calculate'); //map the function from the global variables onto 'calculate'
 
     let resultPy: any;
+    let result;
 
-    if (arg) {
-      resultPy = calculate(xAxis, yAxis, arg); //run function on the dataset
-    } else {
-      resultPy = calculate(xAxis, yAxis); //run function on the dataset
+    try {
+      if (arg) {
+        resultPy = calculate(xAxis, yAxis, arg); //run function on the dataset
+      } else {
+        resultPy = calculate(xAxis, yAxis); //run function on the dataset
+      }
+      result = resultPy.toJs(); //translate result to JS
+      result = {x: result[0], y: result[1]}; //map result onto container
+
+      // If script returns [None, None], an error has been caught in the python code
+      if (result.x == null || result.y == null) {
+        throw new Error('CodeError: ERROR IN PYTHON SCRIPT');
+      }
+
+      if (result.x.length > 1 && result.y.length > 1) {
+        result = this.convertXAndYArrayToDatapointsArray(result);
+      } else {
+        result = result as Datapoint
+      }
+      resultPy.destroy();//free the function used
+    } catch (e: any) {
+      result = this.errorHandlerService.Fatal(e); //record any error
+    } finally {
+      return result; //might return Error
     }
-    let result = resultPy.toJs(); //translate result to JS
-    result = {x: result[0], y: result[1]}; //map result onto container
-    if (result.x.length > 1 && result.y.length > 1) {
-      result = this.convertXAndYArrayToDatapointsArray(result);
-    } else {
-      result = result as Datapoint
-    }
-    resultPy.destroy();//free the function used
-    return result;
   }
 
-  convertDatapointsArrayToXAndYArray(datapoints: Datapoint[]): { x: number[], y: number[] } {
+  public convertDatapointsArrayToXAndYArray(datapoints: Datapoint[]): { x: number[], y: number[] } {
     let x: number[] = [];
     let y: number[] = [];
 
@@ -304,7 +301,7 @@ export class ProcessorService {
     return {x: x, y: y};
   }
 
-  convertXAndYArrayToDatapointsArray(input: { x: number[], y: number[] }): Datapoint[]{
+  public convertXAndYArrayToDatapointsArray(input: { x: number[], y: number[] }): Datapoint[] | CustomError {
     let datapoints: Datapoint[] = [];
 
     if (input.x.length == input.y.length) {
@@ -315,12 +312,11 @@ export class ProcessorService {
       return datapoints;
     }
 
-    console.log('ERROR: X AND Y AXIS ARE NOT OF EQUAL LENGTH')
-    return [];
+    return this.errorHandlerService.Fatal(Error('DataInputError: X AND Y AXIS ARE NOT OF EQUAL LENGTH'));
   }
 
   //given a list of processes, recursively runs them and stores the output in graphs
-  runAll(processes: Process[]): any {
+  private runAll(processes: Process[]): void | CustomError  {
 
     if (processes.length == 0) { // base case
       // FINISHED
@@ -337,13 +333,17 @@ export class ProcessorService {
     let getScriptPromise: Promise<string> | CustomError = this.getScript(currentProcess); //get script of process
 
     if (!(getScriptPromise instanceof Promise<string>)) {//if a promise is not returned
-      console.log('ERROR: Script could not be obtained');
+      getScriptPromise.message = 'ERROR: Script could not be obtained'; //set error message
       return getScriptPromise; //do smth to show that it's an error
     }
 
+    let recurReturn = null;
     getScriptPromise.then((processScript) => {
+      
+      for (var curSet of this.graphService.selectedDatafile.datasets){ // run script on each dataset
+        let dataset: Dataset = curSet[0]; //set the current dataSet
+        let index: number = curSet[1]; //set the current index
 
-      this.graphService.selectedDatafile.datasets.forEach((dataset: Dataset, index: number) => {
         let inputDatapoints: Datapoint[] = [];
 
         //select datapoints to be processed depending on type of process
@@ -358,9 +358,6 @@ export class ProcessorService {
             if (currentProcess.id == 'calc_indentation') {
               inputDatapoints = dataset.displacementForceFilteredData;
               currentProcess.inputs[0].selectedValue = dataset.contactPoint; //set CP in dataset to be the value
-              
-            /*inputArgs.push(dataset.contactPoint.x);
-              inputArgs.push(dataset.contactPoint.y);*/
             } else if (currentProcess.id == 'calc_elspectra') {
               inputDatapoints = dataset.displacementForceFilteredData;
             }
@@ -373,25 +370,25 @@ export class ProcessorService {
             break;
         }
 
-        let inputArgs: any = currentProcess.inputs.map(input => {
+        let inputArgs: any = currentProcess?.inputs?.map(input => {
           if (input.type == EInputFieldType.DATAPOINT) {
             return [input.selectedValue.x, input.selectedValue.y] //convert Datapoint type to x and y array
           }
-          return input.selectedValue}); //map selected values onto inputarg
+          return input.selectedValue
+        }); //map selected values onto inputarg
 
         //INPUT CHECKING
-        if (currentProcess.inputs.length){ //if there are user inputs required check for null
-        inputArgs.forEach((input: any) => {
-          if (!input){ //if an input is set to be null and there are user inputs specified
-            return this.errorHandlerService.Fatal(Error("InputError: input not given"));
+        if (currentProcess?.inputs?.length) { //if there are user inputs required check for null
+          for (var input of inputArgs){
+            if (!input) { //if an input is set to be null and there are user inputs specified
+              return this.errorHandlerService.Fatal(new Error("InputError: input not given"));
+            }
           }
-          return 0;
-        })
-      }
+        }
 
         //run process on input datapoints
         let outputDatapoints: any;
-        if (inputArgs.length) {
+        if (inputArgs?.length) {
           outputDatapoints = this.runProcessScriptOnDatapoints(inputDatapoints, processScript, inputArgs);
         } else {
           outputDatapoints = this.runProcessScriptOnDatapoints(inputDatapoints, processScript);
@@ -419,13 +416,16 @@ export class ProcessorService {
             // TODO: IMPLEMENT
             break;
         }
-      })
+      }
 
       //change loading msg
       this.graphService.selectedDatafile = this.graphService.selectedDatafile;
       loadingMsgs[loadingMsgs.length - 1] = currentProcess.name + ' done ✔'
-      this.runAll(processes); // recursive call
+      recurReturn = this.runAll(processes); // recursive call
+      return recurReturn
     })
+    this.showReCalculateButton = false;
+    return recurReturn; //if null it was successful
   }
 
   //Runs all the processes from (and including) the process type specified
@@ -455,25 +455,30 @@ export class ProcessorService {
         }
         //@ts-expect-error
         case EProcType.EMODELS: {
-          //if(!this.selectedEmodels.length){break;}
-          //processChain = processChain.concat(this.selectedEmodels);
+          if (!this.selectedEmodels?.length) {
+            break;
+          }
+          processChain = processChain.concat(this.selectedEmodels);
         }
         //@ts-expect-error
         case EProcType.FMODELS: {
-          //if(!this.selectedFmodels.length){break;}
-          //processChain = processChain.concat(this.selectedFmodels);
+          if (!this.selectedFmodels.length) {
+            break;
+          }
+          processChain = processChain.concat(this.selectedFmodels);
         }
         case EProcType.TEST: {
-          //if(!this.selectedTests.length){break;}
-          //processChain = processChain.concat(this.selectedTests);
+          if (!this.selectedTests?.length) {
+            break;
+          }
+          processChain = processChain.concat(this.selectedTests);
           break;
         }
         default: {
-          throw Error('ERROR: ProcType error'); //throw error if type isnt found
+          throw new Error('ERROR: ProcType error'); //throw error if type isnt found
         }
       }
-      this.loading = ['Process Chain created ✔'];
-      this.runAll(processChain); //runs the whole chain
+      return this.runAll(processChain); //runs the whole chain, returns null if successful, customError if not
     } catch (e: any) {
       return this.errorHandlerService.Fatal(e); //catch any errors as fatal errors
     }

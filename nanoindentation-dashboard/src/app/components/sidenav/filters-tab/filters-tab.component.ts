@@ -1,6 +1,7 @@
 import {Component} from '@angular/core';
 import {ProcessorService} from "../../../services/processor.service";
 import {GraphService} from "../../../services/graph.service";
+import {EInputFieldType} from "../../../models/input.model";
 
 @Component({
   selector: 'app-filters-tab',
@@ -9,6 +10,8 @@ import {GraphService} from "../../../services/graph.service";
 })
 export class FiltersTabComponent {
   disabled: boolean = true;
+
+  EInputFieldType = EInputFieldType;
 
   useProminency: boolean = true;
   prominency: number = null;

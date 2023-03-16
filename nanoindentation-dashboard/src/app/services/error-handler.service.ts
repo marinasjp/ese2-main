@@ -6,13 +6,14 @@ import {CustomError, EErrorType} from "../models/error.model";
 })
 export class ErrorHandlerService {
 
-  private errors: CustomError[]; //Container for errors
+  private errors: CustomError[] = []; //Container for errors
   private errorID: -1;    //ID that counts up for each error found
 
   //New error that id added to the container
   public newError(err: any, errType: EErrorType) {
-    this.errors.push({id: this.errorID++, errType: errType, error: err, type:'customerror'}); //attatches 'customerror' typing to object
-    return {id: this.errorID++, errType: errType, error: err, type:'customerror'};
+    this.errors.push({id: this.errorID++, errType: errType, error: err, type:'customerror', message: err.message}); //attatches 'customerror' typing to object
+    //TODO: ADD USER POP UP
+    return this.errors[this.errors.length - 1 ];
   }
 
   //Retrieves error object by its ID

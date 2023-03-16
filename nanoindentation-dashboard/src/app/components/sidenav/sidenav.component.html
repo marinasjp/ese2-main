@@ -1,4 +1,4 @@
-<div class="sidenav" style="overflow-y: scroll; overflow-x: hidden">
+<div class="sidenav" style="overflow-y: auto; padding-bottom: 120px">
 
   <p-accordion [multiple]="true">
 
@@ -8,6 +8,8 @@
     <div class="mt-5 mb-2 px-2" *ngIf="!(graphService.selectedDatafile$|async).datasets.length">
       Other tabs can be used, once a file is uploaded.
     </div>
+
+
     <!-- Filtering Tab -->
     <app-filters-tab></app-filters-tab>
 
@@ -15,16 +17,24 @@
     <app-contact-point-tab></app-contact-point-tab>
 
     <!-- Force-Ind Tab -->
-    <app-force-ind-tab></app-force-ind-tab>
+    <!--    <app-force-ind-tab></app-force-ind-tab>-->
 
     <!-- Elasticity-Spectra Tab -->
-    <app-elisticity-spectra-tab></app-elisticity-spectra-tab>
+    <!--    <app-elisticity-spectra-tab></app-elisticity-spectra-tab>-->
 
     <!-- Downloads Tab -->
-    <app-download-tab></app-download-tab>
+    <!--    <app-download-tab></app-download-tab>-->
 
     <!-- Upload Code Tab -->
-    <app-custom-code-tab></app-custom-code-tab>
+    <!--    <app-custom-code-tab></app-custom-code-tab>-->
 
   </p-accordion>
+
+
+  <div class="recalculate-container px-3" *ngIf="processorService.showReCalculateButton">
+    <div class="mb-2">
+      Some Inputs changed. Curves not up-to-date
+    </div>
+    <p-button (click)="processorService.runFrom(EProcType.FILTER)" label="Update Curves"></p-button>
+  </div>
 </div>

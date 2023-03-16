@@ -1,3 +1,8 @@
 <p-accordionTab header="Download CSV" [disabled]="disabled">
-    <button pButton type="button" label="Download Graph 1" (click)="download()"></button>
-  </p-accordionTab>
+  <button pButton type="button" label="Download Force-Displacement" (click)="download(0)"></button>
+  <button pButton type="button" label="Download Force-Displacement (single)" (click)="download(1)"></button>
+  <button pButton type="button" label="Download Force-Indentation" (click)="download(2)"></button>
+  <button pButton type="button" label="Download Force-Indentation (single)" (click)="download(3)"></button>
+  <button pButton type="button" label="Download Elasticity-Spectra" (click)="download(4)"></button>
+  <button pButton type="button" label="Download Elasticity-Spectra (single)" (click)="download(5)"></button>
+</p-accordionTab>

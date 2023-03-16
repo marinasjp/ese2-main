@@ -6,4 +6,7 @@
               optionLabel="name">
   </p-dropdown>
 
+  <app-process-item *ngIf="processorService.selectedCPointProcess" [process]="processorService.selectedCPointProcess">
+  </app-process-item>
+
 </p-accordionTab>
