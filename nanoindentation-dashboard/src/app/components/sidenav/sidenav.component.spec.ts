@@ -3,6 +3,8 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { SidenavComponent } from './sidenav.component';
 import { GraphService } from '../../services/graph.service';
 import { ProcessorService } from '../../services/processor.service';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import {CommonModule} from "@angular/common";
 
 describe('SidenavComponent', () => {
   let component: SidenavComponent;
@@ -12,9 +14,12 @@ describe('SidenavComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule],
+      imports: [HttpClientTestingModule, CommonModule],
       declarations: [SidenavComponent],
       providers: [GraphService, ProcessorService],
+      schemas: [
+        CUSTOM_ELEMENTS_SCHEMA
+      ],
     }).compileComponents();
   });
 
@@ -60,7 +65,7 @@ describe('SidenavComponent', () => {
 //       providers:[ SidenavComponent ]
 //     }).compileComponents();
 
-    
+
 //   });
 
 //   it('should create', () => {

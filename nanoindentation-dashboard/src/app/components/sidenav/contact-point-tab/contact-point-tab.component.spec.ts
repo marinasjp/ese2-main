@@ -3,20 +3,26 @@ import { HttpClient, HttpHandler } from '@angular/common/http';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import {HttpClientModule} from '@angular/common/http';
 import {ContactPointTabComponent} from './contact-point-tab.component';
+import {CUSTOM_ELEMENTS_SCHEMA} from "@angular/core";
+import {CommonModule} from "@angular/common";
 
 describe('ContactPointTabComponent', () => {
   //let component: ContactPointTabComponent;
   //let fixture: ComponentFixture<ContactPointTabComponent>;
 
   beforeEach(async () => {
-    TestBed.configureTestingModule({
-      imports:[
-        HttpClientModule
+    await TestBed.configureTestingModule({
+      imports: [
+        HttpClientModule,
+        CommonModule
       ],
-      providers:[ContactPointTabComponent]
+      providers: [ContactPointTabComponent],
+      schemas: [
+        CUSTOM_ELEMENTS_SCHEMA
+      ],
     }).compileComponents();
 
-    
+
   });
 
   it('should create', () => {
@@ -25,5 +31,5 @@ describe('ContactPointTabComponent', () => {
     fixture.detectChanges();
     expect(component).toBeTruthy();
   });
-  
+
 });
