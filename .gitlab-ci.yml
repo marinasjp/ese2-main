@@ -1,20 +1,17 @@
-image: node:18.15.0-alpine
+image: 
 
 stages:
   - build
-  - test
-
-before_script:
-  - cd nanoindentation-dashboard
-  - npm ci
-  - export CHROME_BIN=/usr/bin/chromium-browser
+  - test  
 
 
 build:
-  image: marinasjp/ese2:latest
+  image: node:18.15.0-alpine
   stage: build
   script:
+    - cd nanoindentation-dashboard
     - npm ci
+    - export CHROME_BIN=/usr/bin/chromium-browser
   cache:
     paths:
       -  nanoindentation-dashboard/node_modules/
