@@ -4,8 +4,8 @@ import {UIChart} from "primeng/chart";
 import {Subscription} from "rxjs";
 import {saveAs} from 'file-saver';
 import {Papa} from 'papaparse';
-import 'chartjs-plugin-zoom';
 
+// import 'chartjs-plugin-zoom'; // TODO: FIX
 
 
 @Component({
@@ -24,11 +24,11 @@ export class GraphsComponent {
   graphOptions;
   displayError: boolean;
   errorMessage: string;
-  
+
   showErrorDialog(message) {
     this.errorMessage = message;
     this.displayError = true;
-}
+  }
 
   displacementForceFilteredDataMultiple: any;
   displacementForceFilteredDataSingle: any;
