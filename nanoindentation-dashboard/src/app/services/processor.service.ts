@@ -72,7 +72,7 @@ export class ProcessorService {
   }
 
   //container for selected Emodel processes
-  private _selectedEmodels: Process[] = null;
+  private _selectedEmodels: Process[] = [];
 
   //Setter for selected Emodel process (also runs Emodel process)
   public set selectedEmodels(processes: Process[]) {
@@ -86,7 +86,7 @@ export class ProcessorService {
   }
 
   //container for selected Fmodels processes
-  private _selectedFmodels: Process[] = null;
+  private _selectedFmodels: Process[] = [];
 
   //Setter for selected Fmodels process (also runs Fmodels process)
   public set selectedFmodels(processes: Process[]) {
@@ -148,8 +148,20 @@ export class ProcessorService {
       }
     ],
     cPoints: [//container for cPoints
+      {
+        id: 'autothresh', name: 'Auto-Threshold', procType: EProcType.CPOINT, custom: false, inputs: [
+          {name: 'Zero Range', type: EInputFieldType.NUMBER, selectedValue: 500}
+        ]
+      },
+      {id: 'gofSphere', name: 'GofSphere', procType: EProcType.CPOINT, custom: false, inputs: null},
       {id: 'rov', name: 'Rov', procType: EProcType.CPOINT, custom: false, inputs: null},
-      {id: 'stepAndDrift', name: 'Step and Drift', procType: EProcType.CPOINT, custom: false, inputs: null}
+      {
+        id: 'stepAndDrift', name: 'Step and Drift', procType: EProcType.CPOINT, custom: false, inputs: [
+          {name: 'Window', type: EInputFieldType.NUMBER, selectedValue: 101},
+          {name: 'Threshold', type: EInputFieldType.NUMBER, selectedValue: 10},
+          {name: 'ThRatio', type: EInputFieldType.NUMBER, selectedValue: 25}
+        ]
+      }
     ],
     eModels: [],//container for eModel
     fModels: [],//container for fModel,
@@ -322,6 +334,7 @@ export class ProcessorService {
 
     let resultPy: any;
     let result;
+
     try {
       if (arg) {
         resultPy = calculate(xAxis, yAxis, arg); //run function on the dataset
@@ -511,7 +524,7 @@ export class ProcessorService {
         }
         //@ts-expect-error
         case EProcType.EMODELS: {
-          if (!this.selectedEmodels.length) {
+          if (!this.selectedEmodels?.length) {
             break;
           }
           processChain = processChain.concat(this.selectedEmodels);
@@ -524,7 +537,7 @@ export class ProcessorService {
           processChain = processChain.concat(this.selectedFmodels);
         }
         case EProcType.TEST: {
-          if (!this.selectedTests.length) {
+          if (!this.selectedTests?.length) {
             break;
           }
           processChain = processChain.concat(this.selectedTests);

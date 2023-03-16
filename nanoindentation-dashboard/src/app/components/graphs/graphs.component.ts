@@ -48,8 +48,8 @@ export class GraphsComponent {
   }
 
   decimation = {
-    enabled: true,
-    algorithm: 'min-max',
+    // enabled: true,
+    // algorithm: 'min-max',
   };
 
   ngOnInit() {
