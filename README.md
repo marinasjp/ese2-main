@@ -8,26 +8,11 @@ Ciccone, G., Azevedo Gonzalez Oliva, M., Antonovaite, N., Lüchtefeld, I., Salme
 
 # Status
 
-When built, the website is able to take in experiment data and apply a set of filters to the data, calculate the contact point and the indentation and apply emodels and fmodels.
+The website is able to take in experiment data from a JSON file and display it in a set of graphs.
 
-# Team Organisation
-### Team Members
+You can apply a set of filters to the data (which can be stacked) and calculate the contact point and the indentation.
 
-- **Alex Markopoulou** -    2550454m@student.gla.ac.uk
-- **Raphael Nekam** - 2575686n@student.gla.ac.uk
-
-- **Kyle Watt** - 2555811w@student.gla.ac.uk
-
-- **Marina San Jose Pena** - 2569221s@student.gla.ac.uk
-
-- **Djan Tanova** - 2542341t@student.gla.ac.uk
-
-- **Anthony Rainey** - 2506467r@student.gla.ac.uk
-
-- **Alexander Lake** - 2576885l@student.gla.ac.uk
-***
-### Team Coach
-- **Tim Storer** - Timothy.Storer@glasgow.ac.uk
+Once you are done, you can download the graphs and the workspace (the values you set for all the filters and so on).
 
 # Installation
 
@@ -128,7 +113,26 @@ The second and third inputs are for setting the value of Elasticity-Spectra Mini
 
 
 # Support
-This project will not be maintained by the contributors to this repository. If there are any issues with the installation process, please contact any of us via email.
+This project will not be maintained by the contributors to this repository. If there are any issues with the installation process, please contact any of the team members via email.
+
+# Team Organisation
+### Team Members
+
+- **Alex Markopoulou** -    2550454m@student.gla.ac.uk
+- **Raphael Nekam** - 2575686n@student.gla.ac.uk
+
+- **Kyle Watt** - 2555811w@student.gla.ac.uk
+
+- **Marina San Jose Pena** - 2569221s@student.gla.ac.uk
+
+- **Djan Tanova** - 2542341t@student.gla.ac.uk
+
+- **Anthony Rainey** - 2506467r@student.gla.ac.uk
+
+- **Alexander Lake** - 2576885l@student.gla.ac.uk
+***
+### Team Coach
+- **Tim Storer** - Timothy.Storer@glasgow.ac.uk
 
 # License
 This project operates under the MIT license. This is an open-source license.
