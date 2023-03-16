@@ -1,4 +1,4 @@
-<div class="sidenav" style="overflow-y: scroll; overflow-x: hidden">
+<div class="sidenav" style="overflow-y: auto; padding-bottom: 120px">
 
   <p-accordion [multiple]="true">
 
@@ -27,4 +27,12 @@
     <app-custom-code-tab></app-custom-code-tab>
 
   </p-accordion>
+
+
+  <div class="recalculate-container px-3" *ngIf="processorService.showReCalculateButton">
+    <div class="mb-2">
+      Some Inputs changed. Curves not up-to-date
+    </div>
+    <p-button (click)="processorService.runFrom(EProcType.FILTER)" label="Update Curves"></p-button>
+  </div>
 </div>

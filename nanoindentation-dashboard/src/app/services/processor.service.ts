@@ -8,7 +8,7 @@ import {ErrorHandlerService} from "./error-handler.service";
 import {Datapoint} from "../models/datapoint.model";
 import {Dataset} from "../models/dataset.model";
 import {CustomError} from '../models/error.model';
-import { EInputFieldType, Input } from '../models/input.model';
+import {EInputFieldType, Input} from '../models/input.model';
 
 const PYODIDE_BASE_URL = 'https://cdn.jsdelivr.net/pyodide/v0.22.0/full/';
 
@@ -16,6 +16,8 @@ const PYODIDE_BASE_URL = 'https://cdn.jsdelivr.net/pyodide/v0.22.0/full/';
   providedIn: 'root'
 })
 export class ProcessorService {
+
+  showReCalculateButton: boolean = false;
 
   private _loading: BehaviorSubject<string[]>;
 
@@ -114,9 +116,19 @@ export class ProcessorService {
   //container for all available processes
   public availableProcesses: { filters: Process[], cPoints: Process[], eModels: Process[], fModels: Process[], internal: Process[], test: Process[] } = {
     filters: [ //Container for available filters
+      {
+        id: 'prominence',
+        name: 'Prominence',
+        procType: EProcType.FILTER,
+        custom: false,
+        inputs: [
+          {name: 'Band [% preak pos]', type: EInputFieldType.NUMBER, selectedValue: 30},
+          {name: 'Pro', type: EInputFieldType.NUMBER, selectedValue: 40},
+          {name: 'Threshold', type: EInputFieldType.NUMBER, selectedValue: 25}
+        ]
+      },
       {id: 'median', name: 'Median', procType: EProcType.FILTER, custom: false, inputs: null},
-      {id: 'savgol', name: 'Sawitzky Golay', procType: EProcType.FILTER, custom: false, inputs: null},
-      {id: 'linearDetrend', name: 'Linear Detrending', procType: EProcType.FILTER, custom: false, inputs: null},
+      {id: 'savgol', name: 'Sawitzky Golay', procType: EProcType.FILTER, custom: false, inputs: null}
     ],
     cPoints: [//container for cPoints
       {id: 'rov', name: 'Rov', procType: EProcType.CPOINT, custom: false, inputs: null},
@@ -125,24 +137,26 @@ export class ProcessorService {
     eModels: [],//container for eModel
     fModels: [],//container for fModel,
     internal: [
-      {id: 'calc_indentation', name: 'Calculating Indentation', procType: EProcType.INTERNAL, custom: false, 
-      inputs: 
-        [ //container for required user inputs
-          {name: "CP", selectedValue:null, type:EInputFieldType.DATAPOINT},
-          {name: "spring_constant", selectedValue: 1, type:EInputFieldType.NUMBER},
-          {name: "setzeroforce", selectedValue: true, type:EInputFieldType.BOOLEAN}          
-        ]
+      {
+        id: 'calc_indentation', name: 'Calculating Indentation', procType: EProcType.INTERNAL, custom: false,
+        inputs:
+          [ //container for required user inputs
+            {name: "CP", selectedValue: null, type: EInputFieldType.DATAPOINT},
+            {name: "spring_constant", selectedValue: 1, type: EInputFieldType.NUMBER},
+            {name: "setzeroforce", selectedValue: true, type: EInputFieldType.BOOLEAN}
+          ]
       },
-      {id: 'calc_elspectra', name: 'Calculating ElSpectra', procType: EProcType.INTERNAL, custom: false, 
-      inputs: 
-        [ //container for required user inputs
-          {name: "geometry", selectedValue:true, type:EInputFieldType.BOOLEAN},
-          {name: "radius", selectedValue:1, type:EInputFieldType.NUMBER},
-          {name: "win", selectedValue:100, type:EInputFieldType.NUMBER},
-          {name: "order", selectedValue:2, type:EInputFieldType.NUMBER},
-          {name: "interp", selectedValue:false, type:EInputFieldType.BOOLEAN}
-        ] // defaults: geometry='cylinder', radius=1, win=100, order=2, interp=False
-      } 
+      {
+        id: 'calc_elspectra', name: 'Calculating ElSpectra', procType: EProcType.INTERNAL, custom: false,
+        inputs:
+          [ //container for required user inputs
+            {name: "Tip Geometry", selectedValue: true, type: EInputFieldType.GEOMETRY},
+            {name: "Radius", selectedValue: 1, type: EInputFieldType.NUMBER},
+            {name: "Win", selectedValue: 100, type: EInputFieldType.NUMBER},
+            {name: "Order", selectedValue: 2, type: EInputFieldType.NUMBER},
+            {name: "Use Interpolation", selectedValue: false, type: EInputFieldType.BOOLEAN}
+          ] // defaults: geometry='cylinder', radius=1, win=100, order=2, interp=False
+      }
     ], // container for processes only run by the app but not selectable by the user
     test: []     //container for test processess
   }
@@ -176,6 +190,7 @@ export class ProcessorService {
         }
         default: {
           console.log("Could not find type");
+          // this.graphService.showErrorDialog("Could not find Process Type");
           throw new Error('ERROR: ProcType error'); //throw error if type isnt found
         }
       }
@@ -209,7 +224,7 @@ export class ProcessorService {
   }
 
   async initPy() { //initialise Pyodide
-    try{
+    try {
       loadPyodide({indexURL: PYODIDE_BASE_URL}).then((pyodide) => {
         globalThis.pyodide = pyodide;
         this.loading = ['pyodide initialized ✔', 'Initializing numpy...'];
@@ -221,8 +236,8 @@ export class ProcessorService {
           })
         })
       })
-    }catch(e: any){
-    this.errorHandlerService.Fatal(e); // catch error
+    } catch (e: any) {
+      this.errorHandlerService.Fatal(e); // catch error
     }
   }
 
@@ -388,25 +403,26 @@ export class ProcessorService {
             break;
         }
 
-        let inputArgs: any = currentProcess.inputs.map(input => {
+        let inputArgs: any = currentProcess?.inputs?.map(input => {
           if (input.type == EInputFieldType.DATAPOINT) {
             return [input.selectedValue.x, input.selectedValue.y] //convert Datapoint type to x and y array
           }
-          return input.selectedValue}); //map selected values onto inputarg
+          return input.selectedValue
+        }); //map selected values onto inputarg
 
         //INPUT CHECKING
-        if (currentProcess.inputs.length){ //if there are user inputs required check for null
-        inputArgs.forEach((input: any) => {
-          if (!input){ //if an input is set to be null and there are user inputs specified
-            return this.errorHandlerService.Fatal(new Error("InputError: input not given"));
-          }
-          return 0;
-        })
-      }
+        if (currentProcess?.inputs?.length) { //if there are user inputs required check for null
+          inputArgs.forEach((input: any) => {
+            if (!input) { //if an input is set to be null and there are user inputs specified
+              return this.errorHandlerService.Fatal(new Error("InputError: input not given"));
+            }
+            return 0;
+          })
+        }
 
         //run process on input datapoints
         let outputDatapoints: any;
-        if (inputArgs.length) {
+        if (inputArgs?.length) {
           outputDatapoints = this.runProcessScriptOnDatapoints(inputDatapoints, processScript, inputArgs);
         } else {
           outputDatapoints = this.runProcessScriptOnDatapoints(inputDatapoints, processScript);
@@ -441,6 +457,7 @@ export class ProcessorService {
       loadingMsgs[loadingMsgs.length - 1] = currentProcess.name + ' done ✔'
       this.runAll(processes); // recursive call
     })
+    this.showReCalculateButton = false;
   }
 
   //Runs all the processes from (and including) the process type specified
@@ -485,7 +502,6 @@ export class ProcessorService {
           throw new Error('ERROR: ProcType error'); //throw error if type isnt found
         }
       }
-      this.loading = ['Process Chain created ✔'];
       this.runAll(processChain); //runs the whole chain
     } catch (e: any) {
       return this.errorHandlerService.Fatal(e); //catch any errors as fatal errors

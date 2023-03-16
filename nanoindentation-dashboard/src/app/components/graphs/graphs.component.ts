@@ -4,6 +4,9 @@ import {UIChart} from "primeng/chart";
 import {Subscription} from "rxjs";
 import {saveAs} from 'file-saver';
 import {Papa} from 'papaparse';
+import 'chartjs-plugin-zoom';
+
+
 
 @Component({
   selector: 'app-graphs',
@@ -13,14 +16,19 @@ import {Papa} from 'papaparse';
 export class GraphsComponent {
   @ViewChild("displacementForceFilteredChartMultiple") displacementForceFilteredChartMultiple: UIChart;
   @ViewChild("displacementForceFilteredChartSingle") displacementForceFilteredChartSingle: UIChart;
-
   @ViewChild("indentationForceChartMultiple") indentationForceChartMultiple: UIChart;
   @ViewChild("indentationForceChartSingle") indentationForceChartSingle: UIChart;
-
   @ViewChild("elSpectraChartMultiple") elSpectraChartMultiple: UIChart;
   @ViewChild("elSpectraChartSingle") elSpectraChartSingle: UIChart;
 
   graphOptions;
+  displayError: boolean;
+  errorMessage: string;
+  
+  showErrorDialog(message) {
+    this.errorMessage = message;
+    this.displayError = true;
+}
 
   displacementForceFilteredDataMultiple: any;
   displacementForceFilteredDataSingle: any;
@@ -29,7 +37,7 @@ export class GraphsComponent {
   elSpectraDataMultiple: any;
   elSpectraDataSingle: any;
 
-
+  // UIChart.
   // datasets: { id: number, name: string, data: any, labels: any }[] = []
   // selectedDatasets: { id: number, name: string, data: any, labels: any }[] = []
 
@@ -89,6 +97,17 @@ export class GraphsComponent {
       plugins: {
         decimation: this.decimation,
         legend: {display: false},
+        zoom: {
+          zoom: {
+            wheel: {
+              enabled: true,
+            },
+            pinch: {
+              enabled: true
+            },
+            mode: 'xy',
+          }
+        }
       },
       scales: {
         x: {

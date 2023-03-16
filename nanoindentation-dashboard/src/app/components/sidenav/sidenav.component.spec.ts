@@ -1,9 +1,9 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { SidenavComponent } from './sidenav.component';
-import { GraphService } from '../../services/graph.service';
-import { ProcessorService } from '../../services/processor.service';
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
+import {HttpClientTestingModule} from '@angular/common/http/testing';
+import {SidenavComponent} from './sidenav.component';
+import {GraphService} from '../../services/graph.service';
+import {ProcessorService} from '../../services/processor.service';
+import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {CommonModule} from "@angular/common";
 
 describe('SidenavComponent', () => {
@@ -38,12 +38,12 @@ describe('SidenavComponent', () => {
   it('should upload raw data', () => {
     const spy = spyOn(graphService, 'uploadDataRaw');
     const file = new File([], 'test');
-    const event = { target: { files: [file] } }; // update event object
+    const event = {target: {files: [file]}}; // update event object
     graphService.uploadDataRaw(event.target.files[0]);
     expect(spy).toHaveBeenCalledWith(file); // update expected argument
   });
 
-  
+
 });
 
 // import { ComponentFixture, TestBed } from '@angular/core/testing';

@@ -1,5 +1,8 @@
 import {Component} from '@angular/core';
 import {GraphService} from "../../services/graph.service";
+import {ProcessorService} from "../../services/processor.service";
+import {EProcType} from "../../models/process.model";
+import {EGeometryType} from "../../models/geometry.model";
 
 @Component({
   selector: 'app-sidenav',
@@ -8,6 +11,9 @@ import {GraphService} from "../../services/graph.service";
 })
 export class SidenavComponent {
 
-  constructor(public graphService: GraphService) {
+  EProcType = EProcType;
+
+  constructor(public graphService: GraphService,
+              public processorService: ProcessorService) {
   }
 }
