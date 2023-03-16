@@ -331,10 +331,9 @@ export class ProcessorService {
       result = resultPy.toJs(); //translate result to JS
       result = {x: result[0], y: result[1]}; //map result onto container
 
-      // TODO: DJAN ADDS ERROR HANDLER
+      // If script returns [None, None], an error has been caught in the python code
       if (result.x == null || result.y == null) {
-        console.log('ERROR HAPPENED IN PYTHON');
-        return [];
+        throw new Error('CodeError: ERROR IN PYTHON SCRIPT');
       }
 
       if (result.x.length > 1 && result.y.length > 1) {
