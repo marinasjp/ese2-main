@@ -489,8 +489,6 @@ export class ProcessorService {
           throw Error('ERROR: ProcType error'); //throw error if type isnt found
         }
       }
-      this.loading = ['Process Chain created ✔'];
-      console.log(processChain);
       this.runAll(processChain); //runs the whole chain
     } catch (e: any) {
       return this.errorHandlerService.Fatal(e); //catch any errors as fatal errors
