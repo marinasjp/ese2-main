@@ -8,7 +8,7 @@ Ciccone, G., Azevedo Gonzalez Oliva, M., Antonovaite, N., Lüchtefeld, I., Salme
 
 # Status
 
-The website is able to take in experiment data from a JSON file and display it in a set of graphs.
+The website is able to take in experiment data from a Txt or JPK-Force-Map file and display it in a set of graphs.
 
 You can apply a set of filters to the data (which can be stacked) and calculate the contact point and the indentation.
 
@@ -71,6 +71,11 @@ The page can be visited on http://localhost:4200/.
 
 The backend is built on Flask and is used for the AFMFormats library. 
 To install these, a tutorial can be found here: https://docs.python.org/3/installing/index.html.
+
+```console
+foo@bar:~$ cd /ese2-main/
+foo@bar:~$ pip install flask flask-cors afmformats
+```
 
 Run the Server.py file in the root directory of the project. This will enable the backend which is required for the processing of AFMFormats.
 
