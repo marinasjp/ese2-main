@@ -2,6 +2,8 @@ import {Component, ViewChild} from '@angular/core';
 import {GraphService} from '../../services/graph.service';
 import {UIChart} from "primeng/chart";
 import {Subscription} from "rxjs";
+import {saveAs} from 'file-saver';
+import {Papa} from 'papaparse';
 
 @Component({
   selector: 'app-graphs',
@@ -112,11 +114,45 @@ export class GraphsComponent {
     };
   }
 
+  checkContrast(colorA, colorB) {
+    const foregroundLumiance = this.luminance(colorA);
+    const backgroundLuminance = this.luminance(colorB);
+    return backgroundLuminance < foregroundLumiance
+      ? ((backgroundLuminance + 0.05) / (foregroundLumiance + 0.05))
+      : ((foregroundLumiance + 0.05) / (backgroundLuminance + 0.05));
+  }
+
+  luminance(rgb) {
+    const [r, g, b] = rgb.map((v) => {
+      v /= 255;
+      return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+    });
+    return r * 0.2126 + g * 0.7152 + b * 0.0722;
+  }
+
+  getRBGfromHex(hex: string) {
+    hex = hex.slice(1);
+    const value = parseInt(hex, 16);
+    const r = (value >> 16) & 255;
+    const g = (value >> 8) & 255;
+    const b = value & 255;
+
+    return [r, g, b];
+  }
+
   getNewData(): any {
+    let borderColor: string = null;
+    let background: string = '#121212';
+
+    do {
+      borderColor = '#' + (0x1000000 + Math.random() * 0x00ff00).toString(16).substr(1, 6);
+    }
+    while (this.checkContrast(this.getRBGfromHex(borderColor), this.getRBGfromHex(background)) > 0.3);
+
     return {
       data: [],
       fill: false,
-      borderColor: '#' + (0x1000000 + Math.random() * 0x00ff00).toString(16).substr(1, 6),
+      borderColor: borderColor,
       tension: .4
     }
   }
@@ -186,14 +222,12 @@ export class GraphsComponent {
       datasets: []
     };
     for (let dataset of this.graphService.selectedDatafile.datasets) {
-      // console.log(dataset.elspectraData);
       this.elSpectraDataMultiple.datasets.push(this.getNewData());
       this.elSpectraDataMultiple.datasets[this.elSpectraDataMultiple.datasets.length - 1].data = dataset.elspectraData;
     }
     if (this.elSpectraChartMultiple) {
       this.elSpectraChartMultiple.reinit();
     }
-    console.log(this.elSpectraDataMultiple);
   }
 
   setElSpectraSingle(): void {
