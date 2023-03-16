@@ -14,6 +14,7 @@ export class ErrorHandlerService {
   //New error that id added to the container
   public newError(err: any, errType: EErrorType) {
     this.errors.push({id: this.errorID++, errType: errType, error: err, type:'customerror', message: err.message}); //attatches 'customerror' typing to object
+    //TODO: ADD USER POP UP
     return this.errors[this.errors.length - 1 ];
   }
 

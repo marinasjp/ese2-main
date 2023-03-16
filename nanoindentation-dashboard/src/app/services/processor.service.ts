@@ -9,6 +9,7 @@ import {Datapoint} from "../models/datapoint.model";
 import {Dataset} from "../models/dataset.model";
 import {CustomError} from '../models/error.model';
 import {EInputFieldType} from '../models/input.model';
+import {WrittenProcesses} from 'src/environments/environment.prod';
 
 const PYODIDE_BASE_URL = 'https://cdn.jsdelivr.net/pyodide/v0.22.0/full/';
 
@@ -72,7 +73,7 @@ export class ProcessorService {
   }
 
   //container for selected Emodel processes
-  private _selectedEmodels: Process[] = null;
+  private _selectedEmodels: Process[] = [];
 
   //Setter for selected Emodel process (also runs Emodel process)
   public set selectedEmodels(processes: Process[]) {
@@ -86,7 +87,7 @@ export class ProcessorService {
   }
 
   //container for selected Fmodels processes
-  private _selectedFmodels: Process[] = null;
+  private _selectedFmodels: Process[] = [];
 
   //Setter for selected Fmodels process (also runs Fmodels process)
   public set selectedFmodels(processes: Process[]) {
@@ -112,71 +113,11 @@ export class ProcessorService {
   public get selectedTests(): Process[] {
     return this._selectedTests;
   }
-
-  //container for all available processes
-  public availableProcesses: { filters: Process[], cPoints: Process[], eModels: Process[], fModels: Process[], internal: Process[], test: Process[] } = {
-    filters: [ //Container for available filters
-      {
-        id: 'linearDetrend',
-        name: 'Linear Detrend',
-        procType: EProcType.FILTER,
-        custom: false
-      },
-      {
-        id: 'median',
-        name: 'Median',
-        procType: EProcType.FILTER,
-        custom: false,
-        inputs: [{name: 'Window', type: EInputFieldType.NUMBER, selectedValue: 25}]
-      },
-      {
-        id: 'prominence',
-        name: 'Prominence',
-        procType: EProcType.FILTER,
-        custom: false,
-        inputs: [
-          {name: 'Band [% preak pos]', type: EInputFieldType.NUMBER, selectedValue: 30},
-          {name: 'Pro', type: EInputFieldType.NUMBER, selectedValue: 40},
-          {name: 'Threshold', type: EInputFieldType.NUMBER, selectedValue: 25}
-        ]
-      },
-      {
-        id: 'savgol', name: 'Sawitzky Golay', procType: EProcType.FILTER, custom: false, inputs: [
-          {name: 'Window', type: EInputFieldType.NUMBER, selectedValue: 25},
-          {name: 'Order', type: EInputFieldType.NUMBER, selectedValue: 3}
-        ]
-      }
-    ],
-    cPoints: [//container for cPoints
-      {id: 'rov', name: 'Rov', procType: EProcType.CPOINT, custom: false, inputs: null},
-      {id: 'stepAndDrift', name: 'Step and Drift', procType: EProcType.CPOINT, custom: false, inputs: null}
-    ],
-    eModels: [],//container for eModel
-    fModels: [],//container for fModel,
-    internal: [
-      {
-        id: 'calc_indentation', name: 'Calculating Indentation', procType: EProcType.INTERNAL, custom: false,
-        inputs:
-          [ //container for required user inputs
-            {name: "CP", selectedValue: null, type: EInputFieldType.DATAPOINT},
-            {name: "spring_constant", selectedValue: 1, type: EInputFieldType.NUMBER},
-            {name: "setzeroforce", selectedValue: true, type: EInputFieldType.BOOLEAN}
-          ]
-      },
-      {
-        id: 'calc_elspectra', name: 'Calculating ElSpectra', procType: EProcType.INTERNAL, custom: false,
-        inputs:
-          [ //container for required user inputs
-            {name: "Tip Geometry", selectedValue: true, type: EInputFieldType.GEOMETRY},
-            {name: "Radius", selectedValue: 1, type: EInputFieldType.NUMBER},
-            {name: "Win", selectedValue: 100, type: EInputFieldType.NUMBER},
-            {name: "Order", selectedValue: 2, type: EInputFieldType.NUMBER},
-            {name: "Use Interpolation", selectedValue: false, type: EInputFieldType.BOOLEAN}
-          ] // defaults: geometry='cylinder', radius=1, win=100, order=2, interp=False
-      }
-    ], // container for processes only run by the app but not selectable by the user
-    test: []     //container for test processess
-  }
+  
+  private rootPath: string = 'assets/Processes/'; //path of process scripts
+  
+  //container for all available processes (Default set as the processes stored in the environment)
+  public availableProcesses: { filters: Process[], cPoints: Process[], eModels: Process[], fModels: Process[], internal: Process[], test: Process[] } = WrittenProcesses;
 
   public addProcess(process: Process) { //adds a process definition to the data struct
     try {
@@ -216,8 +157,6 @@ export class ProcessorService {
       return this.errorHandlerService.Fatal(e); //catch any errors
     }
   };
-
-  private rootPath: string = 'assets/Processes/'; //path of process scripts
 
   private _processedData: { x: number[], y: number[] };//container for most recent processed dataset
 
@@ -322,6 +261,7 @@ export class ProcessorService {
 
     let resultPy: any;
     let result;
+
     try {
       if (arg) {
         resultPy = calculate(xAxis, yAxis, arg); //run function on the dataset
@@ -515,7 +455,7 @@ export class ProcessorService {
         }
         //@ts-expect-error
         case EProcType.EMODELS: {
-          if (!this.selectedEmodels.length) {
+          if (!this.selectedEmodels?.length) {
             break;
           }
           processChain = processChain.concat(this.selectedEmodels);
@@ -528,7 +468,7 @@ export class ProcessorService {
           processChain = processChain.concat(this.selectedFmodels);
         }
         case EProcType.TEST: {
-          if (!this.selectedTests.length) {
+          if (!this.selectedTests?.length) {
             break;
           }
           processChain = processChain.concat(this.selectedTests);
