@@ -61,7 +61,6 @@
     </p-chart>
   </div>
 
-  <p-button (click)="errorHandler.RetryFailed(3)" icon="pi pi-external-link" label="Show"></p-button>
   <p-dialog header="Error Caught" [(visible)]="errorHandler.dialogShown" [modal]="true" [style]="{width: '50vw'}"
       [draggable]="false" [resizable]="false">
       <p class="m-0">{{this.errorHandler.errorMessage}}</p>
