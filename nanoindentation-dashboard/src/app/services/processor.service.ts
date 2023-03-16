@@ -73,7 +73,7 @@ export class ProcessorService {
   }
 
   //container for selected Emodel processes
-  private _selectedEmodels: Process[] = null;
+  private _selectedEmodels: Process[] = [];
 
   //Setter for selected Emodel process (also runs Emodel process)
   public set selectedEmodels(processes: Process[]) {
@@ -87,7 +87,7 @@ export class ProcessorService {
   }
 
   //container for selected Fmodels processes
-  private _selectedFmodels: Process[] = null;
+  private _selectedFmodels: Process[] = [];
 
   //Setter for selected Fmodels process (also runs Fmodels process)
   public set selectedFmodels(processes: Process[]) {
@@ -261,6 +261,7 @@ export class ProcessorService {
 
     let resultPy: any;
     let result;
+
     try {
       if (arg) {
         resultPy = calculate(xAxis, yAxis, arg); //run function on the dataset
@@ -454,7 +455,7 @@ export class ProcessorService {
         }
         //@ts-expect-error
         case EProcType.EMODELS: {
-          if (!this.selectedEmodels.length) {
+          if (!this.selectedEmodels?.length) {
             break;
           }
           processChain = processChain.concat(this.selectedEmodels);
@@ -467,7 +468,7 @@ export class ProcessorService {
           processChain = processChain.concat(this.selectedFmodels);
         }
         case EProcType.TEST: {
-          if (!this.selectedTests.length) {
+          if (!this.selectedTests?.length) {
             break;
           }
           processChain = processChain.concat(this.selectedTests);
