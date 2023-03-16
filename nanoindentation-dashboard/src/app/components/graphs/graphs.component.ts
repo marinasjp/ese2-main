@@ -3,9 +3,6 @@ import {GraphService} from '../../services/graph.service';
 import {UIChart} from "primeng/chart";
 import {Subscription} from "rxjs";
 import {saveAs} from 'file-saver';
-import {Papa} from 'papaparse';
-
-// import 'chartjs-plugin-zoom'; // TODO: FIX
 
 
 @Component({
