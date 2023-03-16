@@ -1,8 +1,5 @@
 <p-accordionTab header="Download CSV" [disabled]="disabled">
-  <button pButton type="button" label="Download Force-Displacement" (click)="download(0)"></button>
-  <button pButton type="button" label="Download Force-Displacement (single)" (click)="download(1)"></button>
-  <button pButton type="button" label="Download Force-Indentation" (click)="download(2)"></button>
-  <button pButton type="button" label="Download Force-Indentation (single)" (click)="download(3)"></button>
-  <button pButton type="button" label="Download Elasticity-Spectra" (click)="download(4)"></button>
-  <button pButton type="button" label="Download Elasticity-Spectra (single)" (click)="download(5)"></button>
+  <p-dropdown [options]="graphOptions" [(ngModel)]="selectedGraph" optionLabel="name"></p-dropdown><br>
+  <p-dropdown [options]="graphSingle" [(ngModel)]="selectedSingle" optionLabel="name"></p-dropdown><br><br>
+  <button pButton type="button" label="Download" (click)="download()"></button>
 </p-accordionTab>
