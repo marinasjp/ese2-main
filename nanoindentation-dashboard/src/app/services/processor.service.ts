@@ -70,31 +70,45 @@ export class ProcessorService {
   }
 
   //container for selected Emodel processes
-  private _selectedEmodels: Process = null;
+  private _selectedEmodels: Process[] = null;
 
   //Setter for selected Emodel process (also runs Emodel process)
-  public set selectedEmodels(process: Process) {
-    this._selectedCPointProcess = process;
+  public set selectedEmodels(processes: Process[]) {
+    this._selectedEmodels = processes;
     this.runFrom(EProcType.EMODELS);//when Emodel process is changed, calculate Emodel
   }
 
   //Getter for selected Emodels process
-  public get selectedEmodels(): Process {
+  public get selectedEmodels(): Process[] {
     return this._selectedEmodels;
   }
 
   //container for selected Fmodels processes
-  private _selectedFmodels: Process = null;
+  private _selectedFmodels: Process[] = null;
 
   //Setter for selected Fmodels process (also runs Fmodels process)
-  public set selectedFmodels(process: Process) {
-    this._selectedCPointProcess = process;
+  public set selectedFmodels(processes: Process[]) {
+    this._selectedFmodels = processes;
     this.runFrom(EProcType.FMODELS);//when Fmodels process is changed, calculate Fmodels
   }
 
   //Getter for selected Fmodels process
-  public get selectedFmodels(): Process {
+  public get selectedFmodels(): Process[] {
     return this._selectedFmodels;
+  }
+
+    //container for selected Test processes
+  private _selectedTests: Process[] = null;
+
+  //Setter for selected test process (also runs test processes)
+  public set selectedTests(processes: Process[]) {
+    this._selectedTests = processes;
+    this.runFrom(EProcType.TEST);//when Test processes are changed, calculate all from Tests
+  }
+
+  //Getter for selected Fmodels process
+  public get selectedTests(): Process[] {
+    return this._selectedTests;
   }
 
   //container for all available processes
@@ -162,7 +176,7 @@ export class ProcessorService {
         }
         default: {
           console.log("Could not find type");
-          throw Error('ERROR: ProcType error'); //throw error if type isnt found
+          throw new Error('ERROR: ProcType error'); //throw error if type isnt found
         }
       }
       return this.availableProcesses;
@@ -255,7 +269,7 @@ export class ProcessorService {
           break;
         }
         default: {
-          throw Error('ERROR: ProcType error'); //throw error if type isnt found
+          throw new Error('ERROR: ProcType error'); //throw error if type isnt found
         }
       }
       procPath += process.id + '.py'; //add file name to path to get path to file
@@ -275,21 +289,26 @@ export class ProcessorService {
     let calculate = globalThis.pyodide.globals.get('calculate'); //map the function from the global variables onto 'calculate'
 
     let resultPy: any;
-
-    if (arg) {
-      resultPy = calculate(xAxis, yAxis, arg); //run function on the dataset
-    } else {
-      resultPy = calculate(xAxis, yAxis); //run function on the dataset
+    let result;
+    try{
+      if (arg) {
+        resultPy = calculate(xAxis, yAxis, arg); //run function on the dataset
+      } else {
+        resultPy = calculate(xAxis, yAxis); //run function on the dataset
+      }
+      result = resultPy.toJs(); //translate result to JS
+      result = {x: result[0], y: result[1]}; //map result onto container
+      if (result.x.length > 1 && result.y.length > 1) {
+        result = this.convertXAndYArrayToDatapointsArray(result);
+      } else {
+        result = result as Datapoint
+      }
+      resultPy.destroy();//free the function used
+    }catch(e:any){
+      result = this.errorHandlerService.Fatal(e); //record any error
+    }finally{
+      return result; //might return Error
     }
-    let result = resultPy.toJs(); //translate result to JS
-    result = {x: result[0], y: result[1]}; //map result onto container
-    if (result.x.length > 1 && result.y.length > 1) {
-      result = this.convertXAndYArrayToDatapointsArray(result);
-    } else {
-      result = result as Datapoint
-    }
-    resultPy.destroy();//free the function used
-    return result;
   }
 
   convertDatapointsArrayToXAndYArray(datapoints: Datapoint[]): { x: number[], y: number[] } {
@@ -304,7 +323,7 @@ export class ProcessorService {
     return {x: x, y: y};
   }
 
-  convertXAndYArrayToDatapointsArray(input: { x: number[], y: number[] }): Datapoint[] | Datapoint {
+  convertXAndYArrayToDatapointsArray(input: { x: number[], y: number[] }): Datapoint[] | CustomError {
     let datapoints: Datapoint[] = [];
 
     if (input.x.length == input.y.length) {
@@ -315,12 +334,11 @@ export class ProcessorService {
       return datapoints;
     }
 
-    console.log('ERROR: X AND Y AXIS ARE NOT OF EQUAL LENGTH')
-    return [];
+    return this.errorHandlerService.Fatal(Error('DataInputError: X AND Y AXIS ARE NOT OF EQUAL LENGTH'));
   }
 
   //given a list of processes, recursively runs them and stores the output in graphs
-  runAll(processes: Process[]): any {
+  private runAll(processes: Process[]): any {
 
     if (processes.length == 0) { // base case
       // FINISHED
@@ -337,7 +355,7 @@ export class ProcessorService {
     let getScriptPromise: Promise<string> | CustomError = this.getScript(currentProcess); //get script of process
 
     if (!(getScriptPromise instanceof Promise<string>)) {//if a promise is not returned
-      console.log('ERROR: Script could not be obtained');
+      getScriptPromise.message = 'ERROR: Script could not be obtained'; //set error message
       return getScriptPromise; //do smth to show that it's an error
     }
 
@@ -358,9 +376,6 @@ export class ProcessorService {
             if (currentProcess.id == 'calc_indentation') {
               inputDatapoints = dataset.displacementForceFilteredData;
               currentProcess.inputs[0].selectedValue = dataset.contactPoint; //set CP in dataset to be the value
-              
-            /*inputArgs.push(dataset.contactPoint.x);
-              inputArgs.push(dataset.contactPoint.y);*/
             } else if (currentProcess.id == 'calc_elspectra') {
               inputDatapoints = dataset.displacementForceFilteredData;
             }
@@ -383,7 +398,7 @@ export class ProcessorService {
         if (currentProcess.inputs.length){ //if there are user inputs required check for null
         inputArgs.forEach((input: any) => {
           if (!input){ //if an input is set to be null and there are user inputs specified
-            return this.errorHandlerService.Fatal(Error("InputError: input not given"));
+            return this.errorHandlerService.Fatal(new Error("InputError: input not given"));
           }
           return 0;
         })
@@ -448,28 +463,26 @@ export class ProcessorService {
         }
         //@ts-expect-error
         case EProcType.INTERNAL: {
-          if (!this.availableProcesses.internal.length) {
-            break;
-          }
+          if (!this.availableProcesses.internal.length) {break;}
           processChain = processChain.concat(this.availableProcesses.internal);
         }
         //@ts-expect-error
         case EProcType.EMODELS: {
-          //if(!this.selectedEmodels.length){break;}
-          //processChain = processChain.concat(this.selectedEmodels);
+          if(!this.selectedEmodels.length){break;}
+          processChain = processChain.concat(this.selectedEmodels);
         }
         //@ts-expect-error
         case EProcType.FMODELS: {
-          //if(!this.selectedFmodels.length){break;}
-          //processChain = processChain.concat(this.selectedFmodels);
+          if(!this.selectedFmodels.length){break;}
+          processChain = processChain.concat(this.selectedFmodels);
         }
         case EProcType.TEST: {
-          //if(!this.selectedTests.length){break;}
-          //processChain = processChain.concat(this.selectedTests);
+          if(!this.selectedTests.length){break;}
+          processChain = processChain.concat(this.selectedTests);
           break;
         }
         default: {
-          throw Error('ERROR: ProcType error'); //throw error if type isnt found
+          throw new Error('ERROR: ProcType error'); //throw error if type isnt found
         }
       }
       this.loading = ['Process Chain created ✔'];
