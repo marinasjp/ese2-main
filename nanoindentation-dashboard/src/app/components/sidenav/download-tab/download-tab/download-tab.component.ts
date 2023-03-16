@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
 import { saveAs } from 'file-saver';
-import  Papa  from 'papaparse';
+//import Papa from 'papaparse';
+import { Datapoint } from 'src/app/models/datapoint.model';
 import { GraphService } from 'src/app/services/graph.service';
+import { ProcessorService } from 'src/app/services/processor.service';
 
 @Component({
   selector: 'app-download-tab',
@@ -10,7 +12,7 @@ import { GraphService } from 'src/app/services/graph.service';
 })
 
 export class DownloadTabComponent {
-  constructor(public graphService: GraphService) {
+  constructor(public graphService: GraphService, public processorService: ProcessorService) {
     this.graphService.selectedDatafile$.subscribe((datafile) => {
       if (datafile.datasets.length) {
         this.disabled = false;
@@ -22,20 +24,52 @@ export class DownloadTabComponent {
 
   disabled: boolean = true;
   download(): any {
-    const data = this.graphService.selectedDatafile.datasets;
-    const stringifiedData = [];
-    
-    for (let i = 0; i < data.length; i++) {
-      const stringifiedObject = JSON.stringify(data[i]);
-      stringifiedData.push([stringifiedObject]);
-    }
-    
-    console.log(stringifiedData); // Check the output in the console
-    
-    // You can then do what you need to do with the stringified data
-    // For example, you can save it to a CSV file using PapaParse:
-    
-    const csv = Papa.unparse(stringifiedData);
+    let data: Datapoint[][] = [];
+    this.graphService.selectedDatafile.datasets.forEach((dataset => {
+      data.push(dataset.displacementForceData)
+    }))
+    console.log(data)
+
+
+    let xArray: number[] = [];
+  let yArray: number[] = [];
+
+  for (let i = 0; i < data.length; i++) {
+    const ConvertedData = this.processorService.convertDatapointsArrayToXAndYArray(data[i]);
+    console.log(ConvertedData)
+    xArray.push(...ConvertedData.x);
+    yArray.push(...ConvertedData.y);
+  }
+
+  let csvString: string = 'x,y\n';
+
+  for (let i = 0; i < xArray.length; i++) {
+    csvString += `${xArray[i]},${yArray[i]}\n`;
+  }
+
+  console.log(csvString); // Check the output in the console
+
+  const csv = csvString;
+
+
+    //const ConvertedData = this.processorService.convertDatapointsArrayToXAndYArray(data[0]);
+    //console.log(ConvertedData)
+    // let stringifiedData: string;
+    // let xString: string = '';
+    // let yString: string = '';
+    // console.log(data.length)
+    // for (let i = 0; i < data.length; i++) {
+    //   const ConvertedData = this.processorService.convertDatapointsArrayToXAndYArray(data[i]);
+    //   console.log(ConvertedData)
+    //   xString += ', ' + ConvertedData.x;
+    //   yString += ', ' + ConvertedData.y;
+    // }
+
+    // stringifiedData = '{x: [' + xString + '], y: [' + yString + ']} \r\n';
+
+    // console.log(stringifiedData); // Check the output in the console
+
+    // const csv = stringifiedData;
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     saveAs(blob, 'data.csv');
   }

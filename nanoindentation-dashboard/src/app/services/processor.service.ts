@@ -195,17 +195,21 @@ export class ProcessorService {
   }
 
   async initPy() { //initialise Pyodide
-    loadPyodide({indexURL: PYODIDE_BASE_URL}).then((pyodide) => {
-      globalThis.pyodide = pyodide;
-      this.loading = ['pyodide initialized ✔', 'Initializing numpy...'];
-      globalThis.pyodide.loadPackage(['numpy']).then(() => {
-        this.loading = ['pyodide initialized ✔', 'numpy initialized ✔', 'Initializing scipy...'];
-        globalThis.pyodide.loadPackage(['scipy']).then(() => {
-          this.loading = ['pyodide initialized ✔', 'numpy initialized ✔', 'scipy initialized ✔'];
-          this.loading = [];
+    try{
+      loadPyodide({indexURL: PYODIDE_BASE_URL}).then((pyodide) => {
+        globalThis.pyodide = pyodide;
+        this.loading = ['pyodide initialized ✔', 'Initializing numpy...'];
+        globalThis.pyodide.loadPackage(['numpy']).then(() => {
+          this.loading = ['pyodide initialized ✔', 'numpy initialized ✔', 'Initializing scipy...'];
+          globalThis.pyodide.loadPackage(['scipy']).then(() => {
+            this.loading = ['pyodide initialized ✔', 'numpy initialized ✔', 'scipy initialized ✔'];
+            this.loading = [];
+          })
         })
       })
-    })
+    }catch(e: any){
+    this.errorHandlerService.Fatal(e); // catch error
+    }
   }
 
   //Uses the given process name and processes path to give the script
@@ -333,7 +337,7 @@ export class ProcessorService {
     let getScriptPromise: Promise<string> | CustomError = this.getScript(currentProcess); //get script of process
 
     if (!(getScriptPromise instanceof Promise<string>)) {//if a promise is not returned
-      console.log('ERROR: Script could not be obtained')
+      console.log('ERROR: Script could not be obtained');
       return getScriptPromise; //do smth to show that it's an error
     }
 
@@ -437,8 +441,8 @@ export class ProcessorService {
         } //fallthrough to the next procType
         //@ts-expect-error
         case EProcType.CPOINT: {
-          if (!this.selectedCPointProcess) {
-            break;
+          if (!this.selectedCPointProcess) {//if there are no selected process of the type
+            break;  //skip
           }
           processChain.push(this.selectedCPointProcess);
         }
@@ -469,7 +473,7 @@ export class ProcessorService {
         }
       }
       this.loading = ['Process Chain created ✔'];
-      this.runAll(processChain);
+      this.runAll(processChain); //runs the whole chain
     } catch (e: any) {
       return this.errorHandlerService.Fatal(e); //catch any errors as fatal errors
     }

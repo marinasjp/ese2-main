@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import {HttpClientModule} from '@angular/common/http';
 import { DownloadTabComponent } from './download-tab.component';
 import {CUSTOM_ELEMENTS_SCHEMA} from "@angular/core";
 import {HttpClientModule} from "@angular/common/http";
@@ -19,14 +19,13 @@ describe('DownloadTabComponent', () => {
         CUSTOM_ELEMENTS_SCHEMA
       ],
     })
-    .compileComponents();
-
-    fixture = TestBed.createComponent(DownloadTabComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+      .compileComponents();
   });
 
   it('should create', () => {
+    const fixture = TestBed.createComponent(DownloadTabComponent);
+    const component = fixture.componentInstance;
+    fixture.detectChanges();
     expect(component).toBeTruthy();
   });
 });

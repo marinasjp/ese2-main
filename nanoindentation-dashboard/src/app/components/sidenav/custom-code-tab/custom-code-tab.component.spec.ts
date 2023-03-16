@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import {HttpClientModule} from '@angular/common/http';
 import { CustomCodeTabComponent } from './custom-code-tab.component';
 import {CUSTOM_ELEMENTS_SCHEMA} from "@angular/core";
 import {HttpClientModule} from "@angular/common/http";
@@ -19,14 +19,13 @@ describe('CustomCodeTabComponent', () => {
         CUSTOM_ELEMENTS_SCHEMA
       ],
     })
-    .compileComponents();
-
-    fixture = TestBed.createComponent(CustomCodeTabComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+      .compileComponents();
   });
 
   it('should create', () => {
+    const fixture = TestBed.createComponent(CustomCodeTabComponent);
+    const component = fixture.componentInstance;
+    fixture.detectChanges();
     expect(component).toBeTruthy();
   });
 });
