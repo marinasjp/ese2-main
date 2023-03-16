@@ -4,6 +4,8 @@ import Papa from 'papaparse';
 import { Datapoint } from 'src/app/models/datapoint.model';
 import { GraphService } from 'src/app/services/graph.service';
 import { ProcessorService } from 'src/app/services/processor.service';
+import { GraphNumber } from 'src/app/models/graphNumber.model';
+import { GraphSingle } from 'src/app/models/graphSingle.model';
 
 @Component({
   selector: 'app-download-tab',
@@ -12,6 +14,11 @@ import { ProcessorService } from 'src/app/services/processor.service';
 })
 
 export class DownloadTabComponent {
+  graphOptions: GraphNumber[];
+  selectedGraph: GraphNumber;
+  graphSingle: GraphSingle[];
+  selectedSingle: GraphSingle;
+
   constructor(public graphService: GraphService, public processorService: ProcessorService) {
     this.graphService.selectedDatafile$.subscribe((datafile) => {
       if (datafile.datasets.length) {
@@ -20,34 +27,43 @@ export class DownloadTabComponent {
         this.disabled = true;
       }
     })
+    this.graphOptions = [
+      {name: "Force Displacement", no: 1},
+      {name: "Force Indentation", no: 2},
+      {name: "Elasticity Spectra", no: 3}
+    ]
+    this.graphSingle = [
+      {name: "Multiple Curves", single: false},
+      {name: "Single Curve", single: true},
+    ]
   }
 
   disabled: boolean = true;
-  download(value: number): any {
+  download(): any {
      
     let Filename;
     console.log(this.graphService.sliderValue)
 
     let data: Datapoint[][] = [];
-    if (value == 0){    //Force-Displacement 
+    if (this.selectedGraph.no==1 && this.selectedSingle.single==false){    //Force-Displacement 
     Filename = "Force-Displacement.csv";
     this.graphService.selectedDatafile.datasets.forEach((dataset => {
       data.push(dataset.displacementForceData)
     }))
-  } else if (value == 1){ //Force-Displacement (single)
+  } else if (this.selectedGraph.no==1 && this.selectedSingle.single==true){ //Force-Displacement (single)
       Filename = "Force-Displacement (Single).csv"
       data.push(this.graphService.selectedDatafile.datasets[this.graphService.sliderValue].displacementForceData)
       
-  }else if (value == 2){ //Force-Indentation 
+  }else if (this.selectedGraph.no==2 && this.selectedSingle.single==false){ //Force-Indentation 
     Filename = "Force-Indentation.csv"
     this.graphService.selectedDatafile.datasets.forEach((dataset => {
       data.push(dataset.indentationForceData)
     }))
-  }else if (value == 3){ //Force-Indentation (single)
+  }else if (this.selectedGraph.no==2 && this.selectedSingle.single==true){ //Force-Indentation (single)
     Filename = "Force-Indentation (Single).csv"
     data.push(this.graphService.selectedDatafile.datasets[this.graphService.sliderValue].indentationForceData)
       
-  }else if (value == 4){ // Elasticity-Spectra
+  }else if (this.selectedGraph.no==3 && this.selectedSingle.single==false){ // Elasticity-Spectra
     Filename = "Elasticity-Spectra.csv"
     this.graphService.selectedDatafile.datasets.forEach((dataset => {
       data.push(dataset.elspectraData)
