@@ -32,14 +32,18 @@ export class GraphsComponent {
   displayError: boolean;
   errorMessage: string;
   displayTutorial: boolean;
+<<<<<<< HEAD
   displayTutorial2: boolean;
   displayTutorial3: boolean;
+=======
+>>>>>>> a2698e0f6620aac66b58dfce21f5eb8feae912ec
 
   showErrorDialog(message) {
     this.errorMessage = message;
     this.displayError = true;
   }
   showTutorial() {
+<<<<<<< HEAD
     this.displayTutorial2 = false;
     this.displayTutorial = true;
   }
@@ -52,6 +56,10 @@ export class GraphsComponent {
     this.displayTutorial2 = false;
     this.displayTutorial3 = true;
   }
+=======
+    this.displayTutorial = true;
+  }
+>>>>>>> a2698e0f6620aac66b58dfce21f5eb8feae912ec
 
   displacementForceFilteredDataMultiple: any;
   displacementForceFilteredDataSingle: any;
@@ -257,7 +265,6 @@ export class GraphsComponent {
     this.setDisplacementForceFilteredSingle();
     this.setIndentationForceSingle();
     this.setElSpectraSingle();
-    this.setGraphOptions();
   }
 
   resetAllZooms() {
@@ -278,6 +285,8 @@ export class GraphsComponent {
 
     if (this.elSpectraChartSingle?.chart)
       this.elSpectraChartSingle.chart.resetZoom();
+
+    this.setGraphOptions();
   }
 
 
