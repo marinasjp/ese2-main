@@ -9,7 +9,6 @@ import {ProcessorService} from "../../../services/processor.service";
   styleUrls: ['./force-ind-tab.component.scss']
 })
 export class ForceIndTabComponent {
-
   disabled: boolean = true;
 
   calcIndentationProcess: Process

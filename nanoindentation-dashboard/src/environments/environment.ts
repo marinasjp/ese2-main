@@ -66,8 +66,8 @@ export const WrittenProcesses: { filters: Process[], cPoints: Process[], eModels
       inputs:
         [ //container for required user inputs
           {name: "CP", selectedValue: null, type: EInputFieldType.DATAPOINT},
-          {name: "spring_constant", selectedValue: 1, type: EInputFieldType.NUMBER},
-          {name: "setzeroforce", selectedValue: true, type: EInputFieldType.BOOLEAN}
+          {name: "Spring constant", selectedValue: 1, type: EInputFieldType.NUMBER},
+          {name: "Set Zero Force", selectedValue: true, type: EInputFieldType.BOOLEAN}
         ]
     },
     {
