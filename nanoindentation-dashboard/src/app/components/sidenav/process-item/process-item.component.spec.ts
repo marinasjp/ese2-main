@@ -29,19 +29,16 @@ describe('ProcessItemComponent', () => {
         ErrorHandlerService,
         ProcessorService,
         ProcessItemComponent],
-      schemas: [
-        CUSTOM_ELEMENTS_SCHEMA
-      ],
-    })
-      .compileComponents();
-  });
+       schemas: [
+         CUSTOM_ELEMENTS_SCHEMA
+       ],
+     })
+       .compileComponents();
+   });
 
-  it('should create', () => {
-    /*const fixture = TestBed.createComponent(ProcessItemComponent);
-    const component = fixture.componentInstance;
-    fixture.detectChanges();*/
-    const service = new ProcessorService(http, errorHandler, graph);
-    const component = new ProcessItemComponent(service);
-    expect(component).toBeTruthy();
-  });
-});
+   it('should create', () => {
+     const service = new ProcessorService(http, errorHandler, graph);
+     const component = new ProcessItemComponent(service);
+     expect(component).toBeTruthy();
+   });
+ });

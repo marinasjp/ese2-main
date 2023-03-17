@@ -7,8 +7,6 @@ import {CUSTOM_ELEMENTS_SCHEMA} from "@angular/core";
 import {CommonModule} from "@angular/common";
 
 describe('ContactPointTabComponent', () => {
-  //let component: ContactPointTabComponent;
-  //let fixture: ComponentFixture<ContactPointTabComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
