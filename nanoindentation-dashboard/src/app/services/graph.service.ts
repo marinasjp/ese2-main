@@ -5,6 +5,7 @@ import {environment} from "../../environments/environment";
 import {finalize} from "rxjs/operators";
 import {Dataset} from "../models/dataset.model";
 import {Datafile} from "../models/datafile.model";
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Injectable({
   providedIn: 'root',
@@ -89,7 +90,6 @@ export class GraphService {
     this._sliderValue = new BehaviorSubject<number>(0);
     this._resetAllGraphZooms = new BehaviorSubject<any>(null);
   }
-
 
   // takes the response of the backend and transforms it to fit the structure of the backend
   // adds it to the datafiles behavioursubject and sets it as selected
@@ -184,11 +184,14 @@ export class GraphService {
     this.http.post(environment.apiURL + 'send_data_txt', formData, {
       headers: headers,
       responseType: "json"
-    }).pipe(finalize(() => this._uploadingDataLoading.next(false)))
+    }).pipe(finalize(() => this._uploadingDataLoading.next(false)))  //This is what takes the response from the backend
       .subscribe(
-        (response) => {
-          console.log(response);
-          this.prepareUserInputDataTxt(response, filename);
+        (response) => { //This is what takes the response/return from the backend
+          if ('error' in response) {   //checks if there is an error or not
+            console.log('ERROR: WRONG DATA FILE OR FORMAT')
+            // } else {
+            this.prepareUserInputDataTxt(response, filename); //else sends it to prepareUserInputData functions
+          }
         }, () => {
         })
   }
@@ -211,7 +214,11 @@ export class GraphService {
     }).pipe(finalize(() => this._uploadingDataLoading.next(false)))
       .subscribe(
         (response) => {
-          this.prepareUserInputData(response, filename);
+          if ('error' in response) {
+            console.log('ERROR: WRONG DATA FILE OR FORMAT')
+          } else {
+            this.prepareUserInputData(response, filename);
+          }
         }, () => {
         })
   }
