@@ -103,10 +103,10 @@ export class ProcessorService {
   //container for selected Test processes
   private _selectedTests: Process[] = null;
 
-  //Setter for selected test process (also runs test processes)
+  //Setter for selected test process (also runs test processes)114:
   public set selectedTests(processes: Process[]) {
     this._selectedTests = processes;
-    this.runFrom(EProcType.TEST);//when Test processes are changed, calculate all from Tests
+    //this.runFrom(EProcType.TEST); //when Test processes are changed, calculate all from Tests
   }
 
   //Getter for selected Fmodels process
@@ -250,14 +250,15 @@ export class ProcessorService {
     let convertedDataset: { x: number[], y: number[] } = this.convertDatapointsArrayToXAndYArray(datapoints);
     let xAxis = convertedDataset.x;
     let yAxis = convertedDataset.y;
-
-    globalThis.pyodide.runPython(processScript); //Running the code
-    let calculate = globalThis.pyodide.globals.get('calculate'); //map the function from the global variables onto 'calculate'
-
-    let resultPy: any;
     let result;
 
     try {
+    globalThis.pyodide.runPython(processScript); //Running the code
+    let calculate = globalThis.pyodide.globals.get('calculate'); //map the function from the global variables onto 'calculate'
+    
+    let resultPy: any;
+    
+
       if (arg) {
         resultPy = calculate(xAxis, yAxis, arg); //run function on the dataset
       } else {
@@ -312,7 +313,6 @@ export class ProcessorService {
 
   //given a list of processes, recursively runs them and stores the output in graphs
   private runAll(processes: Process[], datasets: Dataset[] = this.graphService.selectedDatafile.datasets): void | CustomError {
-
     if (processes.length == 0) { // base case
       // FINISHED
       this.loading = [];
