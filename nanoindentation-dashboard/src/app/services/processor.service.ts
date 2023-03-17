@@ -335,7 +335,7 @@ export class ProcessorService {
     let recurReturn = null;
     getScriptPromise.then((processScript) => {
 
-
+      currentProcess.script = processScript; //cache script in Process object 
       for (let index = 0; index < datasets.length; index += 1) { // run script on each dataset
         let dataset: Dataset = datasets[index]; //set the current dataSet
         let inputDatapoints: Datapoint[] = [];
@@ -488,7 +488,7 @@ export class ProcessorService {
           throw new Error('ERROR: ProcType error'); //throw error if type isnt found
         }
       }
-      if (datasets?.length){
+      if (datasets?.length) {
         return this.runAll(processChain, datasets); //if custom datasets have been given, run on those datasets
       }
       return this.runAll(processChain); //runs the whole chain, returns null if successful, customError if not

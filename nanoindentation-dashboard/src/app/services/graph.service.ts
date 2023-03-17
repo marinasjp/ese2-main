@@ -1,3 +1,4 @@
+import { NgModel } from '@angular/forms';
 import {Injectable} from '@angular/core';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {SampleDataService} from "./sample-data.service";
@@ -11,6 +12,16 @@ import {Datafile} from "../models/datafile.model";
   providedIn: 'root',
 })
 export class GraphService {
+
+  private _resetAllGraphZooms: BehaviorSubject<any>;
+
+  public get resetAllGraphZooms$(): Observable<any> {
+    return this._resetAllGraphZooms.asObservable();
+  }
+
+  public set resetAllGraphZooms(value: any) {
+    this._resetAllGraphZooms.next(value);
+  }
 
   private _uploadingDataLoading: BehaviorSubject<boolean>;
 
@@ -67,6 +78,7 @@ export class GraphService {
     this._selectedDatafile = new BehaviorSubject<Datafile>({name: null, datasets: []});
     this._uploadingDataLoading = new BehaviorSubject<boolean>(false);
     this._sliderValue = new BehaviorSubject<number>(0);
+    this._resetAllGraphZooms = new BehaviorSubject<any>(null);
   }
 
   prepareUserInputData(input, filename: string): any {
@@ -129,9 +141,10 @@ export class GraphService {
         y: inputLoad[i]
       }
       dataset.displacementForceData.push(valuePair);
+      // TODO: REMOVE?
       dataset.displacementForceFilteredData.push(valuePair);
     }
-
+    
     // Add the dataset to the datasets array
     datasets.push(dataset);
 
@@ -153,13 +166,13 @@ export class GraphService {
     headers.append('Content-Type', 'multipart/form-data');
 
     const filename: string = file.name;
-
     this.http.post(environment.apiURL + 'send_data_txt', formData, {
       headers: headers,
       responseType: "json"
     }).pipe(finalize(() => this._uploadingDataLoading.next(false)))
       .subscribe(
         (response) => {
+          console.log(response);
           this.prepareUserInputDataTxt(response, filename);
         }, () => {
         })
