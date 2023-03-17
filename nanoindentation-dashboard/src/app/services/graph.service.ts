@@ -7,10 +7,14 @@ import {environment} from "../../environments/environment";
 import {finalize} from "rxjs/operators";
 import {Dataset} from "../models/dataset.model";
 import {Datafile} from "../models/datafile.model";
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Injectable({
   providedIn: 'root',
 })
+
+
+
 export class GraphService {
 
   private _uploadingDataLoading: BehaviorSubject<boolean>;
@@ -63,11 +67,22 @@ export class GraphService {
   }
 
   constructor(private sampleDataService: SampleDataService,
-              private http: HttpClient) {
+              private http: HttpClient,
+              public snackBar: MatSnackBar) {
     this._datafiles = new BehaviorSubject<Datafile[]>([]);
     this._selectedDatafile = new BehaviorSubject<Datafile>({name: null, datasets: []});
     this._uploadingDataLoading = new BehaviorSubject<boolean>(false);
     this._sliderValue = new BehaviorSubject<number>(0);
+  }
+
+
+  displayErrorMessage(message: string) {
+    this.snackBar.open(message, 'Close', {
+      duration: 5000,
+      horizontalPosition: 'center',
+      verticalPosition: 'top'
+    });
+   
   }
 
   prepareUserInputData(input, filename: string): any {
@@ -161,8 +176,11 @@ export class GraphService {
     }).pipe(finalize(() => this._uploadingDataLoading.next(false)))
       .subscribe(
         (response) => {
-          console.log(response);
+          if ('error' in response){
+            this.displayErrorMessage("Error: wrong file type");
+          } else {
           this.prepareUserInputDataTxt(response, filename);
+          }
         }, () => {
         })
   }
@@ -183,7 +201,11 @@ export class GraphService {
     }).pipe(finalize(() => this._uploadingDataLoading.next(false)))
       .subscribe(
         (response) => {
+          if ('error' in response){
+            this.displayErrorMessage("Error");
+          } else {
           this.prepareUserInputData(response, filename);
+          }
         }, () => {
         })
   }
