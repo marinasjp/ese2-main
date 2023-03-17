@@ -87,7 +87,8 @@ foo@bar:~$ python server.py
 
 # Visuals and Usage
 This is what you will see after building the application.
-*show the final program once all the graphs are attached*
+
+![Website.png](./visuals/Website.png)
 
 ## Graphs
 Three sets of graphs are displayed, each with a primary and secondary graph. The primary graph displays all of the uploaded curves, whearas the secondary graph displays one curve from the set, picked out by a slider on the sidebar.
@@ -95,32 +96,38 @@ Three sets of graphs are displayed, each with a primary and secondary graph. The
 ![Graph1IMG.PNG](./visuals/Graph1IMG.PNG)
 
 ## Sidebar
-The interface is the sidebar will allow you to control the data shown in the graphs. Is made up of 6 parts.
+The interface is the sidebar will allow you to control the data shown in the graphs. Is made up of 8 parts which consist of drop-down tabs. 
 
-![SidebarIMG.PNG](./visuals/SidebarIMG.PNG)
+![SidebarNew.png](./visuals/SidebarNew.png)
 
-### 1.- Filter Select
-Filter-Select is a slider used to display each curve seperately on the secondary graphs. Moving the slider will change which curve is viewed, with the number of the curve being displayed on top.
-
-### 2.- Filters
-You can expand the filters tab by clicking on it. It will first allow you to determine whether to use Prominency. It also allows the user to set parameters for Prominency, Minimum Frequency and Band. You can select/unselect Prominency by clicking on it.
-
-Below this, there is a drop down menu that allows the user to activate filters. Multiple filters can be selected, and they will apply to all graphs.
-
-![FilterIMG.PNG](./visuals/FilterIMG.PNG)
+### 1. - Files
+Files shows and gives the options to select which uploaded file/s to show in the graphs. There are also buttons to upload either text or jpk-force-map files which will automatically shown in the graphs as well as in the "Select file to use" box. 
+There is a drop down menu that allows the user to activate filters. Multiple filters can be selected, and they will apply to all graphs.
 
 ### 3.- Contact Point
-The Contact Point tab defines which contact point calculation method wish to use. Contact point is the point at which the cantilever made contact with the surface.
+The Contact Point tab defines which contact point calculation method wish to use including an auto range. Contact point is the point at which the cantilever made contact with the surface.
 
 ### 4.- Force-Ind
-The Force-Ind tab is used to control the second set of graphs - the Force-Indentation graphs. The first feature is a drop down box which determines the force indentation shape to be used.
-The second and third inputs are for setting the value of Force Minimum and Force Maximum respectively.
+The Force-Ind tab is used to control the second set of graphs - the Force-Indentation graphs. The feature is a drop down box which allows the user to select a spring constant from a range. 
+There is also a toggle to choose to set "Zero Force"
 
 ### 5.- Elasticity-Spectra
-The Elasticity-Spectra tab is used to control the third set of graphs. The values of Elasticity-Spectra Minimum and Elasticity-Spectra Maximum respectively can be set.
+The Elasticity-Spectra tab is used to control the third set of graphs. The type of Tip geometry can be selected, The user can also choose the settings for the values for "Radius", "Win" and "Order" as well as toggle the option to use "Interpolation".
 
-### 6.- Upload Custom Code Tab
+### 6.- Download CSV
+This is a drop-down feature which allows the user to download the datasets of either the "Force Displacement", "Force Indentation" or "Elasticity Spectra" and choose to either download the entire datasets or a single curve.
 
+### 7.- Settings
+This is a drop-down feature which allows the user to download the settings they have selected for the displayed datasets as a text file or to upload their own desired settings 
+
+### 8.- Upload Custom Code 
+This enables the user to upload their own custom filter or CPoint python code file 
+
+### 9.- Curve Selection
+This is a curve selection slider feature on the bottom bar which gives the user the option of easily selecting a single curve or looking through the single curves from the entire dataset with will automatically displayed on the bottom graphs. 
+
+### 10.- Update Curves
+When a change is made to any of the filters or selections then a button called "Update Curves" will appear allowing the graphs to apply any changes made to the displayed graphs 
 
 # Support
 This project will not be maintained by the contributors to this repository. If there are any issues with the installation process, please contact any of the team members via email.
