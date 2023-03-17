@@ -11,6 +11,7 @@ import {Datafile} from "../models/datafile.model";
 })
 export class GraphService {
 
+  fileErrorMsgs: string = null;
 
   // observable used, to whenever value is updated resets all the graph options
   private _resetAllGraphZooms: BehaviorSubject<any>;
@@ -137,6 +138,7 @@ export class GraphService {
     const inputLoad = input.Load;
     let datasets: Dataset[] = [];
 
+    console.log('HERE')
     let dataset: Dataset = {
       contactPoint: null,
       displacementForceData: [],
@@ -147,7 +149,7 @@ export class GraphService {
     };
 
     // Loop through the indentation and load arrays and add data to the dataset
-    for (let i = 0; i < inputIndentation.length; i++) {
+    for (let i = 0; i < inputIndentation?.length; i++) {
 
       let valuePair: { x: number, y: number } = {
         x: inputIndentation[i],
@@ -172,6 +174,7 @@ export class GraphService {
 
   // executed the backend-call whenever a txt file is uploaded
   uploadDataTxt(file: any): void {
+    this.fileErrorMsgs = null;
     this._uploadingDataLoading.next(true);
     const formData = new FormData();
     formData.append('file', file);
@@ -185,8 +188,8 @@ export class GraphService {
       .subscribe(
         (response) => { //This is what takes the response/return from the backend
           if ('error' in response) {   //checks if there is an error or not
-            console.log('ERROR: WRONG DATA FILE OR FORMAT')
-            // } else {
+            this.fileErrorMsgs = 'File-Upload Error: Wrong File-Type or incorrect format'
+          } else {
             this.prepareUserInputDataTxt(response, filename); //else sends it to prepareUserInputData functions
           }
         }, () => {
@@ -196,6 +199,7 @@ export class GraphService {
 
   // executed the backend-call whenever a raw/jpk file is uploaded
   uploadDataRaw(file: any): void {
+    this.fileErrorMsgs = null;
     this._uploadingDataLoading.next(true);
     const formData = new FormData();
     formData.append('file', file);
@@ -212,7 +216,7 @@ export class GraphService {
       .subscribe(
         (response) => {
           if ('error' in response) {
-            console.log('ERROR: WRONG DATA FILE OR FORMAT')
+            this.fileErrorMsgs = 'File-Upload Error: Wrong File-Type or incorrect format'
           } else {
             this.prepareUserInputData(response, filename);
           }
