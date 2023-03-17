@@ -8,6 +8,7 @@ import {finalize} from "rxjs/operators";
 import {Dataset} from "../models/dataset.model";
 import {Datafile} from "../models/datafile.model";
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { ErrorHandlerService } from './error-handler.service';
 
 @Injectable({
   providedIn: 'root',
@@ -16,6 +17,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 
 
 export class GraphService {
+
+  private errorHandlerService: ErrorHandlerService;
 
   private _resetAllGraphZooms: BehaviorSubject<any>;
 
@@ -84,10 +87,11 @@ export class GraphService {
     this._uploadingDataLoading = new BehaviorSubject<boolean>(false);
     this._sliderValue = new BehaviorSubject<number>(0);
     this._resetAllGraphZooms = new BehaviorSubject<any>(null);
+    this.errorHandlerService = new ErrorHandlerService();
   }
 
 
-  displayErrorMessage(message: string) {
+  displayErrorMessage(message: "Error: Your file is the wrong type or incorrectly formatted") {
     this.snackBar.open(message, 'Close', {
       duration: 5000,
       horizontalPosition: 'center',
@@ -176,10 +180,8 @@ export class GraphService {
     this._uploadingDataLoading.next(true);
     const formData = new FormData();
     formData.append('file', file);
-
     const headers = new HttpHeaders();
     headers.append('Content-Type', 'multipart/form-data');
-
     const filename: string = file.name;
     this.http.post(environment.apiURL + 'send_data_txt', formData, {
       headers: headers,
@@ -188,7 +190,7 @@ export class GraphService {
       .subscribe(
         (response) => {
           if ('error' in response){
-            this.displayErrorMessage("Error: wrong file type");
+            this.displayErrorMessage("Error: Your file is the wrong type or incorrectly formatted");
           } else {
           this.prepareUserInputDataTxt(response, filename);
           }
@@ -213,7 +215,7 @@ export class GraphService {
       .subscribe(
         (response) => {
           if ('error' in response){
-            this.displayErrorMessage("Error");
+            this.displayErrorMessage("Error: Your file is the wrong type or incorrectly formatted");
           } else {
           this.prepareUserInputData(response, filename);
           }
