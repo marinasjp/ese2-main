@@ -31,10 +31,26 @@ export class GraphsComponent {
 
   displayError: boolean;
   errorMessage: string;
+  displayTutorial: boolean;
+  displayTutorial2: boolean;
+  displayTutorial3: boolean;
 
   showErrorDialog(message) {
     this.errorMessage = message;
     this.displayError = true;
+  }
+  showTutorial() {
+    this.displayTutorial2 = false;
+    this.displayTutorial = true;
+  }
+  showTutorial2() {
+    this.displayTutorial = false;
+    this.displayTutorial2 = true;
+    this.displayTutorial3 = false;
+  }
+  showTutorial3() {
+    this.displayTutorial2 = false;
+    this.displayTutorial3 = true;
   }
 
   displacementForceFilteredDataMultiple: any;
