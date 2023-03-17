@@ -2,12 +2,12 @@ import {Component, ViewChild} from '@angular/core';
 import {GraphService} from '../../services/graph.service';
 import {UIChart} from "primeng/chart";
 import {Subscription} from "rxjs";
-import {saveAs} from 'file-saver';
-import {Papa} from 'papaparse';
-import { ErrorHandlerService } from 'src/app/services/error-handler.service';
+import {ErrorHandlerService} from 'src/app/services/error-handler.service';
 
-// import 'chartjs-plugin-zoom'; // TODO: FIX
+import {Chart} from 'chart.js';
+import zoomPlugin from 'chartjs-plugin-zoom';
 
+Chart.register(zoomPlugin);
 
 @Component({
   selector: 'app-graphs',
@@ -15,14 +15,20 @@ import { ErrorHandlerService } from 'src/app/services/error-handler.service';
   styleUrls: ['./graphs.component.scss']
 })
 export class GraphsComponent {
-  @ViewChild("displacementForceFilteredChartMultiple") displacementForceFilteredChartMultiple: UIChart;
+  @ViewChild("displacementForceFilteredChartMultiple") displacementForceFilteredChartMultiple: any;
   @ViewChild("displacementForceFilteredChartSingle") displacementForceFilteredChartSingle: UIChart;
   @ViewChild("indentationForceChartMultiple") indentationForceChartMultiple: UIChart;
   @ViewChild("indentationForceChartSingle") indentationForceChartSingle: UIChart;
   @ViewChild("elSpectraChartMultiple") elSpectraChartMultiple: UIChart;
   @ViewChild("elSpectraChartSingle") elSpectraChartSingle: UIChart;
 
-  graphOptions;
+  graphOptions1: any;
+  graphOptions2: any;
+  graphOptions3: any;
+  graphOptions4: any;
+  graphOptions5: any;
+  graphOptions6: any;
+
   displayError: boolean;
   errorMessage: string;
 
@@ -45,7 +51,8 @@ export class GraphsComponent {
   datasetsSubscription: Subscription;
   sliderValueSubscription: Subscription;
 
-  constructor(public graphService: GraphService, public errorHandler: ErrorHandlerService) {
+  constructor(public graphService: GraphService,
+              public errorHandler: ErrorHandlerService) {
   }
 
   decimation = {
@@ -63,6 +70,10 @@ export class GraphsComponent {
     this.sliderValueSubscription = this.graphService.sliderValue$.subscribe(() => {
       this.reloadSingleLineGraphs();
     })
+
+    this.graphService.resetAllGraphZooms$.subscribe(() => {
+      this.resetAllZooms();
+    })
   }
 
 
@@ -71,68 +82,20 @@ export class GraphsComponent {
     this.sliderValueSubscription.unsubscribe();
   }
 
-  setGraphOptions(): void {
-    this.graphOptions = {
-      indexAxis: "x",
-      // Turn off animations and data parsing for performance
-      animation: false,
-      parsing: false,
-
-      interaction: {
-        mode: 'nearest',
-        axis: 'x',
-        intersect: false
+  zoomOptions = {
+    pan: {
+      enabled: true,
+      mode: 'xy',
+    },
+    zoom: {
+      wheel: {
+        enabled: true,
       },
-      elements: {
-        point: {
-          radius: 0
-        }
+      pinch: {
+        enabled: false
       },
-      tooltips: {
-        callbacks: {
-          label: function (tooltipItem) {
-            return tooltipItem.yLabel;
-          }
-        }
-      },
-      plugins: {
-        decimation: this.decimation,
-        legend: {display: false},
-        zoom: {
-          zoom: {
-            wheel: {
-              enabled: true,
-            },
-            pinch: {
-              enabled: true
-            },
-            mode: 'xy',
-          }
-        }
-      },
-      scales: {
-        x: {
-          stacked: true,
-          ticks: {
-            color: "#ebedef"
-          },
-          grid: {
-            color: "rgba(255,255,255,0.2)"
-          },
-          type: 'linear',
-        },
-        y: {
-          stacked: true,
-          ticks: {
-            color: "#ebedef"
-          },
-          grid: {
-            color: "rgba(255,255,255,0.2)"
-          }
-        }
-      }
-    };
-  }
+    }
+  };
 
   checkContrast(colorA, colorB) {
     const foregroundLumiance = this.luminance(colorA);
@@ -278,5 +241,89 @@ export class GraphsComponent {
     this.setDisplacementForceFilteredSingle();
     this.setIndentationForceSingle();
     this.setElSpectraSingle();
+    this.setGraphOptions();
+  }
+
+  resetAllZooms() {
+    if (this.displacementForceFilteredChartMultiple?.chart)
+      this.displacementForceFilteredChartMultiple.chart.resetZoom();
+
+    if (this.displacementForceFilteredChartSingle?.chart)
+      this.displacementForceFilteredChartSingle.chart.resetZoom();
+
+    if (this.indentationForceChartMultiple?.chart)
+      this.indentationForceChartMultiple.chart.resetZoom();
+
+    if (this.indentationForceChartSingle?.chart)
+      this.indentationForceChartSingle.chart.resetZoom();
+
+    if (this.elSpectraChartMultiple?.chart)
+      this.elSpectraChartMultiple.chart.resetZoom();
+
+    if (this.elSpectraChartSingle?.chart)
+      this.elSpectraChartSingle.chart.resetZoom();
+  }
+
+
+  setGraphOptions(): void {
+    const graphOptions = {
+      indexAxis: "x",
+      // Turn off animations and data parsing for performance
+      animation: false,
+      parsing: false,
+
+      interaction: {
+        mode: 'nearest',
+        axis: 'x',
+        intersect: false
+      },
+      elements: {
+        point: {
+          radius: 0
+        }
+      },
+      tooltips: {
+        callbacks: {
+          label: function (tooltipItem) {
+            return tooltipItem.yLabel;
+          }
+        }
+      },
+      plugins: {
+        decimation: this.decimation,
+        legend: {display: false},
+        zoom: this.zoomOptions
+
+      },
+      scales: {
+        x: {
+          stacked: true,
+          ticks: {
+            color: "#ebedef"
+          },
+          grid: {
+            color: "rgba(255,255,255,0.2)"
+          },
+          type: 'linear',
+        },
+        y: {
+          stacked: true,
+          ticks: {
+            color: "#ebedef"
+          },
+          grid: {
+            color: "rgba(255,255,255,0.2)"
+          }
+        }
+      }
+    };
+
+    const graphOptionsString = JSON.stringify(graphOptions);
+    this.graphOptions1 = JSON.parse(graphOptionsString);
+    this.graphOptions2 = JSON.parse(graphOptionsString);
+    this.graphOptions3 = JSON.parse(graphOptionsString);
+    this.graphOptions4 = JSON.parse(graphOptionsString);
+    this.graphOptions5 = JSON.parse(graphOptionsString);
+    this.graphOptions6 = JSON.parse(graphOptionsString);
   }
 }

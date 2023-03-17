@@ -12,6 +12,16 @@ import {Datafile} from "../models/datafile.model";
 })
 export class GraphService {
 
+  private _resetAllGraphZooms: BehaviorSubject<any>;
+
+  public get resetAllGraphZooms$(): Observable<any> {
+    return this._resetAllGraphZooms.asObservable();
+  }
+
+  public set resetAllGraphZooms(value: any) {
+    this._resetAllGraphZooms.next(value);
+  }
+
   private _uploadingDataLoading: BehaviorSubject<boolean>;
 
   public get uploadingDataLoading$(): Observable<boolean> {
@@ -67,6 +77,7 @@ export class GraphService {
     this._selectedDatafile = new BehaviorSubject<Datafile>({name: null, datasets: []});
     this._uploadingDataLoading = new BehaviorSubject<boolean>(false);
     this._sliderValue = new BehaviorSubject<number>(0);
+    this._resetAllGraphZooms = new BehaviorSubject<any>(null);
   }
 
   prepareUserInputData(input, filename: string): any {

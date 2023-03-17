@@ -488,7 +488,7 @@ export class ProcessorService {
           throw new Error('ERROR: ProcType error'); //throw error if type isnt found
         }
       }
-      if (datasets?.length){
+      if (datasets?.length) {
         return this.runAll(processChain, datasets); //if custom datasets have been given, run on those datasets
       }
       return this.runAll(processChain); //runs the whole chain, returns null if successful, customError if not
