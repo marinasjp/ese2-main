@@ -14,7 +14,7 @@ You can apply a set of filters to the data (which can be stacked) and calculate 
 
 Once you are done, you can download the graphs and the workspace (the values you set for all the filters and so on).
 
-# Installation
+# Installation and Building
 
 ### 1.-Install NodeJS
 
@@ -86,37 +86,40 @@ foo@bar:~$ python server.py
 ```
 
 # Visuals and Usage
-Once the program is installed, after running ng serve and the flask backend you will be shown this display:
+This is what you will see after building the application.
 *show the final program once all the graphs are attached*
 
 ## Graphs
-The first part of the interface is the graphs. 3 graph sets are displayed, each with a primary and secondary graph. The primary graph displays all of the uploaded curves, whearas the secondary graph displays one curve from the set, picked out by a slider on the sidebar.
+Three sets of graphs are displayed, each with a primary and secondary graph. The primary graph displays all of the uploaded curves, whearas the secondary graph displays one curve from the set, picked out by a slider on the sidebar.
 
 ![Graph1IMG.PNG](./visuals/Graph1IMG.PNG)
 
 ## Sidebar
-The second part of the interface is the sidebar. This is how the website is controlled, and is made up of 7 parts.
+The interface is the sidebar will allow you to control the data shown in the graphs. Is made up of 6 parts.
 
 ![SidebarIMG.PNG](./visuals/SidebarIMG.PNG)
 
-### Filter Select
-The first is Filter-Select, a slider used to display each curve seperately on the secondary graphs. Moving the slider around will change which curve is viewed, with the number of the curve being displayed on top.
-### Filters
-The next is Filters. Click on the box to open it up. This will first allow you to determine whether to use Prominency. In order to enable or disable, click the switch. It also allows the user to set parameters for Prominency, Minimum Frequency and Band.
+### 1.- Filter Select
+Filter-Select is a slider used to display each curve seperately on the secondary graphs. Moving the slider will change which curve is viewed, with the number of the curve being displayed on top.
+
+### 2.- Filters
+You can expand the filters tab by clicking on it. It will first allow you to determine whether to use Prominency. It also allows the user to set parameters for Prominency, Minimum Frequency and Band. You can select/unselect Prominency by clicking on it.
+
 Below this, there is a drop down menu that allows the user to activate filters. Multiple filters can be selected, and they will apply to all graphs.
 
 ![FilterIMG.PNG](./visuals/FilterIMG.PNG)
 
-### Contact Point
-The Contact Point tab will allow the user to set which contact point they wish to use. Contact point is...
-### Force-Ind
-The Force-Ind tab is used to control the second set of graphs, The Force-Indentation graphs. The first feature is a drop down box allowing the user to determine which force indentation shape to use.
+### 3.- Contact Point
+The Contact Point tab defines which contact point calculation method wish to use. Contact point is the point at which the cantilever made contact with the surface.
+
+### 4.- Force-Ind
+The Force-Ind tab is used to control the second set of graphs - the Force-Indentation graphs. The first feature is a drop down box which determines the force indentation shape to be used.
 The second and third inputs are for setting the value of Force Minimum and Force Maximum respectively.
-### Elasticity-Spectra
-The Elasticity-Spectra tab is used to control the third set of graphs. The first feature is a drop down box allowing the user to determine (TBA).
-The second and third inputs are for setting the value of Elasticity-Spectra Minimum and Elasticity-Spectra Maximum respectively.
-### Upload Custom Code Tab
-(TBA)
+
+### 5.- Elasticity-Spectra
+The Elasticity-Spectra tab is used to control the third set of graphs. The values of Elasticity-Spectra Minimum and Elasticity-Spectra Maximum respectively can be set.
+
+### 6.- Upload Custom Code Tab
 
 
 # Support
