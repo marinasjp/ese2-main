@@ -6,7 +6,8 @@
   </div>
 
   <div *ngFor="let input of process.inputs">
-    <h5 class="mt-2">{{input.name}}</h5>
+    <h5 class="mt-2"
+        *ngIf="input.type == EInputFieldType.NUMBER || input.type == EInputFieldType.BOOLEAN || input.type == EInputFieldType.GEOMETRY">{{input.name}}</h5>
 
     <p-inputNumber *ngIf="input.type == EInputFieldType.NUMBER"
                    (onInput)="processorService.showReCalculateButton = true"

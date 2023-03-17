@@ -1,5 +1,7 @@
 import {Component} from '@angular/core';
 import {GraphService} from "../../../services/graph.service";
+import {Process} from "../../../models/process.model";
+import {ProcessorService} from "../../../services/processor.service";
 
 @Component({
   selector: 'app-force-ind-tab',
@@ -10,19 +12,10 @@ export class ForceIndTabComponent {
 
   disabled: boolean = true;
 
-  forceIndMin: any;
-  forceIndMax: any;
+  calcIndentationProcess: Process
 
-  selectedIndShape: any;
-
-  indShapes: { name: string } [] = [
-    {name: "Sphere"},
-    {name: "Cylinder"},
-    {name: "Cone"},
-    {name: "Pyramid"}
-  ]
-
-  constructor(private graphService: GraphService) {
+  constructor(private graphService: GraphService,
+              private processorService: ProcessorService) {
     this.graphService.selectedDatafile$.subscribe(() => {
       if (this.graphService.selectedDatafile.datasets[0]?.contactPoint) {
         this.disabled = false;
@@ -30,5 +23,7 @@ export class ForceIndTabComponent {
         this.disabled = true;
       }
     })
+
+    this.calcIndentationProcess = this.processorService.availableProcesses.internal.find(p => p.id == 'calc_indentation');
   }
 }
