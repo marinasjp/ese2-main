@@ -42,9 +42,10 @@ export class DownloadTabComponent {
   download(): any {
 
     let Filename;
-    console.log(this.graphService.sliderValue)
 
     let data: Datapoint[][] = [];
+
+    // Sets correct filename
     if (this.selectedGraph.no == 1 && this.selectedSingle.single == false) {    //Force-Displacement
       Filename = "Force-Displacement.csv";
       this.graphService.selectedDatafile.datasets.forEach((dataset => {
@@ -73,6 +74,12 @@ export class DownloadTabComponent {
       data.push(this.graphService.selectedDatafile.datasets[this.graphService.sliderValue].elspectraData)
 
     }
+
+
+    // Create CSV
+    // , as delimiter between columns
+    // \n as delimiter for new rows
+    // - for empty cells
 
     let xArray: number[][] = [];
     let yArray: number[][] = [];
@@ -123,6 +130,7 @@ export class DownloadTabComponent {
 
     const csv = csvString;
 
+    // SAVES CSV AS TEXT FILE
     const blob = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
     saveAs(blob, Filename);
   }

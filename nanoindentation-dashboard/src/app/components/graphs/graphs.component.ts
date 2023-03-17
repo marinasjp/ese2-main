@@ -15,7 +15,13 @@ Chart.register(zoomPlugin);
   styleUrls: ['./graphs.component.scss']
 })
 export class GraphsComponent {
-  @ViewChild("displacementForceFilteredChartMultiple") displacementForceFilteredChartMultiple: any;
+
+  // CONTAINS ALL GRAPH WINDOWS
+  // implements all 6 charts
+  // sets the data accordingly
+
+
+  @ViewChild("displacementForceFilteredChartMultiple") displacementForceFilteredChartMultiple: UIChart;
   @ViewChild("displacementForceFilteredChartSingle") displacementForceFilteredChartSingle: UIChart;
   @ViewChild("indentationForceChartMultiple") indentationForceChartMultiple: UIChart;
   @ViewChild("indentationForceChartSingle") indentationForceChartSingle: UIChart;
@@ -29,12 +35,36 @@ export class GraphsComponent {
   graphOptions5: any;
   graphOptions6: any;
 
-  displayError: boolean;
   errorMessage: string;
+  displayGraphTutorial: boolean;
+  displayTutorial: boolean;
+  displayTutorial2: boolean;
+  displayTutorial3: boolean;
 
-  showErrorDialog(message) {
-    this.errorMessage = message;
-    this.displayError = true;
+  showGraphTutorial() {
+    this.displayGraphTutorial = true;
+    this.displayTutorial = false;
+  }
+
+  showTutorial() {
+    this.displayGraphTutorial = false;
+    this.displayTutorial2 = false;
+    this.displayTutorial = true;
+  }
+
+  showTutorial2() {
+    this.displayTutorial = false;
+    this.displayTutorial2 = true;
+    this.displayTutorial3 = false;
+  }
+
+  showTutorial3() {
+    this.displayTutorial2 = false;
+    this.displayTutorial3 = true;
+  }
+
+  closeTutorial() {
+    this.displayTutorial3 = false;
   }
 
   displacementForceFilteredDataMultiple: any;
@@ -44,10 +74,6 @@ export class GraphsComponent {
   elSpectraDataMultiple: any;
   elSpectraDataSingle: any;
 
-  // UIChart.
-  // datasets: { id: number, name: string, data: any, labels: any }[] = []
-  // selectedDatasets: { id: number, name: string, data: any, labels: any }[] = []
-
   datasetsSubscription: Subscription;
   sliderValueSubscription: Subscription;
 
@@ -56,6 +82,8 @@ export class GraphsComponent {
   }
 
   decimation = {
+    // NOT USED
+    // but left to be reimplemented if performance is not good enough in the future
     // enabled: true,
     // algorithm: 'min-max',
   };
@@ -82,6 +110,8 @@ export class GraphsComponent {
     this.sliderValueSubscription.unsubscribe();
   }
 
+
+  // settings for zoom plugin
   zoomOptions = {
     pan: {
       enabled: true,
@@ -97,6 +127,7 @@ export class GraphsComponent {
     }
   };
 
+  // checks the contrast between two colors
   checkContrast(colorA, colorB) {
     const foregroundLumiance = this.luminance(colorA);
     const backgroundLuminance = this.luminance(colorB);
@@ -105,6 +136,8 @@ export class GraphsComponent {
       : ((foregroundLumiance + 0.05) / (backgroundLuminance + 0.05));
   }
 
+  // calculates the luminance of an rgb color
+  // RGB should be structures as [r, g, b]
   luminance(rgb) {
     const [r, g, b] = rgb.map((v) => {
       v /= 255;
@@ -123,6 +156,9 @@ export class GraphsComponent {
     return [r, g, b];
   }
 
+
+  // sets all basic data for a new curve
+  // assigns a random color fitting the color scheme
   getNewData(): any {
     let borderColor: string = null;
     let background: string = '#121212';
@@ -241,7 +277,6 @@ export class GraphsComponent {
     this.setDisplacementForceFilteredSingle();
     this.setIndentationForceSingle();
     this.setElSpectraSingle();
-    this.setGraphOptions();
   }
 
   resetAllZooms() {
@@ -262,6 +297,8 @@ export class GraphsComponent {
 
     if (this.elSpectraChartSingle?.chart)
       this.elSpectraChartSingle.chart.resetZoom();
+
+    this.setGraphOptions();
   }
 
 
@@ -318,6 +355,7 @@ export class GraphsComponent {
       }
     };
 
+    // JSON stringify and parse used to destroy connections between the objects
     const graphOptionsString = JSON.stringify(graphOptions);
     this.graphOptions1 = JSON.parse(graphOptionsString);
     this.graphOptions2 = JSON.parse(graphOptionsString);

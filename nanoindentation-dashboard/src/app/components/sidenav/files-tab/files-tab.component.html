@@ -13,6 +13,7 @@
 
   <ng-template #notLoading>
 
+    <!--    DROPDOWN TO SWITCH BETWEEN UPLOADED DATASETS -->
     <div class="mb-4" *ngIf="graphService.datafiles.length">
       <h4 class="mb-2">Select file to use</h4>
       <p-dropdown [options]="graphService.datafiles" [(ngModel)]="selectedDatafile" (onChange)="onSelectDatafile()"
@@ -47,9 +48,9 @@
     </p-fileUpload>
 
 
-    
-
   </ng-template>
+
+  <div class="mt-3" style="color: red">{{graphService.fileErrorMsgs}}</div>
 
 
 </p-accordionTab>
