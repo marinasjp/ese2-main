@@ -1,10 +1,22 @@
 
-
 stages:
-  - build
   - test
+  
+unit-test:
+  image: python:3.8
+  stage: test
+  before_script:
+  - pip install numpy
+  - pip install scipy
+  - pip install pytest
+  script:
+    - python -m pytest --import-mode=append ./nanoindentation-dashboard/src/Processor/Processes/
+  cache:
+    key: "$CI_COMMIT_REF_SLUG"
+    paths:
+      - cache/
 
-build:
+docker-test:
   image: marinasjp/ese2:latest
   stage: build
   script:
@@ -20,17 +32,3 @@ build:
     when: on_success
     paths:
       -  nanoindentation-dashboard/node_modules/
-
-unit-test:
-  image: python:3.8
-  stage: test
-  before_script:
-  - pip install numpy
-  - pip install scipy
-  - pip install pytest
-  script:
-    - python -m pytest --import-mode=append ./nanoindentation-dashboard/src/Processor/Processes/
-  cache:
-    key: "$CI_COMMIT_REF_SLUG"
-    paths:
-      - cache/
