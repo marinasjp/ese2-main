@@ -1419,4 +1419,4 @@ def test_calculate():
                  4.333027, 4.452026, 4.609519, 4.655558, 4.574144, 4.49631, 4.429659, 4.402793, 4.4234, 4.487757,
                  4.494828, 4.476086, 4.415395, 4.356487, 4.324607, 4.353721, 4.464824]
 
-  assert calculate(np.array(test_array), np.array(test_array2)) == [-0.027776, 6258.58519]
+  assert calculate(np.array(test_array), np.array(test_array2), [500]) == [-0.027776, 6258.58519]

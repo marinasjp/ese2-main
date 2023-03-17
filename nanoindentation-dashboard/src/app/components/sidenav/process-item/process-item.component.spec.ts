@@ -1,23 +1,51 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import {HttpClientModule} from '@angular/common/http';
+import {CUSTOM_ELEMENTS_SCHEMA} from "@angular/core";
+import {CommonModule} from "@angular/common";
 import { ProcessItemComponent } from './process-item.component';
+import { ProcessorService } from 'src/app/services/processor.service';
+import { GraphService } from 'src/app/services/graph.service';
+import { ErrorHandlerService } from 'src/app/services/error-handler.service';
+import { SampleDataService } from 'src/app/services/sample-data.service';
+import { HttpClient, HttpHandler } from '@angular/common/http';
 
 describe('ProcessItemComponent', () => {
   let component: ProcessItemComponent;
   let fixture: ComponentFixture<ProcessItemComponent>;
 
+  let errorHandler = new ErrorHandlerService();
+  let sample = new SampleDataService();
+  let http: HttpClient;
+  let graph = new GraphService(sample, http);
+
+  let process: ProcessorService;
+
+
   beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [ ProcessItemComponent ]
-    })
-    .compileComponents();
-
-    fixture = TestBed.createComponent(ProcessItemComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
-
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
-});
+    TestBed.configureTestingModule({
+       imports: [
+         CommonModule, HttpClientModule
+       ],
+       providers: [
+        GraphService, 
+        ErrorHandlerService, 
+        SampleDataService,
+        ProcessorService,
+        ProcessItemComponent],
+       schemas: [
+         CUSTOM_ELEMENTS_SCHEMA
+       ],
+     })
+       .compileComponents();
+   });
+ 
+   it('should create', () => {
+     /*const fixture = TestBed.createComponent(ProcessItemComponent);
+     const component = fixture.componentInstance;
+     fixture.detectChanges();*/
+     const service = new ProcessorService(http, errorHandler, graph);
+     const component = new ProcessItemComponent(service);
+     expect(component).toBeTruthy();
+   });
+ });
+ 

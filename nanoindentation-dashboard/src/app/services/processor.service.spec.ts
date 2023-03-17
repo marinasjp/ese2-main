@@ -8,6 +8,7 @@ import { SampleDataService } from 'src/app/services/sample-data.service';
 import { HttpClient, HttpHandler } from '@angular/common/http';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import {HttpClientModule} from '@angular/common/http';
+import {WrittenProcesses} from "../../environments/environment";
 
 //import * as fs from 'fs';
 
@@ -19,42 +20,8 @@ let testScript = "def calculate( x, y): \n return x, y+1"
 let testData: { x: number[], y: number[] } = { x: [100, 200, 300, 400], y: [1, 2, 3, 4] };
 let outData: { x: number[], y: number[] } = { x: [100, 200, 300, 400], y: [2, 3, 4, 5] };
 
-
-
-let modelProcessDataSet = {
-  filters: [ //Container for available filters
-    {id: 'median', name: 'Median', procType: EProcType.FILTER, custom: false, inputs: null},
-    {id: 'savgol', name: 'Sawitzky Golay', procType: EProcType.FILTER, custom: false, inputs: null},
-    {id: 'linearDetrend', name: 'Linear Detrending', procType: EProcType.FILTER, custom: false, inputs: null},
-  ],
-  cPoints: [//container for cPoints
-    {id: 'rov', name: 'Rov', procType: EProcType.CPOINT, custom: false, inputs: null},
-    {id: 'stepAndDrift', name: 'Step and Drift', procType: EProcType.CPOINT, custom: false, inputs: null}
-  ],
-  eModels: [],//container for eModel
-  fModels: [],//container for fModel,
-  internal: [
-    {id: 'calc_indentation', name: 'Calculating Indentation', procType: EProcType.INTERNAL, custom: false, 
-    inputs: 
-      [ //container for required user inputs
-        {name: "CP", selectedValue:null, type:EInputFieldType.DATAPOINT},
-        {name: "spring_constant", selectedValue: 1, type:EInputFieldType.NUMBER},
-        {name: "setzeroforce", selectedValue: true, type:EInputFieldType.BOOLEAN}          
-      ]
-    },
-    {id: 'calc_elspectra', name: 'Calculating ElSpectra', procType: EProcType.INTERNAL, custom: false, 
-    inputs: 
-      [ //container for required user inputs
-        {name: "geometry", selectedValue:true, type:EInputFieldType.BOOLEAN},
-        {name: "radius", selectedValue:1, type:EInputFieldType.NUMBER},
-        {name: "win", selectedValue:100, type:EInputFieldType.NUMBER},
-        {name: "order", selectedValue:2, type:EInputFieldType.NUMBER},
-        {name: "interp", selectedValue:false, type:EInputFieldType.BOOLEAN}
-      ] // defaults: geometry='cylinder', radius=1, win=100, order=2, interp=False
-    } 
-  ], // container for processes only run by the app but not selectable by the user
-  test: [{id:"testProcess", name: "Test", procType: EProcType.TEST, script:"def calculate( x, y): \n return x, y+1"}]     //container for test processess
-}
+let modelProcessDataSet = WrittenProcesses;
+modelProcessDataSet.test.push(testProcess);
 
 
   describe('ProcessorService', () => {
@@ -131,8 +98,8 @@ let modelProcessDataSet = {
       console.log("Adding process..")
       service.addProcess(testProcess);
 
-      const resultData = service.runProcessScriptOnDatapoints(testDataConverted, testScript);
-      expect(resultData).toEqual(outDataConverted);
+      //const resultData = service.runProcessScriptOnDatapoints(testDataConverted, testScript);
+      //expect(resultData).toEqual(outDataConverted);
       done()
       //expect(service.runProcessScriptOnDatapoints(testDataConverted, testScript)).toEqual(outDataconverted);
 

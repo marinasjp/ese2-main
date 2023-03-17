@@ -2,7 +2,6 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import {HttpClientModule} from '@angular/common/http';
 import { CustomCodeTabComponent } from './custom-code-tab.component';
 import {CUSTOM_ELEMENTS_SCHEMA} from "@angular/core";
-import {HttpClientModule} from "@angular/common/http";
 import {CommonModule} from "@angular/common";
 
 describe('CustomCodeTabComponent', () => {
@@ -12,7 +11,7 @@ describe('CustomCodeTabComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
-        CommonModule
+        CommonModule, HttpClientModule,
       ],
       declarations: [ CustomCodeTabComponent ],
       schemas: [

@@ -2,15 +2,16 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { DownloadTabComponent } from './download-tab.component';
 import {CUSTOM_ELEMENTS_SCHEMA} from "@angular/core";
 import {CommonModule} from "@angular/common";
+import {HttpClientModule} from '@angular/common/http';
 
 describe('DownloadTabComponent', () => {
   let component: DownloadTabComponent;
   let fixture: ComponentFixture<DownloadTabComponent>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({
+   TestBed.configureTestingModule({
       imports: [
-        CommonModule
+        CommonModule, HttpClientModule
       ],
       declarations: [ DownloadTabComponent ],
       schemas: [

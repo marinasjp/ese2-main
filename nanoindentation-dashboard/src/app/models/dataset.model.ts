@@ -6,4 +6,5 @@ export interface Dataset {
   displacementForceFilteredData: Datapoint[];
   indentationForceData: Datapoint[];
   elspectraData: Datapoint[];
+  testData: Datapoint[];
 }

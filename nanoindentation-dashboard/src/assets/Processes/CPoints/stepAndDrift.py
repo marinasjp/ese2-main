@@ -1,4 +1,5 @@
 from scipy.signal import savgol_filter
+import numpy as np
 
 
 def calculate(x, y, input):
