@@ -9,7 +9,7 @@ import {Datapoint} from "../models/datapoint.model";
 import {Dataset} from "../models/dataset.model";
 import {CustomError} from '../models/error.model';
 import {EInputFieldType} from '../models/input.model';
-import {WrittenProcesses} from 'src/environments/environment.prod';
+import {WrittenProcesses} from "../../environments/environment";
 
 const PYODIDE_BASE_URL = 'https://cdn.jsdelivr.net/pyodide/v0.22.0/full/';
 
@@ -113,9 +113,9 @@ export class ProcessorService {
   public get selectedTests(): Process[] {
     return this._selectedTests;
   }
-  
+
   private rootPath: string = 'assets/Processes/'; //path of process scripts
-  
+
   //container for all available processes (Default set as the processes stored in the environment)
   public availableProcesses: { filters: Process[], cPoints: Process[], eModels: Process[], fModels: Process[], internal: Process[], test: Process[] } = WrittenProcesses;
 
@@ -316,7 +316,7 @@ export class ProcessorService {
   }
 
   //given a list of processes, recursively runs them and stores the output in graphs
-  private runAll(processes: Process[]): void | CustomError  {
+  private runAll(processes: Process[]): void | CustomError {
 
     if (processes.length == 0) { // base case
       // FINISHED
@@ -339,11 +339,10 @@ export class ProcessorService {
 
     let recurReturn = null;
     getScriptPromise.then((processScript) => {
-      
-      for (var curSet of this.graphService.selectedDatafile.datasets){ // run script on each dataset
-        let dataset: Dataset = curSet[0]; //set the current dataSet
-        let index: number = curSet[1]; //set the current index
 
+
+      for (let index = 0; index < this.graphService.selectedDatafile.datasets.length; index += 1) { // run script on each dataset
+        let dataset: Dataset = this.graphService.selectedDatafile.datasets[index]; //set the current dataSet
         let inputDatapoints: Datapoint[] = [];
 
         //select datapoints to be processed depending on type of process
@@ -377,14 +376,16 @@ export class ProcessorService {
           return input.selectedValue
         }); //map selected values onto inputarg
 
+
         //INPUT CHECKING
         if (currentProcess?.inputs?.length) { //if there are user inputs required check for null
-          for (var input of inputArgs){
-            if (!input) { //if an input is set to be null and there are user inputs specified
+          for (let input of inputArgs) {
+            if (!input == undefined) { //if an input is set to be null and there are user inputs specified
               return this.errorHandlerService.Fatal(new Error("InputError: input not given"));
             }
           }
         }
+
 
         //run process on input datapoints
         let outputDatapoints: any;
@@ -392,6 +393,14 @@ export class ProcessorService {
           outputDatapoints = this.runProcessScriptOnDatapoints(inputDatapoints, processScript, inputArgs);
         } else {
           outputDatapoints = this.runProcessScriptOnDatapoints(inputDatapoints, processScript);
+        }
+
+        // skip if type is error
+        if (typeof (outputDatapoints) == 'object' && outputDatapoints.error) {
+          this.graphService.selectedDatafile = this.graphService.selectedDatafile;
+          loadingMsgs[loadingMsgs.length - 1] = currentProcess.name + ' skipped due to error ~'
+          recurReturn = this.runAll(processes); // recursive call
+          return recurReturn
         }
 
         //set dataset being displayed according to the type of process that was run

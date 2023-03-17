@@ -11,7 +11,7 @@ from scipy.signal import savgol_filter
 
 def calculate(Zi, Fi, inputs):
   #inputs: geometry='cylinder', radius=1, win=100, order=2, interp=False
-  geometry = 'cylinder' if inputs[0] else 'sphere' #default true
+  geometry = 'Cylinder' if inputs[0] else 'Sphere' #default true
   radius = inputs[1] #default 1
   win = inputs[2] #default 100
   order = inputs[3] #default 2
@@ -42,13 +42,13 @@ def calculate(Zi, Fi, inputs):
     yy = y[1:]
     ddt = (x[-1] - x[1]) / (len(x) - 2)
 
-  if geometry == 'sphere':
+  if geometry == 'Sphere':
     R = radius
     area = np.pi * xx * R
     # contactradius = np.sqrt(xx * R)
 
     coeff = 3 * np.sqrt(np.pi) / 8 / np.sqrt(area)
-  elif geometry == 'cylinder':
+  elif geometry == 'Cylinder':
     R = radius
     coeff = 3 / 8 / R
   else:
