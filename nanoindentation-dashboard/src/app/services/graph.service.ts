@@ -80,7 +80,8 @@ export class GraphService {
         displacementForceData: [],
         displacementForceFilteredData: [],
         indentationForceData: [],
-        elspectraData: []
+        elspectraData: [],
+        testData: []
       }
       let datasetIndentation = inputIndentation[index];
       let datasetLoad = inputLoad[index];
@@ -116,7 +117,8 @@ export class GraphService {
       displacementForceData: [],
       displacementForceFilteredData: [],
       indentationForceData: [],
-      elspectraData: []
+      elspectraData: [],
+      testData: []
     };
 
     // Loop through the indentation and load arrays and add data to the dataset

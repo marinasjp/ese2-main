@@ -158,16 +158,11 @@ export class ProcessorService {
     }
   };
 
-  private _processedData: { x: number[], y: number[] };//container for most recent processed dataset
+  private _testOutDatasets: Dataset[]; //container for output of testing datasets
 
   //getter for processed dataset
-  public get processedData(): { x: number[], y: number[] } {
-    return this._processedData;
-  }
-
-  //setter for processed dataset
-  public set processedData(data: { x: number[], y: number[] }) {
-    this._processedData = data;
+  public get testOutDatasets(): Dataset[] {
+    return this._testOutDatasets;
   }
 
   //constructor for object
@@ -316,7 +311,7 @@ export class ProcessorService {
   }
 
   //given a list of processes, recursively runs them and stores the output in graphs
-  private runAll(processes: Process[]): void | CustomError {
+  private runAll(processes: Process[], datasets: Dataset[] = this.graphService.selectedDatafile.datasets): void | CustomError {
 
     if (processes.length == 0) { // base case
       // FINISHED
@@ -341,8 +336,8 @@ export class ProcessorService {
     getScriptPromise.then((processScript) => {
 
 
-      for (let index = 0; index < this.graphService.selectedDatafile.datasets.length; index += 1) { // run script on each dataset
-        let dataset: Dataset = this.graphService.selectedDatafile.datasets[index]; //set the current dataSet
+      for (let index = 0; index < datasets.length; index += 1) { // run script on each dataset
+        let dataset: Dataset = datasets[index]; //set the current dataSet
         let inputDatapoints: Datapoint[] = [];
 
         //select datapoints to be processed depending on type of process
@@ -366,6 +361,9 @@ export class ProcessorService {
             break;
           case EProcType.FMODELS:
             inputDatapoints = dataset.indentationForceData;
+            break;
+          case EProcType.TEST:
+            inputDatapoints = dataset.testData;
             break;
         }
 
@@ -424,6 +422,9 @@ export class ProcessorService {
           case EProcType.FMODELS:
             // TODO: IMPLEMENT
             break;
+          case EProcType.TEST:
+            this._testOutDatasets[index].testData = outputDatapoints as Datapoint[] //stores output in processor
+            break;
         }
       }
 
@@ -438,7 +439,7 @@ export class ProcessorService {
   }
 
   //Runs all the processes from (and including) the process type specified
-  public runFrom(procType: EProcType): void | CustomError {
+  public runFrom(procType: EProcType, datasets?: Dataset[]): void | CustomError {
     this.loading = ['Creating Process Chain'];
 
     try {
@@ -486,6 +487,9 @@ export class ProcessorService {
         default: {
           throw new Error('ERROR: ProcType error'); //throw error if type isnt found
         }
+      }
+      if (datasets?.length){
+        return this.runAll(processChain, datasets); //if custom datasets have been given, run on those datasets
       }
       return this.runAll(processChain); //runs the whole chain, returns null if successful, customError if not
     } catch (e: any) {
