@@ -61,12 +61,28 @@
     </p-chart>
   </div>
 
+  <button pButton pRipple type="button" (click) = "showTutorial()" icon = "pi pi-info" class="p-button-rounded p-button-success"></button>
+
   <p-dialog header="Error Caught" [(visible)]="errorHandler.dialogShown" [modal]="true" [style]="{width: '50vw'}"
             [draggable]="false" [resizable]="false">
     <p class="m-0">{{this.errorHandler.errorMessage}}</p>
     <ng-template pTemplate="footer">
       <p-button icon="pi pi-check" (click)="errorHandler.dialogShown=false" label="Ok"
                 styleClass="p-button-text"></p-button>
+    </ng-template>
+  </p-dialog>
+
+  <!-- Tutorial Page One -->
+  <p-dialog header="Help" [(visible)]="displayTutorial" [modal]="true" [style]="{width: '50vw'}"[draggable]="false" [resizable]="false">
+    <p class="m-0">
+
+      Welcome to the help page. This page will walk you through how to use the nano-indentation dashboard.
+      The first section is the files tab.
+
+    </p>
+    <ng-template pTemplate="footer">
+      <p-button (click)="errorHandler.dialogShown=false" label="Previous"styleClass="p-button-text"></p-button>
+      <p-button (click)="errorHandler.dialogShown=false" label="Next"styleClass="p-button-text"></p-button>
     </ng-template>
   </p-dialog>
 </div>
