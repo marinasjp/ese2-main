@@ -31,10 +31,14 @@ export class GraphsComponent {
 
   displayError: boolean;
   errorMessage: string;
+  displayTutorial: boolean;
 
   showErrorDialog(message) {
     this.errorMessage = message;
     this.displayError = true;
+  }
+  showTutorial() {
+    this.displayTutorial = true;
   }
 
   displacementForceFilteredDataMultiple: any;
