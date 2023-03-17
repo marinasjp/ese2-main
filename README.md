@@ -126,10 +126,10 @@ This is a drop-down feature which allows the user to download the settings they 
 ### 8.- Upload Custom Code 
 This enables the user to upload their own custom filter or CPoint python code file 
 
-### 9.- Curve Selection
+### Curve Selection
 This is a curve selection slider feature on the bottom bar which gives the user the option of easily selecting a single curve or looking through the single curves from the entire dataset with will automatically displayed on the bottom graphs. 
 
-### 10.- Update Curves
+### Update Curves
 When a change is made to any of the filters or selections then a button called "Update Curves" will appear allowing the graphs to apply any changes made to the displayed graphs 
 
 # Support
