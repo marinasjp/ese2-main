@@ -241,7 +241,6 @@ export class GraphsComponent {
     this.setDisplacementForceFilteredSingle();
     this.setIndentationForceSingle();
     this.setElSpectraSingle();
-    this.setGraphOptions();
   }
 
   resetAllZooms() {
@@ -262,6 +261,8 @@ export class GraphsComponent {
 
     if (this.elSpectraChartSingle?.chart)
       this.elSpectraChartSingle.chart.resetZoom();
+
+    this.setGraphOptions();
   }
 
 
