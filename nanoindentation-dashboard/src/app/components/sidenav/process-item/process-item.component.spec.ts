@@ -40,9 +40,6 @@ describe('ProcessItemComponent', () => {
    });
  
    it('should create', () => {
-     /*const fixture = TestBed.createComponent(ProcessItemComponent);
-     const component = fixture.componentInstance;
-     fixture.detectChanges();*/
      const service = new ProcessorService(http, errorHandler, graph);
      const component = new ProcessItemComponent(service);
      expect(component).toBeTruthy();

@@ -14,7 +14,8 @@ export class ErrorHandlerService {
   //New error that id added to the container
   public newError(err: any, errType: EErrorType) {
     this.errors.push({id: this.errorID++, errType: errType, error: err, type: 'customerror', message: err.message}); //attatches 'customerror' typing to object
-    //TODO: ADD USER POP UP
+    this.dialogShown = true;
+    this.errorMessage = ("Error: " + err.message + " was caught, skipping process");
     return this.errors[this.errors.length - 1];
   }
 
@@ -31,15 +32,11 @@ export class ErrorHandlerService {
 
   //Records a fatal error and adds to container
   public Fatal(error: any) {
-    //UI ERROR
-    this.dialogShown = true;
-    this.errorMessage = ("Fatal error: " + error + " was caught, skipping process");
     return this.newError(error, EErrorType.FATAL); //Adds error to record
   };
 
   //Records a non-fatal error and adds to container
   public Retry(error: any, attempt: number, max_attempt: number, errID?: number) {
-    //ADD UI PROMPT
     this.dialogShown = true;
     this.errorMessage = ("Error: " + error + " occurred. Attempting retry: " + attempt + 1 + "/" + max_attempt)
     if (attempt == 1) {
@@ -51,7 +48,6 @@ export class ErrorHandlerService {
 
   //Records a failed retry and changes type of error
   public RetryFailed(errID: number) {
-    //ADD UI PROPMT
     this.dialogShown = true;
     this.errorMessage = ("Max attempts reached. Quitting method.")
     let error = this.getError(errID);

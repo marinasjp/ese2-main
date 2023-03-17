@@ -5,9 +5,6 @@ import {CUSTOM_ELEMENTS_SCHEMA} from "@angular/core";
 import {CommonModule} from "@angular/common";
 
 describe('GraphsComponent', () => {
-  //let component: GraphsComponent;
-  //let fixture: ComponentFixture<GraphsComponent>;
-
   beforeEach(async () => {
     TestBed.configureTestingModule({
       imports: [

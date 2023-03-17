@@ -23,9 +23,6 @@ export class CustomCodeTabComponent {
     this.processOptions = [
       {name: "Filter", procType: EProcType.FILTER},
       {name: "CPoint", procType: EProcType.CPOINT},
-      // TODO: E & FMODELS NOT IMPLEMENTED
-      // {name: "FModel", procType: EProcType.FMODELS},
-      // {name: "EModel", procType: EProcType.EMODELS}
     ]
   }
 

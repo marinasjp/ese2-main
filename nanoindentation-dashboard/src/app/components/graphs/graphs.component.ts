@@ -69,10 +69,6 @@ export class GraphsComponent {
   elSpectraDataMultiple: any;
   elSpectraDataSingle: any;
 
-  // UIChart.
-  // datasets: { id: number, name: string, data: any, labels: any }[] = []
-  // selectedDatasets: { id: number, name: string, data: any, labels: any }[] = []
-
   datasetsSubscription: Subscription;
   sliderValueSubscription: Subscription;
 
@@ -81,8 +77,6 @@ export class GraphsComponent {
   }
 
   decimation = {
-    // enabled: true,
-    // algorithm: 'min-max',
   };
 
   ngOnInit() {

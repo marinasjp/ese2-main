@@ -97,11 +97,7 @@ modelProcessDataSet.test.push(testProcess);
 
       console.log("Adding process..")
       service.addProcess(testProcess);
-
-      //const resultData = service.runProcessScriptOnDatapoints(testDataConverted, testScript);
-      //expect(resultData).toEqual(outDataConverted);
       done()
-      //expect(service.runProcessScriptOnDatapoints(testDataConverted, testScript)).toEqual(outDataconverted);
 
      });
     
