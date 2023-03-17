@@ -1,7 +1,7 @@
 
 stages:
   - test
-  
+
 unit-test:
   image: python:3.8
   stage: test
@@ -18,7 +18,7 @@ unit-test:
 
 docker-test:
   image: marinasjp/ese2:latest
-  stage: build
+  stage: test
   script:
       - cd nanoindentation-dashboard
       - npm ci
