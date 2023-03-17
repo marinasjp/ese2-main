@@ -1,11 +1,16 @@
 <p-accordionTab header="Download CSV" [disabled]="disabled">
-  <p-dropdown [options]="graphOptions" [(ngModel)]="selectedGraph" optionLabel="name"></p-dropdown><br>
-  <p-dropdown [options]="graphSingle" [(ngModel)]="selectedSingle" optionLabel="name"></p-dropdown><br><br>
-  <button pButton type="button" label="Download" (click)="download()"></button>
+
+  <div class="mb-3">
+    <p-dropdown [options]="graphOptions" [(ngModel)]="selectedGraph" optionLabel="name"></p-dropdown>
+  </div>
+  <div class="mb-3">
+    <p-dropdown [options]="graphSingle" [(ngModel)]="selectedSingle" optionLabel="name"></p-dropdown>
+  </div>
+  <div>
+    <button pButton type="button" label="Download" (click)="download()"></button>
+  </div>
 </p-accordionTab>
-<p-accordionTab header="Download Settings" [disabled]="disabled">
-  <button pButton type="button" label="Download Force-Displacement" (click)="downloadSet()"></button>
-</p-accordionTab>
+
 
 <p-accordionTab header="Download Settings" [disabled]="disabled">
   <button pButton type="button" label="Download Force-Displacement" (click)="downloadSet()"></button>

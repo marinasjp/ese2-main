@@ -1,11 +1,10 @@
-import { Component } from '@angular/core';
-import { saveAs } from 'file-saver';
-import Papa from 'papaparse';
-import { Datapoint } from 'src/app/models/datapoint.model';
-import { GraphService } from 'src/app/services/graph.service';
-import { ProcessorService } from 'src/app/services/processor.service';
-import { GraphNumber } from 'src/app/models/graphNumber.model';
-import { GraphSingle } from 'src/app/models/graphSingle.model';
+import {Component} from '@angular/core';
+import {saveAs} from 'file-saver';
+import {Datapoint} from 'src/app/models/datapoint.model';
+import {GraphService} from 'src/app/services/graph.service';
+import {ProcessorService} from 'src/app/services/processor.service';
+import {GraphNumber} from 'src/app/models/graphNumber.model';
+import {GraphSingle} from 'src/app/models/graphSingle.model';
 
 @Component({
   selector: 'app-download-tab',
@@ -39,65 +38,97 @@ export class DownloadTabComponent {
   }
 
   disabled: boolean = true;
+
   download(): any {
-     
+
     let Filename;
     console.log(this.graphService.sliderValue)
 
     let data: Datapoint[][] = [];
-    if (this.selectedGraph.no==1 && this.selectedSingle.single==false){    //Force-Displacement 
-    Filename = "Force-Displacement.csv";
-    this.graphService.selectedDatafile.datasets.forEach((dataset => {
-      data.push(dataset.displacementForceData)
-    }))
-  } else if (this.selectedGraph.no==1 && this.selectedSingle.single==true){ //Force-Displacement (single)
+    if (this.selectedGraph.no == 1 && this.selectedSingle.single == false) {    //Force-Displacement
+      Filename = "Force-Displacement.csv";
+      this.graphService.selectedDatafile.datasets.forEach((dataset => {
+        data.push(dataset.displacementForceData)
+      }))
+    } else if (this.selectedGraph.no == 1 && this.selectedSingle.single == true) { //Force-Displacement (single)
       Filename = "Force-Displacement (Single).csv"
       data.push(this.graphService.selectedDatafile.datasets[this.graphService.sliderValue].displacementForceData)
-      
-  }else if (this.selectedGraph.no==2 && this.selectedSingle.single==false){ //Force-Indentation 
-    Filename = "Force-Indentation.csv"
-    this.graphService.selectedDatafile.datasets.forEach((dataset => {
-      data.push(dataset.indentationForceData)
-    }))
-  }else if (this.selectedGraph.no==2 && this.selectedSingle.single==true){ //Force-Indentation (single)
-    Filename = "Force-Indentation (Single).csv"
-    data.push(this.graphService.selectedDatafile.datasets[this.graphService.sliderValue].indentationForceData)
-      
-  }else if (this.selectedGraph.no==3 && this.selectedSingle.single==false){ // Elasticity-Spectra
-    Filename = "Elasticity-Spectra.csv"
-    this.graphService.selectedDatafile.datasets.forEach((dataset => {
-      data.push(dataset.elspectraData)
-    }))
-  }else { // Elasticity-Spectra (single)
-    Filename = "Elasticity-Spectra (Single).csv"
-    data.push(this.graphService.selectedDatafile.datasets[this.graphService.sliderValue].elspectraData)
-      
-  }
-  
-    let xArray: number[] = [];
-    let yArray: number[] = [];
 
-    for (let i = 0; i < data.length; i++) {
-      const ConvertedData = this.processorService.convertDatapointsArrayToXAndYArray(data[i]);
-      console.log(ConvertedData)
-      xArray.push(...ConvertedData.x);
-      yArray.push(...ConvertedData.y);
+    } else if (this.selectedGraph.no == 2 && this.selectedSingle.single == false) { //Force-Indentation
+      Filename = "Force-Indentation.csv"
+      this.graphService.selectedDatafile.datasets.forEach((dataset => {
+        data.push(dataset.indentationForceData)
+      }))
+    } else if (this.selectedGraph.no == 2 && this.selectedSingle.single == true) { //Force-Indentation (single)
+      Filename = "Force-Indentation (Single).csv"
+      data.push(this.graphService.selectedDatafile.datasets[this.graphService.sliderValue].indentationForceData)
+
+    } else if (this.selectedGraph.no == 3 && this.selectedSingle.single == false) { // Elasticity-Spectra
+      Filename = "Elasticity-Spectra.csv"
+      this.graphService.selectedDatafile.datasets.forEach((dataset => {
+        data.push(dataset.elspectraData)
+      }))
+    } else { // Elasticity-Spectra (single)
+      Filename = "Elasticity-Spectra (Single).csv"
+      data.push(this.graphService.selectedDatafile.datasets[this.graphService.sliderValue].elspectraData)
+
     }
 
-    let csvString: string = 'x,y\n';
+    let xArray: number[][] = [];
+    let yArray: number[][] = [];
+    let longestAxis: number = 0;
 
-    for (let i = 0; i < xArray.length; i++) {
-      csvString += `${xArray[i]},${yArray[i]}\n`;
+    let csvString: string = '';
+
+    for (let i = 0; i < data.length; i++) {
+      if (i > 0) {
+        csvString += ',';
+      }
+      csvString += 'x' + i + ',y' + i;
+
+      let convertedData = this.processorService.convertDatapointsArrayToXAndYArray(data[i]);
+      let xAxis = convertedData.x;
+      let yAxis = convertedData.y;
+      xArray.push(xAxis);
+      yArray.push(yAxis);
+
+      if (xAxis.length > longestAxis) {
+        longestAxis = xAxis.length;
+      }
+      if (yAxis.length > longestAxis) {
+        longestAxis = yAxis.length;
+      }
+    }
+
+    csvString += '\n';
+
+    for (let i = 0; i < longestAxis; i++) {
+      for (let j = 0; j < xArray.length; j++) {
+        if (xArray[j] && xArray[j][i]) {
+          csvString += xArray[j][i];
+        } else {
+          csvString += '-';
+        }
+        csvString += ',';
+
+        if (yArray[j] && yArray[j][i]) {
+          csvString += yArray[j][i];
+        } else {
+          csvString += '-';
+        }
+        csvString += ','
+      }
+      csvString += '\n'
     }
 
     const csv = csvString;
 
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const blob = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
     saveAs(blob, Filename);
   }
 
-  downloadSet(){
-    
+  downloadSet() {
+
   }
 
 }
