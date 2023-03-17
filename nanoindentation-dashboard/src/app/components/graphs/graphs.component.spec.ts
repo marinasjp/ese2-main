@@ -1,6 +1,4 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { HttpClient, HttpHandler } from '@angular/common/http';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import {HttpClientModule} from '@angular/common/http';
 import { GraphsComponent } from './graphs.component';
 import {CUSTOM_ELEMENTS_SCHEMA} from "@angular/core";
@@ -11,7 +9,7 @@ describe('GraphsComponent', () => {
   //let fixture: ComponentFixture<GraphsComponent>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({
+    TestBed.configureTestingModule({
       imports: [
         HttpClientModule,
         CommonModule
