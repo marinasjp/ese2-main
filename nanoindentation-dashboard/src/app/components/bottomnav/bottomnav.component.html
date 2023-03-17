@@ -4,12 +4,14 @@
     <h3 class="mr-4 white-space-nowrap">
       Curve Selection
     </h3>
-    <div>
+    <div class="flex justify-content-between w-full">
       <p-inputNumber [(ngModel)]="graphService.sliderValue" [showButtons]="true" buttonLayout="horizontal"
                      inputId="horizontal" spinnerMode="horizontal" [step]="1"
                      [min]="0" [max]="graphService.selectedDatafile.datasets.length - 1"
                      incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus">
       </p-inputNumber>
+      <p-button class="bottom-nav-button" label="Reset all Graph Zooms" icon="pi pi-replay" iconPos="left"
+                (click)="graphService.resetAllGraphZooms = true"></p-button>
     </div>
   </div>
 

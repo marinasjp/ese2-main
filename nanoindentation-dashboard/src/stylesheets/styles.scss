@@ -54,3 +54,11 @@ body {
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
+
+
+.bottom-nav-button {
+  .p-button {
+    max-height: 30px !important;
+  }
+}
+

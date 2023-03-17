@@ -9,13 +9,16 @@ import { HttpClient, HttpHandler } from '@angular/common/http';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import {HttpClientModule} from '@angular/common/http';
 import {WrittenProcesses} from "../../environments/environment";
+import { Dataset } from '../models/dataset.model';
+import { CustomError } from '../models/error.model';
+import { Datapoint } from '../models/datapoint.model';
+import {loadPyodide} from "pyodide";
 
 //import * as fs from 'fs';
 
 let testProcess = {id:"testProcess", name: "Test", procType: EProcType.TEST, script:"def calculate( x, y): \n return x, y+1"}
 //let testFs = fs.readFileSync('../assets/Processes/Tests/testProcess.py', 'utf-8');
 let testScript = "def calculate( x, y): \n return x, y+1"
-
 
 let testData: { x: number[], y: number[] } = { x: [100, 200, 300, 400], y: [1, 2, 3, 4] };
 let outData: { x: number[], y: number[] } = { x: [100, 200, 300, 400], y: [2, 3, 4, 5] };
@@ -30,7 +33,7 @@ modelProcessDataSet.test.push(testProcess);
     let errorHandler = new ErrorHandlerService();
     let sample = new SampleDataService();
     let http: HttpClient;
-    let graph = new GraphService(sample, http);
+    const graph = new GraphService(sample, http);
 
     let process: ProcessorService;
 
@@ -38,17 +41,16 @@ modelProcessDataSet.test.push(testProcess);
         
        TestBed.configureTestingModule({
         imports:[
-          HttpClientTestingModule
+          HttpClientTestingModule,
+          
         ],
         providers: [
           GraphService, 
           ErrorHandlerService, 
           SampleDataService,
-          ProcessorService
+          ProcessorService,
         ],
        });
-
-       process = new ProcessorService(http, errorHandler, graph);
     });
 
 
@@ -89,20 +91,47 @@ modelProcessDataSet.test.push(testProcess);
      }); 
 
      // Test if script executes
-     it('Test Script Execution', (done) => {
-      console.log("Pyodide Test...")
-      let service = new ProcessorService(http, errorHandler, graph);
-      let testDataConverted = service.convertXAndYArrayToDatapointsArray(testData)
-      let outDataConverted = service.convertXAndYArrayToDatapointsArray(outData);
+     it('Test if ... correct script is selected to run', (done) => {
+      let service = new ProcessorService(http, errorHandler, graph); //declare new object because the constructor needs to run
 
-      console.log("Adding process..")
       service.addProcess(testProcess);
+      service.selectedTests = [testProcess];
 
-      //const resultData = service.runProcessScriptOnDatapoints(testDataConverted, testScript);
-      //expect(resultData).toEqual(outDataConverted);
+      expect(service.selectedTests).toEqual([testProcess]);
       done()
-      //expect(service.runProcessScriptOnDatapoints(testDataConverted, testScript)).toEqual(outDataconverted);
-
      });
+
+     it('Tests if ... pyodide runner is used', ()=>{
+
+     })
+
+
+     /*it('Test if ... Selected process runs on dataset',async()=>{
+      let service = new ProcessorService(http, errorHandler, graph);
+       let pyodide = await loadPyodide({
+      indexURL: "https://cdn.jsdelivr.net/pyodide/v0.18.1/full/",
+    });
+
+      let testDataSet: Dataset = {
+        contactPoint: null,
+        displacementForceData : [],
+        displacementForceFilteredData: [],
+        indentationForceData: [],
+        elspectraData : [],
+        testData: [],
+      };
+
+      let testDataConverted: any = service.convertXAndYArrayToDatapointsArray(testData);
+      if (typeof (testDataConverted) == 'object' && testDataConverted.error)
+      {
+        fail('Data conversion failed.');
+      }
+      testDataSet.testData = testDataConverted;
+      let outDataConverted: any = service.convertXAndYArrayToDatapointsArray(outData);
+      service.addProcess(testProcess);
+      service.selectedTests = [testProcess];
+
+      expect(service.testOutDatasets[0].testData).toEqual(outDataConverted);
+     });*/
     
 });
