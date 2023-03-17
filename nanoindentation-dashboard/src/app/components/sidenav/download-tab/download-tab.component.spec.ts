@@ -1,8 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import {HttpClientModule} from '@angular/common/http';
 import { DownloadTabComponent } from './download-tab.component';
 import {CUSTOM_ELEMENTS_SCHEMA} from "@angular/core";
-import {HttpClientModule} from "@angular/common/http";
 import {CommonModule} from "@angular/common";
 
 describe('DownloadTabComponent', () => {
