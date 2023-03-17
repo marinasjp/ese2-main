@@ -41,28 +41,28 @@ export class GraphsComponent {
   displayTutorial2: boolean;
   displayTutorial3: boolean;
 
-  showErrorDialog(message) {
-    this.errorMessage = message;
-    this.displayError = true;
-  }
   showGraphTutorial() {
     this.displayGraphTutorial = true;
     this.displayTutorial = false;
   }
+
   showTutorial() {
     this.displayGraphTutorial = false;
     this.displayTutorial2 = false;
     this.displayTutorial = true;
   }
+
   showTutorial2() {
     this.displayTutorial = false;
     this.displayTutorial2 = true;
     this.displayTutorial3 = false;
   }
+
   showTutorial3() {
     this.displayTutorial2 = false;
     this.displayTutorial3 = true;
   }
+
   closeTutorial() {
     this.displayTutorial3 = false;
   }
