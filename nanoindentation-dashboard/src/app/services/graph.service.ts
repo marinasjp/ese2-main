@@ -18,7 +18,7 @@ import { ErrorHandlerService } from './error-handler.service';
 
 export class GraphService {
 
-  private errorHandlerService: ErrorHandlerService;
+  
 
   private _resetAllGraphZooms: BehaviorSubject<any>;
 
@@ -29,7 +29,9 @@ export class GraphService {
   public set resetAllGraphZooms(value: any) {
     this._resetAllGraphZooms.next(value);
   }
-
+  
+  
+ 
   private _uploadingDataLoading: BehaviorSubject<boolean>;
 
   public get uploadingDataLoading$(): Observable<boolean> {
@@ -81,17 +83,18 @@ export class GraphService {
 
   constructor(private sampleDataService: SampleDataService,
               private http: HttpClient,
-              public snackBar: MatSnackBar) {
+              public snackBar?: MatSnackBar) {
     this._datafiles = new BehaviorSubject<Datafile[]>([]);
     this._selectedDatafile = new BehaviorSubject<Datafile>({name: null, datasets: []});
     this._uploadingDataLoading = new BehaviorSubject<boolean>(false);
     this._sliderValue = new BehaviorSubject<number>(0);
     this._resetAllGraphZooms = new BehaviorSubject<any>(null);
-    this.errorHandlerService = new ErrorHandlerService();
+    
+    
   }
 
 
-  displayErrorMessage(message: "Error: Your file is the wrong type or incorrectly formatted") {
+  displayErrorMessage(message: "Error: Your file is the wrong type or incorrectly formatted") { //This is a function to display error message to user in case of error 
     this.snackBar.open(message, 'Close', {
       duration: 5000,
       horizontalPosition: 'center',
@@ -143,7 +146,7 @@ export class GraphService {
     const inputLoad = input.Load;
     let datasets: Dataset[] = [];
 
-    let dataset: Dataset = {
+    let dataset: Dataset = {  //
       contactPoint: null,
       displacementForceData: [],
       displacementForceFilteredData: [],
@@ -182,23 +185,23 @@ export class GraphService {
     formData.append('file', file);
     const headers = new HttpHeaders();
     headers.append('Content-Type', 'multipart/form-data');
-    const filename: string = file.name;
+    const filename: string = file.name; //Takes the filename 
     this.http.post(environment.apiURL + 'send_data_txt', formData, {
       headers: headers,
       responseType: "json"
-    }).pipe(finalize(() => this._uploadingDataLoading.next(false)))
+    }).pipe(finalize(() => this._uploadingDataLoading.next(false)))  //This is what takes the response from the backend 
       .subscribe(
-        (response) => {
-          if ('error' in response){
+        (response) => { //This is what takes the response/return from the backend 
+          if ('error' in response){   //checks if there is an error or not 
             this.displayErrorMessage("Error: Your file is the wrong type or incorrectly formatted");
           } else {
-          this.prepareUserInputDataTxt(response, filename);
+          this.prepareUserInputDataTxt(response, filename); //else sends it to prepareUserInputData functions
           }
         }, () => {
         })
   }
 
-  uploadDataRaw(file: any): void {
+  uploadDataRaw(file: any): void { //This does the same as above but it handles raw data, It is cleaner if it is seperate functions due to having to use afmformats library in the backend 
     this._uploadingDataLoading.next(true);
     const formData = new FormData();
     formData.append('file', file);

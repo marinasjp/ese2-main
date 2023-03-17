@@ -15,10 +15,11 @@ CORS(app, resources={r"/send_data": {"origins": "*"}})
 def index():
     return 'Flask backend is running'
 
-
+#This is to check file extensions 
 ALLOWED_EXTENSIONS_TXT = {'txt'}
 ALLOWED_EXTENSIONS_JPK = {'jpk-force-map'}
 
+#Split and lower filename for checking extension
 def allowed_fileTxt(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS_TXT
@@ -26,38 +27,39 @@ def allowed_fileJpk(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS_JPK
 
+#Flask routing
 @app.route('/send_data', methods=['POST'])
-@cross_origin(origin='localhost', headers=['Content-Type,Authorization'])
+@cross_origin(origin='localhost', headers=['Content-Type,Authorization']) #CORS security
 
 def send_data():
-
+    # checking for errors, also must return a jasonified object as that is what the front end is expecting 
     if 'file' not in request.files:
-        return jsonify({'error': 'No file part'})
+        return jsonify({'error': 'No file part'}) #
     
     file = request.files['file']
     if not file or not allowed_fileJpk(file.filename):
         return jsonify({'error': 'File type not allowed'})
     
     file.save('temp.jpk-force-map')
-    data = afmformats.load_data('temp.jpk-force-map') 
-    customerData = {"Name": [], "Time": [], "Load": [], "Indentation": [], "Cantilever": [], "Piezo": []}
-    customerData['Name'].append("test")
+    data = afmformats.load_data('temp.jpk-force-map') #stores file in temporary file location 
+    customerData = {"Name": [], "Time": [], "Load": [], "Indentation": [], "Cantilever": [], "Piezo": []} #empty dictionary for storing values 
+    customerData['Name'].append("test") #name will actually be taken in the front end, this is just a place holder
 
     
 
     for i in range(len(data)-1):
         fd = afmformats.mod_force_distance.AFMForceDistance(
-            data[i]._raw_data, data[i].metadata, diskcache=False)
+            data[i]._raw_data, data[i].metadata, diskcache=False)  #afmformats parses the jpk-force-map file 
         customerData['Time'].append(0)   #data[i]['time'].tolist())
         customerData['Load'].append((fd.appr['force']*1e9).tolist() + (fd.retr['force']*1e9).tolist())
         customerData['Piezo'].append(0)   #[i]['height (piezo)'].tolist()) 
         customerData['Indentation'].append((-1*(fd.appr['height (measured)']*1e9)).tolist() + (-1*(fd.retr['height (measured)']*1e9).tolist()))
         customerData['Cantilever'].append(0)   #data[i]['segment'].tolist())
-  
+    #This is taken from source code
     headers = {'Content-Type': 'application/json'}
     
     
-    return jsonify(customerData)
+    return jsonify(customerData) 
 
 @app.route('/send_data_txt', methods=['POST'])
 @cross_origin(origin='localhost', headers=['Content-Type,Authorization'])
@@ -78,9 +80,9 @@ def send_data_txt():
     data = []
     customerData = {'Name': [], 'Time': [], 'Load': [], 'deflection': [], 'Indentation': [], 'z': []}
     customerData['Name'].append("Test")
-    for riga in f:
+    for riga in f:  #This is taken from sourcecode 
         if numeric is False:
-            if riga[0:len(stopLine)] == stopLine:
+            if riga[0:len(stopLine)] == stopLine:  #Stopline used as anything after that is not needed 
                 numeric = True
         else:
             line = riga.strip().replace(',', '.').split('\t')
@@ -89,13 +91,13 @@ def send_data_txt():
             data.append([float(line[0]), float(line[1]),
                             float(line[3]), float(line[4]),float(line[2])])
     f.close()
-    data = np.array(data)
-    max_index_indentation = data[:, 2].argmax()
+    data = np.array(data) #The data is much easier to manipulate in an numpy array 
+    max_index_indentation = data[:, 2].argmax() #Takes the max value as the rest is not needed for data 
     max_index_load = data[:, 1].argmax()
     max_index = max(max_index_indentation, max_index_load)
     data = data[:max_index+1, :]
     customerData['Time'] = data[:, 0]
-    customerData['Load'] = data[:, 1]*1000
+    customerData['Load'] = data[:, 1]*1000 #Multiplied by 1000 to scale up and be easier to work with 
     customerData['deflection'] = data[:, 2]
     customerData['z'] = data[:, 3]
     customerData['Indentation'] = data[:, 4]
@@ -107,7 +109,7 @@ def send_data_txt():
     customerData['z'] = customerData['z'].tolist()
     customerData['Indentation'] = customerData['Indentation'].tolist()
 
-    customerDataJson = json.dumps(customerData)
+    customerDataJson = json.dumps(customerData) #This converts to a json object, Jasonify wasn't working 100%
      
     return customerDataJson
 
