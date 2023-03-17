@@ -1,10 +1,11 @@
-image: marinasjp/ese2:latest
+
 
 stages:
   - build
   - test
 
 build:
+  image: marinasjp/ese2:latest
   stage: build
   script:
       - cd nanoindentation-dashboard
@@ -20,11 +21,16 @@ build:
     paths:
       -  nanoindentation-dashboard/node_modules/
 
-
-test:
+unit-test:
+  image: python:3.8
   stage: test
-  dependencies:
-    - build
+  before_script:
+  - pip install numpy
+  - pip install scipy
+  - pip install pytest
   script:
-    - cd nanoindentation-dashboard
-    - npm run test:ci
+    - python -m pytest --import-mode=append ./nanoindentation-dashboard/src/Processor/Processes/
+  cache:
+    key: "$CI_COMMIT_REF_SLUG"
+    paths:
+      - cache/
