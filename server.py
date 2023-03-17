@@ -9,16 +9,35 @@ app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 CORS(app, resources={r"/send_data": {"origins": "*"}})
 
+
 @app.route('/')
 
 def index():
     return 'Flask backend is running'
 
+
+ALLOWED_EXTENSIONS_TXT = {'txt'}
+ALLOWED_EXTENSIONS_JPK = {'jpk-force-map'}
+
+def allowed_fileTxt(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS_TXT
+def allowed_fileJpk(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS_JPK
+
 @app.route('/send_data', methods=['POST'])
 @cross_origin(origin='localhost', headers=['Content-Type,Authorization'])
 
 def send_data():
+
+    if 'file' not in request.files:
+        return jsonify({'error': 'No file part'})
+    
     file = request.files['file']
+    if not file or not allowed_fileJpk(file.filename):
+        return jsonify({'error': 'File type not allowed'})
+    
     file.save('temp.jpk-force-map')
     data = afmformats.load_data('temp.jpk-force-map') 
     customerData = {"Name": [], "Time": [], "Load": [], "Indentation": [], "Cantilever": [], "Piezo": []}
@@ -43,6 +62,14 @@ def send_data():
 @app.route('/send_data_txt', methods=['POST'])
 @cross_origin(origin='localhost', headers=['Content-Type,Authorization'])
 def send_data_txt():
+    if 'file' not in request.files:
+        return jsonify({'error': 'No file part'})
+
+    file = request.files['file']
+    if not file or not allowed_fileTxt(file.filename):
+        return jsonify({'error': 'File type not allowed'})
+
+
     file = request.files['file']
     file.save('temp.txt')
     f = open('temp.txt',encoding='latin1')
@@ -80,69 +107,10 @@ def send_data_txt():
     customerData['z'] = customerData['z'].tolist()
     customerData['Indentation'] = customerData['Indentation'].tolist()
 
-   
-
-    # data = np.loadtxt('temp.txt')
-   
-
-    # check = np.abs(np.mean(data[:100, 1])*1e9)
-    # if check < 1000:
-    #     customerData['force'] = data[:, 1]*1e9
-    # else:
-    #     customerData['force'] = data[:, 1] 
-    #     customerData['z'] = data[:, 0]*1e9
-
-
-
-  
-    print("TEST!!!")
-
     customerDataJson = json.dumps(customerData)
-   # print(type(customerDataJson))  
+     
     return customerDataJson
 
 if __name__ == '__main__':
     app.run(debug=True)
 
-
-
-# file = request.files['file']
-
-#     print("TESTING1")
-#     file.save('temp.txt')
-    
-    
-#     customerData = {"Name": [], "Time": [], "Load": [], "Indentation": [], "Cantilever": [], "Piezo": []}
-#     customerData['Name'].append("test")
-    
-#     f = open('temp.txt',encoding='latin1')
-#     stopLine = 'Time (s)'
-#     numeric = False
-#     data = []
-#     for riga in f:
-#         if numeric is False:
-#             if riga[0:len(stopLine)] == stopLine:
-#                 numeric = True
-#         else:
-#             line = riga.strip().replace(',', '.').split('\t')
-#             # Time (s)	Load (uN)	Indentation (nm)	Cantilever (nm)	Piezo (nm)	Auxiliary
-#             # skip 2 = indentation and #5 auxiliary if present
-#             data.append([float(line[0]), float(line[1]),
-#                             float(line[3]), float(line[4]),float(line[2])])
-#     f.close()
-    
-
-#     max_indentation = max([inner_list[2] for inner_list in data]) # get maximum value in Indentation column
-#     data_filtered = [inner_list for inner_list in data if inner_list[2] <= max_indentation] # filter data to only include values until max Indentation is reached
-
-#     customerData['Time'] = [inner_list[0] for inner_list in data_filtered]
-#     customerData['Load'] = [inner_list[1] * 10000 for inner_list in data_filtered]
-#     customerData['Indentation'] = [inner_list[2] for inner_list in data_filtered]
-#     customerData['Cantilever'] = [inner_list[3] for inner_list in data_filtered]
-#     customerData['Piezo'] = [inner_list[4] for inner_list in data_filtered]
-
-#     print(len(customerData['Indentation']))
-  
-
-#     print(len(customerData['Load']))
-#     headers = {'Content-Type': 'application/json'}
