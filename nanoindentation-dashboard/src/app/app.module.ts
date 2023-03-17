@@ -36,7 +36,6 @@ import {DialogModule} from 'primeng/dialog';
 import {DownloadTabComponent} from './components/sidenav/download-tab/download-tab.component';
 import {ProcessItemComponent} from './components/sidenav/process-item/process-item.component';
 import {DownloadSettingsTabComponent} from './components/sidenav/download-settings-tab/download-settings-tab.component';
-import {MatSnackBarModule} from '@angular/material/snack-bar';
 
 @NgModule({
   declarations: [
@@ -76,8 +75,7 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
     ScrollerModule,
     DropdownModule,
     ProgressSpinnerModule,
-    DialogModule,
-    MatSnackBarModule
+    DialogModule
   ],
   providers: [],
   bootstrap: [AppComponent],

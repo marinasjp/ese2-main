@@ -5,7 +5,6 @@ import {environment} from "../../environments/environment";
 import {finalize} from "rxjs/operators";
 import {Dataset} from "../models/dataset.model";
 import {Datafile} from "../models/datafile.model";
-import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Injectable({
   providedIn: 'root',
@@ -176,11 +175,9 @@ export class GraphService {
     this._uploadingDataLoading.next(true);
     const formData = new FormData();
     formData.append('file', file);
-
     const headers = new HttpHeaders();
     headers.append('Content-Type', 'multipart/form-data');
-
-    const filename: string = file.name;
+    const filename: string = file.name; //Takes the filename
     this.http.post(environment.apiURL + 'send_data_txt', formData, {
       headers: headers,
       responseType: "json"
@@ -223,3 +220,4 @@ export class GraphService {
         })
   }
 }
+
