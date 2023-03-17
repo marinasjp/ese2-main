@@ -104,6 +104,9 @@ The interface is the sidebar will allow you to control the data shown in the gra
 Files shows and gives the options to select which uploaded file/s to show in the graphs. There are also buttons to upload either text or jpk-force-map files which will automatically shown in the graphs as well as in the "Select file to use" box. 
 There is a drop down menu that allows the user to activate filters. Multiple filters can be selected, and they will apply to all graphs.
 
+### 2.- Filtering
+Filtering lets you search and select for the preset filters that can be applied to the uploaded datasets and viewed in the graphs.
+
 ### 3.- Contact Point
 The Contact Point tab defines which contact point calculation method wish to use including an auto range. Contact point is the point at which the cantilever made contact with the surface.
 
