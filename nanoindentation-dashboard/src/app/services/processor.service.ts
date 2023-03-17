@@ -492,4 +492,20 @@ export class ProcessorService {
       return this.errorHandlerService.Fatal(e); //catch any errors as fatal errors
     }
   }
+
+  updateSettings(settings: any) {
+    if (settings.availableProcesses) {
+      this.availableProcesses = settings.availableProcesses;
+    }
+    if (settings.selectedFilters) {
+      let filters: Process[] = [];
+      settings.selectedFilters.forEach(filter => {
+        filters.push(this.availableProcesses.filters.find(p => p.id == filter.id))
+      })
+      this.selectedFilters = filters;
+    }
+    if (settings.selectedCPointProcess) {
+      this.selectedCPointProcess = this.availableProcesses.cPoints.find(p => p.id == settings.selectedCPointProcess.id);
+    }
+  }
 }

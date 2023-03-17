@@ -1,4 +1,3 @@
-import {NgModel} from '@angular/forms';
 import {Injectable} from '@angular/core';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {SampleDataService} from "./sample-data.service";
@@ -103,7 +102,7 @@ export class GraphService {
       name: filename,
       datasets: datasets
     });
-    this.selectedDatafile = this.datafiles[0];
+    this.selectedDatafile = this.datafiles[this.datafiles.length - 1];
   }
 
 
@@ -139,7 +138,7 @@ export class GraphService {
       name: filename,
       datasets: datasets
     });
-    this.selectedDatafile = this.datafiles[0];
+    this.selectedDatafile = this.datafiles[this.datafiles.length - 1];
   }
 
 

@@ -1,4 +1,4 @@
-import {NgModule, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA} from '@angular/core';
+import {NgModule, NO_ERRORS_SCHEMA} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
 import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
@@ -25,7 +25,6 @@ import {ProgressSpinnerModule} from "primeng/progressspinner";
 import {FilesTabComponent} from './components/sidenav/files-tab/files-tab.component';
 import {ContactPointTabComponent} from './components/sidenav/contact-point-tab/contact-point-tab.component';
 import {CommonModule} from '@angular/common';
-import {AsyncPipe} from '@angular/common';
 import {FiltersTabComponent} from './components/sidenav/filters-tab/filters-tab.component';
 import {ForceIndTabComponent} from './components/sidenav/force-ind-tab/force-ind-tab.component';
 import {
@@ -34,8 +33,9 @@ import {
 import {CustomCodeTabComponent} from './components/sidenav/custom-code-tab/custom-code-tab.component';
 import {BottomnavComponent} from './components/bottomnav/bottomnav.component';
 import {DialogModule} from 'primeng/dialog';
-import {DownloadTabComponent} from './components/sidenav/download-tab/download-tab/download-tab.component';
+import {DownloadTabComponent} from './components/sidenav/download-tab/download-tab.component';
 import {ProcessItemComponent} from './components/sidenav/process-item/process-item.component';
+import {DownloadSettingsTabComponent} from './components/sidenav/download-settings-tab/download-settings-tab.component';
 
 @NgModule({
   declarations: [
@@ -51,6 +51,7 @@ import {ProcessItemComponent} from './components/sidenav/process-item/process-it
     BottomnavComponent,
     DownloadTabComponent,
     ProcessItemComponent,
+    DownloadSettingsTabComponent,
   ],
   imports: [
     BrowserModule,
