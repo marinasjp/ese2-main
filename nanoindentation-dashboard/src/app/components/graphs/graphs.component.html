@@ -1,9 +1,9 @@
 <div style="padding: 2rem 2rem 0 2rem; display:inline-flex; gap: 20px">
 
   <!--  FILTERED CURVES -->
-  <!--  <app-graph [data]="dataTemplate" [options]="graphOptions"></app-graph>-->
   <div>
     <h3>Force-Displacement</h3>
+    <!--    MULTIPLE -->
     <p-chart type="line"
              width="39vh"
              height="39vh"
@@ -13,7 +13,7 @@
     </p-chart>
 
 
-    <!-- Slide Through Graph -->
+    <!--    SINGLE -->
     <p-chart type="line"
              width="39vh"
              height="39vh"
@@ -23,8 +23,11 @@
     </p-chart>
   </div>
 
+  <!-- INDENTATION CUVES -->
   <div>
     <h3>Force-Indentation</h3>
+
+    <!--    MULTIPLE -->
     <p-chart type="line"
              width="39vh"
              height="39vh"
@@ -32,7 +35,8 @@
              [data]="indentationForceDataMultiple"
              [options]="graphOptions3">
     </p-chart>
-    <!-- Slide Through Graph -->
+
+    <!-- SINGLE -->
     <p-chart type="line"
              width="39vh"
              height="39vh"
@@ -42,8 +46,11 @@
     </p-chart>
   </div>
 
+  <!--  ELASTICITY CURVES -->
   <div>
     <h3>Elasticity-Spectra</h3>
+
+    <!--    MULTIPLE -->
     <p-chart type="line"
              width="39vh"
              height="39vh"
@@ -51,7 +58,8 @@
              [data]="elSpectraDataMultiple"
              [options]="graphOptions5">
     </p-chart>
-    <!-- Slide Through Graph -->
+
+    <!--    SINGLE -->
     <p-chart type="line"
              width="39vh"
              height="39vh"
@@ -61,8 +69,12 @@
     </p-chart>
   </div>
 
-  <button pButton pRipple type="button" (click) = "showTutorial()" icon = "pi pi-info" class="p-button-rounded p-button-success"></button>
 
+  <!--  BUTTON TO OPEN TUTORIAL -->
+  <button pButton pRipple type="button" (click)="showTutorial()" icon="pi pi-info"
+          class="p-button-rounded p-button-success"></button>
+
+  <!--  ERROR DIALOG -->
   <p-dialog header="Error Caught" [(visible)]="errorHandler.dialogShown" [modal]="true" [style]="{width: '50vw'}"
             [draggable]="false" [resizable]="false">
     <p class="m-0">{{this.errorHandler.errorMessage}}</p>
@@ -73,7 +85,8 @@
   </p-dialog>
 
   <!-- Tutorial Page One -->
-  <p-dialog header="Help" [(visible)]="displayTutorial" [modal]="true" [style]="{width: '50vw'}"[draggable]="false" [resizable]="false">
+  <p-dialog header="Help" [(visible)]="displayTutorial" [modal]="true" [style]="{width: '50vw'}" [draggable]="false"
+            [resizable]="false">
     <p class="m-0">
 
       Welcome to the help page. This page will walk you through how to use the nano-indentation dashboard.
@@ -81,8 +94,8 @@
 
     </p>
     <ng-template pTemplate="footer">
-      <p-button (click)="errorHandler.dialogShown=false" label="Previous"styleClass="p-button-text"></p-button>
-      <p-button (click)="errorHandler.dialogShown=false" label="Next"styleClass="p-button-text"></p-button>
+      <p-button (click)="errorHandler.dialogShown=false" label="Previous" styleClass="p-button-text"></p-button>
+      <p-button (click)="errorHandler.dialogShown=false" label="Next" styleClass="p-button-text"></p-button>
     </ng-template>
   </p-dialog>
 </div>

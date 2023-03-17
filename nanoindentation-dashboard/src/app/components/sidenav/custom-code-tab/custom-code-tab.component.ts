@@ -22,10 +22,7 @@ export class CustomCodeTabComponent {
   constructor(private processorService: ProcessorService) {
     this.processOptions = [
       {name: "Filter", procType: EProcType.FILTER},
-      {name: "CPoint", procType: EProcType.CPOINT},
-      // TODO: E & FMODELS NOT IMPLEMENTED
-      // {name: "FModel", procType: EProcType.FMODELS},
-      // {name: "EModel", procType: EProcType.EMODELS}
+      {name: "CPoint", procType: EProcType.CPOINT}
     ]
   }
 
@@ -42,7 +39,7 @@ export class CustomCodeTabComponent {
     }
 
     let fileReader = new FileReader();
-    fileReader.onload = (e) => {
+    fileReader.onload = () => {
       process.script = fileReader.result as string;
       this.uploadSuccessfulMessage = 'Process: ' + process.name + ' uploaded successfully ✔'
 

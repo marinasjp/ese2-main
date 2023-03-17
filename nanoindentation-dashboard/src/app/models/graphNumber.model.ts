@@ -1,4 +1,4 @@
 export interface GraphNumber {
-    name: string,
-    no: number
+  name: string,
+  no: number
 }

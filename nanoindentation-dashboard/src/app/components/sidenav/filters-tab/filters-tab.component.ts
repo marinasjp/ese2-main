@@ -12,20 +12,12 @@ export class FiltersTabComponent {
   disabled: boolean = true;
 
   EInputFieldType = EInputFieldType;
-
-  useProminency: boolean = true;
-  prominency: number = null;
-  minFrequency: number = null;
   band: number = null;
 
   constructor(public processorService: ProcessorService,
               private graphService: GraphService) {
     this.graphService.selectedDatafile$.subscribe((datafile) => {
-      if (datafile.datasets.length) {
-        this.disabled = false;
-      } else {
-        this.disabled = true;
-      }
+      this.disabled = !datafile.datasets.length;
     })
   }
 }

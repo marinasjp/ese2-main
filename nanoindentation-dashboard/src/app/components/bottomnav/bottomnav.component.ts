@@ -8,6 +8,10 @@ import {GraphService} from "../../services/graph.service";
 })
 export class BottomnavComponent {
 
+  // FLOATING BOTTOM NAV
+  // implements slider to slide through single curves
+  // implements reset zoom of graphs
+
   constructor(public graphService: GraphService) {
   }
 }

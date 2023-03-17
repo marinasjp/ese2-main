@@ -1,5 +1,7 @@
-import { EProcType } from "./process.model"
+// parent: process
+import {EProcType} from "./process.model"
+
 export interface ProcessType {
-    name: string,
-    procType: EProcType
-  }
+  name: string,
+  procType: EProcType
+}

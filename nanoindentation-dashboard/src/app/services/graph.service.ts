@@ -1,7 +1,5 @@
-import { NgModel } from '@angular/forms';
 import {Injectable} from '@angular/core';
 import {BehaviorSubject, Observable} from 'rxjs';
-import {SampleDataService} from "./sample-data.service";
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {environment} from "../../environments/environment";
 import {finalize} from "rxjs/operators";
@@ -13,6 +11,8 @@ import {Datafile} from "../models/datafile.model";
 })
 export class GraphService {
 
+
+  // observable used, to whenever value is updated resets all the graph options
   private _resetAllGraphZooms: BehaviorSubject<any>;
 
   public get resetAllGraphZooms$(): Observable<any> {
@@ -23,12 +23,17 @@ export class GraphService {
     this._resetAllGraphZooms.next(value);
   }
 
+
+  // variable to keep track of the uploading of data
+  // true if loading, false if not
+  // used to display loading animations
   private _uploadingDataLoading: BehaviorSubject<boolean>;
 
   public get uploadingDataLoading$(): Observable<boolean> {
     return this._uploadingDataLoading.asObservable();
   }
 
+  // contains all datafiles currently uploaded in the interface
   private _datafiles: BehaviorSubject<Datafile[]>;
 
   public get datafiles$(): Observable<Datafile[]> {
@@ -43,6 +48,9 @@ export class GraphService {
     this._datafiles.next(datafiles);
   }
 
+
+  // contains the currently selected datafiles
+  // defines which curves are shown on the graphs of the interface
   private _selectedDatafile: BehaviorSubject<Datafile>;
 
   public get selectedDatafile$(): Observable<Datafile> {
@@ -58,6 +66,8 @@ export class GraphService {
   }
 
 
+  // keeps track of the value of the slider
+  // slidervalue defines the curves of which dataset are displayed in the singular graphs
   private _sliderValue: BehaviorSubject<number>;
 
   public get sliderValue$(): Observable<number> {
@@ -72,8 +82,7 @@ export class GraphService {
     this._sliderValue.next(index);
   }
 
-  constructor(private sampleDataService: SampleDataService,
-              private http: HttpClient) {
+  constructor(private http: HttpClient) {
     this._datafiles = new BehaviorSubject<Datafile[]>([]);
     this._selectedDatafile = new BehaviorSubject<Datafile>({name: null, datasets: []});
     this._uploadingDataLoading = new BehaviorSubject<boolean>(false);
@@ -81,6 +90,9 @@ export class GraphService {
     this._resetAllGraphZooms = new BehaviorSubject<any>(null);
   }
 
+
+  // takes the response of the backend and transforms it to fit the structure of the backend
+  // adds it to the datafiles behavioursubject and sets it as selected
   prepareUserInputData(input, filename: string): any {
     const inputIndentation = input.Indentation;
     const inputLoad = input.Load;
@@ -119,6 +131,8 @@ export class GraphService {
   }
 
 
+  // takes the response of the backend after a txt file is uploaded and transforms it into the frontend structure
+  // adds it to the datafiles behavioursubject and sets it as selected
   prepareUserInputDataTxt(input, filename: string): any {
     const inputIndentation = input.Indentation;
     const inputLoad = input.Load;
@@ -144,7 +158,7 @@ export class GraphService {
       // TODO: REMOVE?
       dataset.displacementForceFilteredData.push(valuePair);
     }
-    
+
     // Add the dataset to the datasets array
     datasets.push(dataset);
 
@@ -157,6 +171,7 @@ export class GraphService {
   }
 
 
+  // executed the backend-call whenever a txt file is uploaded
   uploadDataTxt(file: any): void {
     this._uploadingDataLoading.next(true);
     const formData = new FormData();
@@ -178,6 +193,8 @@ export class GraphService {
         })
   }
 
+
+  // executed the backend-call whenever a raw/jpk file is uploaded
   uploadDataRaw(file: any): void {
     this._uploadingDataLoading.next(true);
     const formData = new FormData();

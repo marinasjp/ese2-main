@@ -1,4 +1,4 @@
 export interface GraphSingle {
-    name: string,
-    single: boolean
+  name: string,
+  single: boolean
 }

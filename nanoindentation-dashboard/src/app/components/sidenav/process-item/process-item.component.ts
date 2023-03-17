@@ -10,6 +10,9 @@ import {EGeometryType} from "../../../models/geometry.model";
   styleUrls: ['./process-item.component.scss']
 })
 export class ProcessItemComponent {
+
+  // RESUSABLE COMPONENT TO BE USED WHENEVER A PROCESS NEEDS INPUTS
+
   @Input() process: Process;
 
   EInputFieldType = EInputFieldType;

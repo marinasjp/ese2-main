@@ -2,6 +2,7 @@
      class="flex justify-content-center align-items-center"
      style="width: 100vw; height: 100vh">
 
+  <!--  SHOWS LOADING INCLUDING STEPS IF PROCESSORSERVICE IS RUNNING PROCESSES-->
   <div class="flex flex-column justify-content-center align-items-center">
     <p-progressSpinner></p-progressSpinner>
     <ng-container *ngFor="let text of processorService.loading$|async">
@@ -12,7 +13,7 @@
 
 </div>
 
-
+<!-- SHOWS DASHBOARD IF NOTHING IS LOADING -->
 <div [class.hidden]="(processorService.loading$|async).length">
   <div class="flex flex-row" style="overflow-x: hidden">
 

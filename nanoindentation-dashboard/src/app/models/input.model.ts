@@ -1,3 +1,4 @@
+// parent: process
 export interface Input {
   name: string; //Name of input field
   selectedValue: any; //selected value of input field
