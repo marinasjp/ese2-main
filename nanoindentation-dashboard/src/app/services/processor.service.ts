@@ -335,7 +335,7 @@ export class ProcessorService {
     let recurReturn = null;
     getScriptPromise.then((processScript) => {
 
-
+      currentProcess.script = processScript; //cache script in Process object 
       for (let index = 0; index < datasets.length; index += 1) { // run script on each dataset
         let dataset: Dataset = datasets[index]; //set the current dataSet
         let inputDatapoints: Datapoint[] = [];
