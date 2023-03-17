@@ -1,7 +1,7 @@
-import { Component, ViewChild } from '@angular/core';
+import {Component, ViewChild} from '@angular/core';
 import {ProcessorService} from "../../../services/processor.service";
-import { Process, EProcType } from 'src/app/models/process.model';
-import { ProcessType } from 'src/app/models/processType.model';
+import {Process, EProcType} from 'src/app/models/process.model';
+import {ProcessType} from 'src/app/models/processType.model';
 
 @Component({
   selector: 'app-custom-code-tab',
@@ -12,46 +12,45 @@ import { ProcessType } from 'src/app/models/processType.model';
 export class CustomCodeTabComponent {
   @ViewChild('fileUpload') fileUpload: any;
 
-  selectedProcess: ProcessType;
+  loading: boolean = false;
+
+  uploadSuccessfulMessage: string = '';
+
+  selectedProcessType: ProcessType;
   processOptions: ProcessType[];
 
   constructor(private processorService: ProcessorService) {
     this.processOptions = [
       {name: "Filter", procType: EProcType.FILTER},
       {name: "CPoint", procType: EProcType.CPOINT},
-      {name: "FModel", procType: EProcType.FMODELS},
-      {name: "EModel", procType: EProcType.EMODELS}
+      // TODO: E & FMODELS NOT IMPLEMENTED
+      // {name: "FModel", procType: EProcType.FMODELS},
+      // {name: "EModel", procType: EProcType.EMODELS}
     ]
-    }
-  // process: Process
-  displayBasic: boolean;
-  showBasicDialog() {
-    this.displayBasic = true;
   }
 
-  // uploadFilterHandler(event: any): void {
-  //   this.uploadCode(event, EProcType.FILTER)
-  // }
-  // uploadCPointHandler(event: any): void {
-  //   this.uploadCode(event, EProcType.CPOINT)
-  // }
-  // uploadFModelHandler(event: any): void {
-  //   this.uploadCode(event, EProcType.FMODELS)
-  // }
-  // uploadEModelHandler(event: any): void {
-  //   this.uploadCode(event, EProcType.EMODELS)
-  // }
-
   uploadCodeHandler(event: any): void {
-    var process = {} as Process;
+    this.loading = true;
 
-    // Set Parameters
-    process.id=event.files.name;
-    process.name=event.files.name;
-    process.custom=true;
-    process.procType=this.selectedProcess.procType;
+    let file: File = event.files[0];
 
-    this.processorService.addProcess(process);
-    this.fileUpload.clear()
+    let process: Process = {
+      id: file.name,
+      name: file.name,
+      custom: true,
+      procType: this.selectedProcessType.procType
+    }
+
+    let fileReader = new FileReader();
+    fileReader.onload = (e) => {
+      process.script = fileReader.result as string;
+      this.uploadSuccessfulMessage = 'Process: ' + process.name + ' uploaded successfully ✔'
+
+      this.loading = false;
+      this.processorService.addProcess(process);
+      this.fileUpload.clear()
+    }
+
+    fileReader.readAsText(file);
   }
 }

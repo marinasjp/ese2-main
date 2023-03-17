@@ -1,4 +1,4 @@
-import { NgModel } from '@angular/forms';
+import {NgModel} from '@angular/forms';
 import {Injectable} from '@angular/core';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {SampleDataService} from "./sample-data.service";
@@ -128,10 +128,9 @@ export class GraphService {
         y: inputLoad[i]
       }
       dataset.displacementForceData.push(valuePair);
-      // TODO: REMOVE?
       dataset.displacementForceFilteredData.push(valuePair);
     }
-    
+
     // Add the dataset to the datasets array
     datasets.push(dataset);
 
