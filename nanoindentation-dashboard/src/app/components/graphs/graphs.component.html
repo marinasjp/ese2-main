@@ -61,7 +61,7 @@
     </p-chart>
   </div>
 
-  <button pButton pRipple type="button" (click) = "showTutorial()" icon = "pi pi-info" class="p-button-rounded p-button-success"></button>
+  <button pButton pRipple type="button" (click) = "showGraphTutorial()" icon = "pi pi-info" class="p-button-rounded p-button-success"></button>
 
   <p-dialog header="Error Caught" [(visible)]="errorHandler.dialogShown" [modal]="true" [style]="{width: '50vw'}"
             [draggable]="false" [resizable]="false">
@@ -69,6 +69,21 @@
     <ng-template pTemplate="footer">
       <p-button icon="pi pi-check" (click)="errorHandler.dialogShown=false" label="Ok"
                 styleClass="p-button-text"></p-button>
+    </ng-template>
+  </p-dialog>
+
+  <p-dialog header="Tutorial (Graphs)" [(visible)]="displayGraphTutorial" [modal]="true" [style]="{width: '50vw'}"[draggable]="false" [resizable]="false">
+    <p class="m-0">
+      This service is made up of two parts. The Graphs and the Sidebar. <br><br>
+      Three sets of graphs are displayed, each with a primary and secondary graph.
+      One of these graphs displays Force-Displacement data, one Force-Indentation and the last displays Elasticity-Spectra data. <br><br>
+      The primary graph displays all of the uploaded curves, whearas the secondary graph displays one curve from the set, picked out by a slider on the bottom bar.
+      This is useful if you need to pick out a certain curve to download as a CSV file, or want to examine another curve further.<br><br>
+      For more information on this website, please see the documentation listed on Github...
+    </p>
+    <ng-template pTemplate="footer">
+      <p-button (click)="showGraphTutorial()" label="Previous"styleClass="p-button-text"></p-button>
+      <p-button (click)="showTutorial()" label="Next"styleClass="p-button-text"></p-button>
     </ng-template>
   </p-dialog>
 
@@ -82,7 +97,7 @@
       2. The Filtering tab lets you search and select for the preset filters that can be applied to the uploaded datasets and viewed in the graphs.
     </p>
     <ng-template pTemplate="footer">
-      <p-button (click)="showTutorial()" label="Previous"styleClass="p-button-text"></p-button>
+      <p-button (click)="showGraphTutorial()" label="Previous"styleClass="p-button-text"></p-button>
       <p-button (click)="showTutorial2()" label="Next"styleClass="p-button-text"></p-button>
     </ng-template>
   </p-dialog>
@@ -110,7 +125,7 @@
     </p>
     <ng-template pTemplate="footer">
       <p-button (click)="showTutorial2()" label="Previous"styleClass="p-button-text"></p-button>
-      <p-button (click)="showTutorial3()" label="Next"styleClass="p-button-text"></p-button>
+      <p-button (click)="closeTutorial()" label="Close"styleClass="p-button-text"></p-button>
     </ng-template>
   </p-dialog>
 </div>

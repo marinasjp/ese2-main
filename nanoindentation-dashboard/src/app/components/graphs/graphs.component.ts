@@ -31,6 +31,7 @@ export class GraphsComponent {
 
   displayError: boolean;
   errorMessage: string;
+  displayGraphTutorial: boolean;
   displayTutorial: boolean;
   displayTutorial2: boolean;
   displayTutorial3: boolean;
@@ -39,7 +40,12 @@ export class GraphsComponent {
     this.errorMessage = message;
     this.displayError = true;
   }
+  showGraphTutorial() {
+    this.displayGraphTutorial = true;
+    this.displayTutorial = false;
+  }
   showTutorial() {
+    this.displayGraphTutorial = false;
     this.displayTutorial2 = false;
     this.displayTutorial = true;
   }
@@ -51,6 +57,9 @@ export class GraphsComponent {
   showTutorial3() {
     this.displayTutorial2 = false;
     this.displayTutorial3 = true;
+  }
+  closeTutorial() {
+    this.displayTutorial3 = false;
   }
 
   displacementForceFilteredDataMultiple: any;
