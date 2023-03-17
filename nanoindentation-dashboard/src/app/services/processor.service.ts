@@ -18,8 +18,14 @@ const PYODIDE_BASE_URL = 'https://cdn.jsdelivr.net/pyodide/v0.22.0/full/';
 })
 export class ProcessorService {
 
+  // decides whether re-calculate section n sidenav is shown
   showReCalculateButton: boolean = false;
 
+
+  // keeps track whether any processes are running
+  // displays loading animation if so
+  // true if processes are running
+  // false if no processes are running
   private _loading: BehaviorSubject<string[]>;
 
   public get loading$(): Observable<string[]> {
@@ -253,11 +259,11 @@ export class ProcessorService {
     let result;
 
     try {
-    globalThis.pyodide.runPython(processScript); //Running the code
-    let calculate = globalThis.pyodide.globals.get('calculate'); //map the function from the global variables onto 'calculate'
-    
-    let resultPy: any;
-    
+      globalThis.pyodide.runPython(processScript); //Running the code
+      let calculate = globalThis.pyodide.globals.get('calculate'); //map the function from the global variables onto 'calculate'
+
+      let resultPy: any;
+
 
       if (arg) {
         resultPy = calculate(xAxis, yAxis, arg); //run function on the dataset
@@ -335,7 +341,7 @@ export class ProcessorService {
     let recurReturn = null;
     getScriptPromise.then((processScript) => {
 
-      currentProcess.script = processScript; //cache script in Process object 
+      currentProcess.script = processScript; //cache script in Process object
       for (let index = 0; index < datasets.length; index += 1) { // run script on each dataset
         let dataset: Dataset = datasets[index]; //set the current dataSet
         let inputDatapoints: Datapoint[] = [];

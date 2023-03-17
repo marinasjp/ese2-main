@@ -17,14 +17,11 @@ export class DownloadSettingsTabComponent {
   constructor(private processorService: ProcessorService,
               private graphService: GraphService) {
     this.graphService.selectedDatafile$.subscribe((datafile) => {
-      if (datafile.datasets.length) {
-        this.disabled = false;
-      } else {
-        this.disabled = true;
-      }
+      this.disabled = !datafile.datasets.length;
     })
   }
 
+  // USED TO DOWNLOAD ALL SETTINGS AS A JSON IN A TEXT FILE
   downloadSettings() {
     let settingsObject: any = {
       availableProcesses: null,
@@ -36,18 +33,18 @@ export class DownloadSettingsTabComponent {
     settingsObject.selectedFilters = this.processorService.selectedFilters;
     settingsObject.selectedCPointProcess = this.processorService.selectedCPointProcess;
 
-    console.log(settingsObject);
-
     let settingsString: string = JSON.stringify(settingsObject);
     const blob = new Blob([settingsString], {type: 'text/txt;charset=utf-8;'});
     saveAs(blob, 'nanoindentation-settings.txt')
   }
 
+
+  // UPLOAD A PREVIOUSLY DOWNLOADED SETTINGS FILE TO APPLY SETTINGS
   uploadSettings(event: any) {
     let file: File = event.files[0];
 
     let fileReader = new FileReader();
-    fileReader.onload = (e) => {
+    fileReader.onload = () => {
       let settings: string = fileReader.result as string;
       let settingsObject = JSON.parse(settings);
       this.processorService.updateSettings(settingsObject);

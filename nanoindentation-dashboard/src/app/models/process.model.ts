@@ -1,5 +1,6 @@
 import {Input} from "./input.model";
 
+// children: Inputs and EProcType
 export interface Process {
   id: string, // unique name to find place in filesystem
   name: string, // displayed name by the UI
