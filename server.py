@@ -53,8 +53,8 @@ def send_data():
         customerData['Time'].append(0)   #data[i]['time'].tolist())
         customerData['Load'].append((fd.appr['force']*1e9).tolist() + (fd.retr['force']*1e9).tolist())
         customerData['Piezo'].append(0)   #[i]['height (piezo)'].tolist()) 
-        customerData['Indentation'].append((-1*(fd.appr['height (measured)']*1e9)).tolist() + (-1*(fd.retr['height (measured)']*1e9).tolist()))
-        customerData['Cantilever'].append(0)   #data[i]['segment'].tolist())
+        customerData['Indentation'].append((-1*(fd.appr['height (measured)']*1e9)).tolist() + (-1*(fd.retr['height (measured)']*1e9).tolist())) # .appr takes the beginning of the curve and .retr takes the end, then are put together. 
+        customerData['Cantilever'].append(0)   #data[i]['segment'].tolist())                                                                       This is a built in function of afmformats 
     #This is taken from source code
     headers = {'Content-Type': 'application/json'}
     

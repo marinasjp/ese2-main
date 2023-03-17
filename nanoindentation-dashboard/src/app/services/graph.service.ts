@@ -96,7 +96,7 @@ export class GraphService {
 
   displayErrorMessage(message: "Error: Your file is the wrong type or incorrectly formatted") { //This is a function to display error message to user in case of error 
     this.snackBar.open(message, 'Close', {
-      duration: 5000,
+      duration: 5000,  //This leaves it open for 5 seconds
       horizontalPosition: 'center',
       verticalPosition: 'top'
     });
